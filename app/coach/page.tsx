@@ -1,13 +1,13 @@
 // app/coach/page.tsx
 import React from 'react';
-import Coach from '@/components/Coach';
+import CoachLayout from '../layouts/CoachLayout';
+import RootLayout from '../layout';
 
-const CoachPage: React.FC = () => {
+const CoachPage: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return (
-    <Coach>
-      <h1>Coach Overview</h1>
-      <p>Content goes here...</p>
-    </Coach>
+    <RootLayout layoutType="coach">
+      <CoachLayout>{children}</CoachLayout>
+    </RootLayout>
   );
 };
 
