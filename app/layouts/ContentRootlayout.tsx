@@ -1,29 +1,27 @@
-// app/layouts/ContentRootLayout.tsx
+'use client';
+import React from 'react';
+import { useLayout } from '../../context/LayoutContext';
+import ContentNavBar from '@/components/ContentNavBar';
 import '@styles/globals.css';
-import React, { ReactNode } from 'react';
-import Sidebar from '@/components/Sidebar';
-import BottomNav from '@/components/BottomNav';
-import ContentNavBar from '@components/ContentNavBar';
-import styles from '../../styles/ContentNavBar.modules.css';
+import { LayoutProvider } from '@/context/LayoutContext';
+
+
+
 interface ContentRootLayoutProps {
-    links: { href: string; label: string }[];
-    children: React.ReactNode;
-  }
-  
-interface ContentRootLayoutProps {
-    links: { href: string; label: string }[];
-    children: React.ReactNode;
-  }
- 
+  links: { href: string; label: string }[];
+  children: React.ReactNode;
+}
+
 const ContentRootLayout: React.FC<ContentRootLayoutProps> = ({ links, children }) => {
-    return (
+  return (
+    <LayoutProvider links={links}>
       <div className="content-layout">
         <ContentNavBar links={links} />
-        <div className="content-main">
-          {children}
-        </div>
+        <div className="content-main">{children}</div>
       </div>
-    );
-  };
-  
-  export default ContentRootLayout;
+    </LayoutProvider>
+  );
+};
+
+export default ContentRootLayout;
+

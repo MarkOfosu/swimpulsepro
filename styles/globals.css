@@ -5,7 +5,7 @@ body {
     margin: 0;
     font-family: Arial, sans-serif;
     height: 100vh;
-    background: #34d6eb;
+    background: #f0f2f5; 
 }
 
 #layout {
@@ -31,18 +31,17 @@ body {
 }
 
 #menu .logo:hover img {
-    box-shadow: 0 0 40px rgba(0, 255, 255, 0.6); 
     transition: box-shadow 0.3s ease-in-out;
 }
 
 #menu .logo:hover {
-    background: none; 
+    background: none;
 }
 
 #menu {
     width: 200px;
     transition: width 0.3s ease;
-    background: #1f2a48; 
+    background: #1f2a48;
     color: white;
     overflow: hidden;
     height: 100vh; 
@@ -106,15 +105,14 @@ body {
 
 .content {
     flex-grow: 1;
-    padding: 20px;
     transition: margin-left 0.3s ease;
     height: 100vh; 
-    overflow-y: auto; /* Allow scrolling if content overflows */
-    background: #ffffff; 
+    overflow-y: auto; 
+    background: #1a2b6a; 
 }
 
 #menu.collapsed + .content {
-    /* margin-left: 60px; */
+    margin-left: 60px; 
 }
 
 .header {
@@ -165,7 +163,6 @@ body {
 
 .bottom-nav a:hover {
     background: #2e3a57;
-    box-shadow: 0 0 10px rgba(0, 255, 255, 0.8); 
 }
 
 @media screen and (max-width: 768px) {
@@ -182,8 +179,7 @@ body {
     }
 
     .content {
-        margin-left: 0 !important;
-        padding: 20px;
+
     }
 
     .bottom-nav {
@@ -196,46 +192,52 @@ body {
     display: flex;
     flex-direction: column;
     height: 100vh;
+    width: 100%;
 }
 
 .content-navbar {
-    background-color: #1f2a48; 
+    background-color: #030945; 
     border-bottom: 1px solid #ddd;
     padding: 1rem;
-    position: fixed;
-    top: 0;
-    width: 100%;
+    transition: left 0.3s ease, width 0.3s ease; 
     z-index: 1000;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); 
+    display: flex; 
+    justify-content: center;
+}
+
+#menu.collapsed + .content-layout .content-navbar {
+    left: 60px; 
 }
 
 .content-navbar ul {
     list-style-type: none;
     margin: 0;
     padding: 0;
-    display: flex;
+    display: flex; 
     gap: 1rem;
 }
 
 .content-navbar ul li {
-    display: inline;
+    display: flex;
+    align-items: center;
 }
 
 .content-navbar ul li a {
     text-decoration: none;
-    color: white;
+    color: rgb(6, 222, 211);
     transition: color 0.3s ease, box-shadow 0.3s ease;
+    padding: 0.3em;
 }
 
 .content-navbar ul li a:hover {
-    color: #00ffff;
+    color: #eab9c7;
     box-shadow: 0 0 10px rgba(0, 255, 255, 0.8); 
 }
 
 .content-main {
     flex-grow: 1;
-    margin-top: 4rem; 
-    padding: 2rem;
     overflow-y: auto;
-    background: #ffffff; 
+
+    background: #ffffff;
 }

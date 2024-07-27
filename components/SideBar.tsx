@@ -23,8 +23,11 @@ const Sidebar: React.FC = () => {
       <button className="menu-toggle" onClick={toggleSidebar}>
         <FaBars />
       </button>
+      <Link href="/" className="pure-menu-link"> 
+        <FaHome className="icon" /> <span className="text">Home</span>
+      </Link>
       <Link href="/team" className="pure-menu-link">
-        <FaHome className="icon" /> <span className="text">Team</span>
+      <FaUsers className="icon" /> <span className="text">Team</span>
       </Link>
       <Link href="/coach" className="pure-menu-link">
         <FaChalkboardTeacher className="icon" /> <span className="text">Coach</span>

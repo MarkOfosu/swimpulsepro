@@ -1,14 +1,13 @@
-// app/team/overview.tsx
 import React from 'react';
-import Team from '@/components/Team';
+import SectionHeader from '@/components/SectionHeader';
+import Coach from '@components/Coach';
 
-const TeamOverview: React.FC = () => {
+export default function Home() {
   return (
-    <Team>
-      <h1>Team Overview</h1>
-      <p>Content goes here...</p>
-    </Team>
+    <div>
+      <SectionHeader heading="Welcome to SwimPulsePro" />
+      <p>content goes here...</p>
+      
+    </div>
   );
-};
-
-export default TeamOverview;
+}

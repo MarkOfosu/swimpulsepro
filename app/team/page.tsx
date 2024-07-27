@@ -1,13 +1,11 @@
-// app/team/page.tsx
-import React from 'react';
-import Team from '@/components/Team';
+import TeamLayout from '../layouts/TeamLayout';
+import RootLayout from '../layout';
 
-const TeamPage: React.FC = () => {
+const TeamPage: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return (
-    <Team>
-      <h1>Team Overview</h1>
-      <p>Content goes here...</p>
-    </Team>
+    <RootLayout layoutType="team">
+      <TeamLayout>{children}</TeamLayout>
+    </RootLayout>
   );
 };
 
