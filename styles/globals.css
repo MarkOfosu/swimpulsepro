@@ -112,7 +112,7 @@ body {
 }
 
 #menu.collapsed + .content {
-    margin-left: 60px; 
+    /* margin-left: 60px;  */
 }
 
 .header {

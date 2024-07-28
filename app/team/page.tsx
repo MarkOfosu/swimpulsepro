@@ -1,11 +1,19 @@
-import TeamLayout from '../layouts/TeamLayout';
-import RootLayout from '../layout';
+//page/team/page.tsx
 
-const TeamPage: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+import React, { ReactNode } from 'react';
+import ContentRootLayout from '@app/layouts/ContentRootlayout';
+
+const TeamPage: React.FC<{ children: ReactNode }> = ({ children }) => {
+  const links = [
+    { href: '/team/overview', label: 'Overview' },
+    { href: '/team/manage-coaches', label: 'Manage Coaches' },
+    { href: '/team/team-settings', label: 'Team Settings' },
+  ];
+
   return (
-    <RootLayout layoutType="team">
-      <TeamLayout>{children}</TeamLayout>
-    </RootLayout>
+    <ContentRootLayout links={links}>
+      {children}
+    </ContentRootLayout>
   );
 };
 
