@@ -1,13 +1,22 @@
 // app/coach/page.tsx
-import React from 'react';
-import CoachLayout from '../layouts/CoachLayout';
-import RootLayout from '../layout';
 
-const CoachPage: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+
+import React, { ReactNode } from 'react';
+import ContentRootLayout from '@app/layouts/ContentRootlayout';
+
+const CoachPage: React.FC<{ children: ReactNode }> = ({ children }) => {
+  const links = [
+    { href: '/coach/dashboard', label: 'Dashboard' },
+    { href: '/coach/athletes', label: 'Athletes' },
+    { href: '/coach/programs', label: 'Programs' },
+    { href: '/coach/progress', label: 'Progress' },
+    { href: '/coach/calendar', label: 'Calendar' },
+  ];
+
   return (
-    <RootLayout layoutType="coach">
-      <CoachLayout>{children}</CoachLayout>
-    </RootLayout>
+    <ContentRootLayout links={links}>
+      {children}
+    </ContentRootLayout>
   );
 };
 

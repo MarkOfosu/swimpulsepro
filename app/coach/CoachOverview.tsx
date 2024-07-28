@@ -6,7 +6,7 @@ const CoachOverview: React.FC = () => {
   return (
     <CoachPage>
       <h1>Coach Overview</h1>
-      <p>Content goes here...</p>
+      <p>Content Content..</p>
     </CoachPage>
   );
 };
