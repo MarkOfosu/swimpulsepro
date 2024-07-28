@@ -12,20 +12,31 @@ export const metadata = {
 };
 
 
-function RootLayout({ children, layoutType }: { children: ReactNode; layoutType: 'team' | 'coach' }) {
-  const links =
-    layoutType === 'team'
-      ? [
-          { href: '/team/overview', label: 'Overview' },
-          { href: '/team/manage-coaches', label: 'Manage Coaches' },
-          { href: '/team/team-settings', label: 'Team Settings' },
-        ]
-      : [
-          { href: '/coach/overview', label: 'Overview' },
-          { href: '/coach/manage-swimmers', label: 'Manage Swimmers' },
-          { href: '/coach/create-workouts', label: 'Create Workouts' },
-          { href: '/coach/monitor-progress', label: 'Monitor Progress' },
+function RootLayout({ children, layoutType }: { readonly children: ReactNode; readonly layoutType: 'team' | 'coach' }) {
+  const getLinks = (layoutType: 'team' | 'coach') => {
+    switch (layoutType) {
+      case 'team':
+        return [
+          { href: '/team/dashboard', label: 'Dashboard' },
+          { href: '/team/athletes', label: 'Athletes' },
+          { href: '/team/programs', label: 'Programs' },
+          { href: '/team/progress', label: 'Progress' },
+          { href: '/team/calendar', label: 'Calendar' },
         ];
+      case 'coach':
+        return [
+          { href: '/coach/dashboard', label: 'Dashboard' },
+          { href: '/coach/athletes', label: 'Athletes' },
+          { href: '/coach/programs', label: 'Programs' },
+          { href: '/coach/progress', label: 'Progress' },
+          { href: '/coach/calendar', label: 'Calendar' },
+        ];
+      default:
+        return [];
+    }
+  };
+
+  const links = getLinks(layoutType);
 
   return (
     <html lang='en'>
