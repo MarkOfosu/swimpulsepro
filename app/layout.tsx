@@ -1,15 +1,15 @@
 //app/layout.tsx
 import '@styles/globals.css';
 import React, { ReactNode } from 'react';
-import Sidebar from '../components/SideBar';
-import BottomNav from '@/components/BottomNav';
+import Sidebar from '../components/nav/SideBar';
+import BottomNav from '@components/nav/BottomNav';
 
 export const metadata = {
   title: 'SwimPulsePro',
   description: 'Swim Training Fit Analysis and Tracking Tool',
 };
 
-function RootLayout({ children, layoutType }: { readonly children: ReactNode; readonly layoutType: 'team' | 'coach' }) {
+function RootLayout({ children}: { readonly children: ReactNode}) {
 
   return (
     <html lang='en'>

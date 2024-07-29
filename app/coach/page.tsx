@@ -4,13 +4,12 @@
 import React, { ReactNode } from 'react';
 import ContentRootLayout from '@app/layouts/ContentRootlayout';
 
-const CoachPage: React.FC<{ children: ReactNode }> = ({ children }) => {
+const CoachPageLayout: React.FC<{ children: ReactNode }> = ({ children }) => {
   const links = [
     { href: '/coach/dashboard', label: 'Dashboard' },
-    { href: '/coach/athletes', label: 'Athletes' },
-    { href: '/coach/programs', label: 'Programs' },
-    { href: '/coach/progress', label: 'Progress' },
-    { href: '/coach/calendar', label: 'Calendar' },
+    { href: '/coach/swimGroups', label: 'Swim Groups' },
+    { href: '/coach/analytics', label: 'Analytics' },
+    { href: '/coach/workout', label: 'Workout' },
   ];
 
   return (
@@ -20,4 +19,4 @@ const CoachPage: React.FC<{ children: ReactNode }> = ({ children }) => {
   );
 };
 
-export default CoachPage;
+export default CoachPageLayout;
