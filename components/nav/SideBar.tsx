@@ -6,7 +6,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { FaHome, FaUsers, FaChalkboardTeacher, FaClipboardList, FaCog, FaBars } from 'react-icons/fa';
 // import styles from '../styles/sidebar.modules.css';
-import logo from '../public/image/logo.png';
+import logo from '../../public/image/logo.png';
 
 const Sidebar: React.FC = () => {
   const [collapsed, setCollapsed] = useState(false);

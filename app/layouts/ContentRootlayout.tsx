@@ -1,22 +1,22 @@
 'use client';
 import React from 'react';
-import ContentNavBar from '@/components/ContentNavBar';
+import ContentNavBar from '@components/nav/ContentNavBar';
 import '@styles/globals.css';
 
+interface ContentRootLayoutProps {
+  links: { href: string; label: string }[];
+  children: React.ReactNode;
+}
 
-
-const ContentRootLayout: React.FC<{ links: { href: string; label: string }[]; children: React.ReactNode }> = ({ links, children }) => {
+const ContentRootLayout: React.FC<ContentRootLayoutProps> = ({ links, children }) => {
   return (
-      <div className="content-layout">
-        <ContentNavBar links={links} />
-        <div className="content-main">
-          {children}
-        </div>
+    <div className="content-layout">
+      <ContentNavBar links={links} />
+      <div className="content-main">
+        {children}
       </div>
+    </div>
   );
 }
 
-
 export default ContentRootLayout;
-
-
