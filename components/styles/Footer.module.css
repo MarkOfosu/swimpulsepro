@@ -1,0 +1,74 @@
+/* File: styles/Footer.module.css */
+
+.footer {
+    width: 100%;
+    background-color: #f8f9fa;
+    padding: 20px 0;
+    text-align: center;
+    border-top: 1px solid #e9ecef;
+  }
+  
+  .legal {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+  
+  .legalLinksContainer {
+    flex: 1;
+    min-width: 200px;
+  }
+  
+  .legalLinks {
+    list-style: none;
+    padding: 0;
+    margin: 10px 0 0;
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+  }
+  
+  .legalLinkItem {
+    margin: 0;
+  }
+  
+  .legalLink {
+    color: #007bff;
+    text-decoration: none;
+  }
+  
+  .legalLink:hover {
+    text-decoration: underline;
+  }
+  
+  .legalCopyright {
+    font-size: 0.9rem;
+    color: #6c757d;
+    margin-top: 10px;
+  }
+  
+  .socialLinks {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+  }
+  
+  .socialLink {
+    color: #007bff;
+    text-decoration: none;
+  }
+  
+  .socialIcon {
+    width: 24px;
+    height: 24px;
+  }
+  
+  .socialLink:hover .socialIcon {
+    filter: brightness(0.8);
+  }
+  
