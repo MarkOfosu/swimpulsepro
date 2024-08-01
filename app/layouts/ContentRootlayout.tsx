@@ -1,7 +1,7 @@
 'use client';
 import React from 'react';
 import ContentNavBar from '@components/nav/ContentNavBar';
-import '@styles/globals.css';
+import '../globals.css';
 
 interface ContentRootLayoutProps {
   links: { href: string; label: string }[];

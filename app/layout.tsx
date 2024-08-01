@@ -1,8 +1,9 @@
 //app/layout.tsx
-import '@styles/globals.css';
 import React, { ReactNode } from 'react';
 import Sidebar from '../components/nav/SideBar';
 import BottomNav from '@components/nav/BottomNav';
+import Footer from '../components/ui/Footer';
+import './globals.css';
 
 export const metadata = {
   title: 'SwimPulsePro',
@@ -20,9 +21,10 @@ function RootLayout({ children}: { readonly children: ReactNode}) {
       <body>
         <div id="layout">
           <Sidebar />
-            <main className='content'>{children}</main>
-          <BottomNav />
+            <main className='content'>{children}</main>  
+          <BottomNav />    
         </div>
+        <Footer />
       </body>
     </html>
   );
