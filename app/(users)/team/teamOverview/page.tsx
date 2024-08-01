@@ -4,9 +4,8 @@
 import React from 'react';
 import TeamLayout from '../page';
 import Card from '@components/ui/Card';
-import Footer from '@components/ui/Footer';
 
-import { useToast } from '../../../components/ui/toasts/Toast';
+import { useToast } from '../../../../components/ui/toasts/Toast';
 
 
 const TeamOverview: React.FC = () => {
@@ -30,10 +29,6 @@ const TeamOverview: React.FC = () => {
       <button onClick={handleShowErrorToast}>Show Error Toast</button>
       <button onClick={() => showToast('This is a default notification!')}>Show Default Toast</button>
       <ToastContainer />
-
-      <Footer />
-
-      
     </TeamLayout>
   );
 };
