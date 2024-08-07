@@ -1,37 +1,34 @@
-'use client';
-import React, { useState } from 'react';
-import { useRouter } from 'next/navigation';
-// import { supabase } from '../utils/supabaseClient';
+// LoginForm.jsx
+import React from 'react';
+import '@fortawesome/fontawesome-free/css/all.min.css';
+import styles from '../../styles/LoginForm.module.css';
 
-const SignInForm: React.FC = () => {
-  const [team, setTeam] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const router = useRouter();
 
-  const handleSignIn = async () => {
-    // const { error } = await supabase.auth.signIn({ email, password });
-    // if (!error) {
-    //   router.push('/coach'); // Redirect to the coach route after successful sign-in
-    // } else {
-    //   alert('Sign in failed. Please check your credentials.');
-    // }
-  };
-
+const LoginForm: React.FC = () => {
   return (
-    <div>
-      <h1>Sign In</h1>
-      <select value={team} onChange={(e) => setTeam(e.target.value)}>
-        {/* Options should be fetched from the database */}
-        <option value="">Select Team</option>
-        <option value="team1">Team 1</option>
-        <option value="team2">Team 2</option>
-      </select>
-      <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email" />
-      <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Password" />
-      <button onClick={handleSignIn}>Sign In</button>
+    <div className={styles.container}>
+      <div className={styles.loginBox}>
+        <h2>Login</h2>
+        <form action="#">
+          <div className={styles.inputBox}>
+            <input type="email" required />
+            <label>Email</label>
+          </div>
+          <div className={styles.inputBox}>
+            <input type="password" required />
+            <label>Password</label>
+          </div>
+          <div className={styles.forgotPassword}>
+            <a href="#">Forgot Password?</a>
+          </div>
+          <button type="submit" className={styles.btn}>Login</button>
+          <div className={styles.signupLink}>
+            <a href="#">Signup</a>
+          </div>
+        </form>
+      </div>
     </div>
   );
 }
 
-export default SignInForm;
+export default LoginForm;

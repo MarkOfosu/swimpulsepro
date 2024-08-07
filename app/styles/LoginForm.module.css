@@ -1,0 +1,141 @@
+
+.container {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #c7dfeb;
+}
+
+.container span {
+  position: absolute;
+  left: 50%;
+  transform-origin: center;
+  width: 32px;
+  height: 5px;
+  background: #2c4766;
+  border-radius: 8px;
+}
+
+@keyframes animateBlink {
+  0% {
+    background: #00fffc;
+  }
+  25% {
+    background: #2c4766;
+  }
+}
+
+.loginBox {
+  position: relative;
+  width: 400px;
+  padding: 50px;
+  background: #000;
+  border-radius: 20px;
+  text-align: center;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+}
+
+.loginBox form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.loginBox h2 {
+  font-size: 2em;
+  color: #00fffc;
+  margin-bottom: 20px;
+}
+
+.inputBox {
+  position: relative;
+  width: 100%;
+  margin: 20px 0;
+}
+
+.inputBox input {
+  width: 100%;
+  height: 50px;
+  background: transparent;
+  border: 2px solid #2c4766;
+  outline: none;
+  border-radius: 40px;
+  font-size: 1em;
+  color: #fff;
+  padding: 0 20px;
+  transition: 0.5s;
+}
+
+.inputBox input:focus,
+.inputBox input:valid {
+  border-color: #00fffc;
+}
+
+.inputBox label {
+  position: absolute;
+  top: 50%;
+  left: 20px;
+  transform: translateY(-50%);
+  font-size: 1em;
+  color: #fff;
+  pointer-events: none;
+  transition: 0.5s ease;
+}
+
+.inputBox input:focus ~ label,
+.inputBox input:valid ~ label {
+  top: 1px;
+  font-size: 0.8em;
+  background-color: #1f293a;
+  padding: 0 6px;
+  color: #00fffc;
+}
+
+.forgotPassword {
+  margin: -15px 0 10px;
+  text-align: center;
+}
+
+.forgotPassword a {
+  font-size: 0.85em;
+  color: #fff;
+  text-decoration: none;
+}
+
+.forgotPassword a:hover {
+  text-decoration: underline;
+}
+
+.btn {
+  width: 100%;
+  height: 45px;
+  border-radius: 45px;
+  background: #00fffc;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  font-size: 1em;
+  color: #1f293a;
+  font-weight: 600;
+  margin-top: 20px;
+}
+
+.signupLink {
+  margin: 20px 0 10px;
+  text-align: center;
+}
+
+.signupLink a {
+  font-size: 1em;
+  color: #00fffc;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.signupLink a:hover {
+  text-decoration: underline;
+}

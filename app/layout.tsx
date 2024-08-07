@@ -4,6 +4,7 @@ import Sidebar from '../components/nav/SideBar';
 import BottomNav from '@components/nav/BottomNav';
 import Footer from '../components/ui/Footer';
 import './globals.css';
+import WelcomePage from './welcome/page';
 
 export const metadata = {
   title: 'SwimPulsePro',
@@ -11,6 +12,7 @@ export const metadata = {
 };
 
 function RootLayout({ children}: { readonly children: ReactNode}) {
+  const signedin = false;
 
   return (
     <html lang='en'>
@@ -19,11 +21,20 @@ function RootLayout({ children}: { readonly children: ReactNode}) {
         <meta name='description' content={metadata.description} />
       </head>
       <body>
+        {signedin && 
         <div id="layout">
-          <Sidebar />
+          {/* <Sidebar /> */}
             <main className='content'>{children}</main>  
-          <BottomNav />    
+          {/* <BottomNav />     */}
         </div>
+        }
+        <div id="">
+          
+          <WelcomePage />
+          
+         
+        </div>
+        
         <Footer />
       </body>
     </html>
