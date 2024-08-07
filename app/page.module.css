@@ -1,3 +1,4 @@
+/*
 .main {
   display: flex;
   flex-direction: column;
@@ -6,6 +7,7 @@
   padding: 6rem;
   min-height: 100vh;
 }
+
 
 .description {
   display: inherit;
@@ -109,45 +111,45 @@
   position: relative;
 }
 /* Enable hover only on non-touch devices */
-@media (hover: hover) and (pointer: fine) {
-  .card:hover {
-    background: rgba(var(--card-rgb), 0.1);
-    border: 1px solid rgba(var(--card-border-rgb), 0.15);
-  }
+/* @media (hover: hover) and (pointer: fine) { */
+  /* .card:hover { */
+    /* background: rgba(var(--card-rgb), 0.1); */
+    /* border: 1px solid rgba(var(--card-border-rgb), 0.15); */
+  /* } */
 
-  .card:hover span {
-    transform: translateX(4px);
-  }
-}
+  /* .card:hover span {
+    transform: translateX(4px); */
+  /* } */
+/* } */
 
-@media (prefers-reduced-motion) {
+/* @media (prefers-reduced-motion) {
   .card:hover span {
     transform: none;
   }
-}
+} */
 
 /* Mobile */
-@media (max-width: 700px) {
+/* @media (max-width: 700px) {
   .content {
     padding: 4rem;
-  }
+  } */
 
-  .grid {
+  /* .grid {
     grid-template-columns: 1fr;
     margin-bottom: 120px;
     max-width: 320px;
     text-align: center;
-  }
+  } */
 
-  .card {
+  /* .card {
     padding: 1rem 2.5rem;
   }
 
   .card h2 {
     margin-bottom: 0.5rem;
-  }
+  } */
 
-  .center {
+  /* .center {
     padding: 8rem 0 6rem;
   }
 
@@ -162,17 +164,17 @@
 
   .description a {
     padding: 1rem;
-  }
+  } */
 
-  .description p,
+  /* .description p,
   .description div {
     display: flex;
     justify-content: center;
     position: fixed;
     width: 100%;
-  }
+  } */
 
-  .description p {
+  /* .description p {
     align-items: center;
     inset: 0 0 auto;
     padding: 2rem 1rem 1.4rem;
@@ -186,9 +188,9 @@
     );
     background-clip: padding-box;
     backdrop-filter: blur(24px);
-  }
+  } */
 
-  .description div {
+  /* .description div {
     align-items: flex-end;
     pointer-events: none;
     inset: auto 0 0;
@@ -201,30 +203,31 @@
     );
     z-index: 1;
   }
-}
+} */
 
 /* Tablet and Smaller Desktop */
-@media (min-width: 701px) and (max-width: 1120px) {
+/* @media (min-width: 701px) and (max-width: 1120px) {
   .grid {
     grid-template-columns: repeat(2, 50%);
   }
-}
+} */
 
-@media (prefers-color-scheme: dark) {
+/* @media (prefers-color-scheme: dark) {
   .vercelLogo {
     filter: invert(1);
-  }
+  } */
 
-  .logo {
+  /* .logo {
     filter: invert(1) drop-shadow(0 0 0.3rem #ffffff70);
   }
-}
+} */
 
-@keyframes rotate {
+/* @keyframes rotate {
   from {
     transform: rotate(360deg);
   }
   to {
     transform: rotate(0deg);
   }
-}
+} */
+
