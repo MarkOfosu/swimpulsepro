@@ -12,7 +12,7 @@ const signupForm = () => {
         <div className={styles.registerBox}>
           <h2>Register</h2>
           <form>
-            <div className={styles.inputBox}>
+            {/* <div className={styles.inputBox}>
               <input type="text" id="firstName" name="firstName" required />
               <label>First Name</label>
             </div>
@@ -27,7 +27,7 @@ const signupForm = () => {
             <div className={styles.inputBox}>
               <input type="text" id="swimTeamLocation" name="swimTeamLocation" required />
               <label>Swim Team Location</label>
-            </div>
+            </div> */}
             <div className={styles.inputBox}>
               <input type="email" id="email" name="email" required />
               <label>Email</label>

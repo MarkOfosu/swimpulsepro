@@ -55,23 +55,23 @@ export async function signup(formData: FormData) {
   }
 
   // Store additional profile information
-  const user = await supabase.auth.getUser()
+  // const user = await supabase.auth.getUser()
 
-  if (user) {
-    const { error: profileError } = await supabase
-      .from('profiles')
-      .insert({
-        id: user.data.user?.id,
-        first_name: firstName,
-        last_name: lastName,
-        swim_team: swimTeam,
-        swim_team_location: swimTeamLocation,
-      })
+  // if (user) {
+  //   const { error: profileError } = await supabase
+  //     .from('profiles')
+  //     .insert({
+  //       id: user.data.user?.id,
+  //       first_name: firstName,
+  //       last_name: lastName,
+  //       swim_team: swimTeam,
+  //       swim_team_location: swimTeamLocation,
+  //     })
 
-    if (profileError) {
-      redirect('/error')
-    }
-  }
+  //   if (profileError) {
+  //     redirect('/error')
+  //   }
+  // }
 
   revalidatePath('/', 'layout')
   redirect('/')
