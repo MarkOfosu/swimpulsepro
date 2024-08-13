@@ -12,7 +12,7 @@ export const metadata = {
 };
 
 function RootLayout({ children}: { readonly children: ReactNode}) {
-  const signedin = false;
+  const signedin = true;
 
   return (
     <html lang='en'>
@@ -20,22 +20,9 @@ function RootLayout({ children}: { readonly children: ReactNode}) {
         <title>{metadata.title}</title>
         <meta name='description' content={metadata.description} />
       </head>
-      <body>
-        {signedin && 
-        <div id="layout">
-          {/* <Sidebar /> */}
-            <main className='content'>{children}</main>  
-          {/* <BottomNav />     */}
-        </div>
-        }
-        <div id="">
-          
-          <WelcomePage />
-          
-         
-        </div>
-        
-        <Footer />
+      <body> 
+          <main className='content'>{children}</main>   
+         <Footer />
       </body>
     </html>
   );

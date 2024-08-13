@@ -1,4 +1,4 @@
-
+/* 
 .container {
   position: relative;
   width: 100vw;
@@ -6,7 +6,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  background: #c7dfeb;
+  background: #1f293a;
 }
 
 .container span {
@@ -15,7 +15,7 @@
   transform-origin: center;
   width: 32px;
   height: 5px;
-  background: #2c4766;
+  background: #042243;
   border-radius: 8px;
 }
 
@@ -53,7 +53,7 @@
 
 .inputBox {
   position: relative;
-  width: 100%;
+  width: 80%;
   margin: 20px 0;
 }
 
@@ -111,7 +111,7 @@
 }
 
 .btn {
-  width: 100%;
+  width: 35%;
   height: 45px;
   border-radius: 45px;
   background: #00fffc;
@@ -123,6 +123,8 @@
   font-weight: 600;
   margin-top: 20px;
 }
+
+
 
 .signupLink {
   margin: 20px 0 10px;
@@ -138,4 +140,138 @@
 
 .signupLink a:hover {
   text-decoration: underline;
+} */
+
+.container {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #1f293a;
 }
+
+.loginBox {
+  position: relative;
+  width: 400px;
+  padding: 50px;
+  background: #000;
+  border-radius: 20px;
+  text-align: center;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+}
+
+.loginBox form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.loginBox h2 {
+  font-size: 2em;
+  color: #00fffc;
+  margin-bottom: 20px;
+}
+
+.inputBox {
+  position: relative;
+  width: 80%;
+  margin: 20px 0;
+}
+
+.inputBox input {
+  width: 100%;
+  height: 50px;
+  background: transparent;
+  border: 2px solid #2c4766;
+  outline: none;
+  border-radius: 40px;
+  font-size: 1em;
+  color: #fff;
+  padding: 0 20px;
+  transition: 0.5s;
+}
+
+.inputBox input:focus,
+.inputBox input:valid {
+  border-color: #00fffc;
+}
+
+.inputBox label {
+  position: absolute;
+  top: 50%;
+  left: 20px;
+  transform: translateY(-50%);
+  font-size: 1em;
+  color: #fff;
+  pointer-events: none;
+  transition: 0.5s ease;
+}
+
+.inputBox input:focus ~ label,
+.inputBox input:valid ~ label {
+  top: 1px;
+  font-size: 0.8em;
+  background-color: #1f293a;
+  padding: 0 6px;
+  color: #00fffc;
+}
+
+.forgotPassword {
+  margin: -15px 0 10px;
+  text-align: center;
+}
+
+.forgotPassword a {
+  font-size: 0.85em;
+  color: #fff;
+  text-decoration: none;
+}
+
+.forgotPassword a:hover {
+  text-decoration: underline;
+}
+
+.btn {
+  width: 40%;
+  height: 45px;
+  border-radius: 45px;
+  background: #00fffc;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  font-size: 1em;
+  color: #1f293a;
+  font-weight: 600;
+  margin-top: 10px; /* Adjusted margin to ensure space between buttons */
+}
+
+.signupLink {
+  margin: 20px 0 10px;
+  text-align: center;
+  align-items: center;
+  width: 40%; /* Adjusted width */
+}
+
+.signupLink button {
+  width: 60%; /* Adjusted width */
+  height: 35px;
+  border-radius: 45px;
+  background: none; /* No background */
+  border: none; /* No border */
+  outline: none; /* No outline */
+  cursor: pointer;
+  font-size: 1em;
+  color: #0a3174; /* Text color */
+  font-weight: 600;
+  transition: color 0.3s ease; /* Transition for hover effect */
+}
+
+.signupLink button:hover {
+  color: #00fffc; /* Brightens text on hover */
+  text-decoration: underline; /* Optional: underline text on hover */
+}
+
+
