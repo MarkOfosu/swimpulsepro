@@ -18,22 +18,6 @@ const Dashboard: React.FC = () => {
           <h1>Welcome, Coach [Name]!</h1>
           <p>Here is an overview of your swim team’s performance.</p>
         </section>
-
-        {/* <section className={styles.performanceOverview}>
-          <h2>Performance Overview</h2>
-          <div className={styles.performanceCharts}>
-            <div className={styles.chart}>
-              <h3>Swimmers Progress</h3>
-              <p>Chart showing swimmers&rsquo; progress over time</p>
-              {swimmersPerformanceData.map((data, index) => (
-                <div key={index}>
-                  <p>{`${data.swimmer}: ${data.metric} - ${data.value} on ${data.date}`}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section> */}
-
         <section className={styles.swimGroups}>
           <h2>Your Swim Groups</h2>
           <ul className={styles.groupsList}>

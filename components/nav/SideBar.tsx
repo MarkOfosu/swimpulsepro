@@ -55,20 +55,20 @@ const Sidebar: React.FC = () => {
       </Link>
       {userRole === 'coach' ? (
         <>
-          <Link href="/coach/dashboard" className="pure-menu-link">
+          <Link href="/user/coach/dashboard" className="pure-menu-link">
             <FaChalkboardTeacher className="icon" /> <span className="text">Coach Dashboard</span>
           </Link>
           {isAdmin && (
             <>
               <hr style={{ width: '80%', borderColor: '#fff', margin: '10px auto' }} />
-              <Link href="/team/teamOverview" className="pure-menu-link">
+              <Link href="/user/team/teamOverview" className="pure-menu-link">
                 <FaUsers className="icon" /> <span className="text">Team Dashboard</span>
               </Link>
             </>
           )}
         </>
       ) : userRole === 'swimmer' ? (
-        <Link href="/swimmer/dashboard" className="pure-menu-link">
+        <Link href="/user/swimmer/dashboard" className="pure-menu-link">
           <FaUsers className="icon" /> <span className="text">Swimmer Dashboard</span>
         </Link>
       ) : (

@@ -3,9 +3,9 @@ import ContentRootLayout from '@app/layouts/ContentRootlayout';
 
 const TeamPageLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const links = [
-    { href: '/team/teamOverview', label: 'Overview' },
-    { href: '/team/manageCoaches', label: 'Manage Coaches' },
-    { href: '/team/teamSettings', label: 'Team Settings' },
+    { href: '/user/team/teamOverview', label: 'Overview' },
+    { href: '/user/team/manageCoaches', label: 'Manage Coaches' },
+    { href: '/user/team/teamSettings', label: 'Team Settings' },
   ];
 
   return (

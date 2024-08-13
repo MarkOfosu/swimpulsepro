@@ -7,8 +7,8 @@ const SwimmerPage = ({
 }) => {
 
   const links = [
-    { href: '/swimmer/dashboard', label: 'Dashboard' },
-    { href: '/swimmer/analytics', label: 'Analytics' },
+    { href: '/user/swimmer/dashboard', label: 'Dashboard' },
+    { href: '/user/swimmer/analytics', label: 'Analytics' },
     
   ];
 

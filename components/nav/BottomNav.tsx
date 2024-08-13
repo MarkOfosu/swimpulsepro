@@ -15,17 +15,17 @@ const BottomNav: React.FC = () => {
       </Link>
       {userRole === 'coach' ? (
         <>
-          <Link href="/coach/dashboard" className="pure-menu-link">
+          <Link href="/user/coach/dashboard" className="pure-menu-link">
             <FaChalkboardTeacher className="icon" />
           </Link>
           {isAdmin && (
-            <Link href="/team/teamOverview" className="pure-menu-link">
+            <Link href="/user/team/teamOverview" className="pure-menu-link">
               <FaUsers className="icon" />
             </Link>
           )}
         </>
       ) : userRole === 'swimmer' ? (
-        <Link href="/swimmer/dashboard" className="pure-menu-link">
+        <Link href="/user/swimmer/dashboard" className="pure-menu-link">
           <FaUsers className="icon" />
         </Link>
       ) : (

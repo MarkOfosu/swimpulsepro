@@ -9,10 +9,10 @@ import BottomNav from '@components/nav/BottomNav';
 
 const CoachPageLayout: React.FC<{ children: ReactNode }> = ({ children }) => {
   const links = [
-    { href: '/coach/dashboard', label: 'Dashboard' },
-    { href: '/coach/swimGroup', label: 'Swim Groups' },
-    { href: '/coach/analytics', label: 'Analytics' },
-    { href: '/coach/workout', label: 'Workout' },
+    { href: '/user/coach/dashboard', label: 'Dashboard' },
+    { href: '/user/coach/swimGroup', label: 'Swim Groups' },
+    { href: '/user/coach/analytics', label: 'Analytics' },
+    { href: '/user/coach/workout', label: 'Workout' },
   ];
 
   return (
