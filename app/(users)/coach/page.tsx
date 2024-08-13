@@ -3,6 +3,9 @@
 
 import React, { ReactNode } from 'react';
 import ContentRootLayout from '@app/layouts/ContentRootlayout';
+import RootLayout from '@app/layout';
+import Sidebar from '@components/nav/SideBar';
+import BottomNav from '@components/nav/BottomNav';
 
 const CoachPageLayout: React.FC<{ children: ReactNode }> = ({ children }) => {
   const links = [
@@ -14,9 +17,7 @@ const CoachPageLayout: React.FC<{ children: ReactNode }> = ({ children }) => {
 
   return (
     <ContentRootLayout links={links}>
-      {/* <div className="sub-content">{children}</div> */}
-      {children}
-      
+       {children}
     </ContentRootLayout>
   );
 };

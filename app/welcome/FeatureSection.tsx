@@ -1,3 +1,4 @@
+import { TbBackground } from 'react-icons/tb';
 import styles from '../styles/FeatureSection.module.css';
 import Image, { StaticImageData } from 'next/image';
 
@@ -14,8 +15,8 @@ const FeatureSection: React.FC<FeatureSectionProps> = ({ title, description, ima
         <h2>{title}</h2>
         <p>{description}</p>
       </div>
-      <div className={styles.image}>
-        <Image src={image} alt={title} width={300} height={300} />
+      <div className={styles.image} >
+        <Image src={image} alt={title} width={500} height={500} />
       </div>
     </section>
   );

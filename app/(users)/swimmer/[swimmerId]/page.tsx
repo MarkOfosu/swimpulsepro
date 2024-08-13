@@ -1,17 +1,23 @@
-
+import ContentRootLayout from "@app/layouts/ContentRootlayout";
 const SwimmerPage = ({
     params}: {
     params: {
         id: string;
     };
 }) => {
+
+  const links = [
+    { href: '/swimmer/dashboard', label: 'Dashboard' },
+    { href: '/swimmer/analytics', label: 'Analytics' },
+    
+  ];
+
    
   return (
-    <div>
+    <ContentRootLayout links={links}>
       <h1>Swimmer Dashboard</h1>
       <p>Content...</p>
-    </div>
+    </ContentRootLayout>
   );
-}
-
+};
 export default SwimmerPage;

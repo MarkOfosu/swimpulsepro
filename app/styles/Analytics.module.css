@@ -1,0 +1,70 @@
+/* Analytics.module.css */
+
+.analyticsContainer {
+    padding: 20px;
+  }
+  
+  .searchBarContainer {
+    position: relative;
+    width: 300px;
+    margin-bottom: 20px;
+  }
+  
+  .searchInput {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
+  }
+  
+  .suggestionsList {
+    position: absolute;
+    top: 100%; /* Positioning the list right below the search input */
+    left: 0;
+    right: 0;
+    background-color: white;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    max-height: 150px; /* Optional: limit the height */
+    overflow-y: auto;
+    z-index: 10; /* Ensure the suggestions appear above other elements */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Optional: add a subtle shadow */
+  }
+  
+  .suggestionItem {
+    padding: 10px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.2s ease;
+  }
+  
+  .suggestionItem:hover {
+    background-color: #f0f0f0;
+  }
+  
+  .selectionContainer {
+    margin-bottom: 20px;
+  }
+  
+  .groupSelector, .swimmerSelector {
+    padding: 10px;
+    margin-right: 10px;
+    border-radius: 4px;
+    font-size: 16px;
+  }
+  
+  .groupOverview {
+    margin-top: 20px;
+  }
+  
+  .chartSection {
+    margin-bottom: 30px;
+  }
+  
+  .chartTitle {
+    font-size: 1.5em;
+    margin-bottom: 15px;
+  }
+  
+  
