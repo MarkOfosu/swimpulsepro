@@ -51,7 +51,7 @@ const LoginForm: React.FC = () => {
             <a href="#">Forgot Password?</a>
           </div>
           <button type="submit" className={styles.btn}>Login</button>
-          <div className={styles.signupLink}>
+          <div className={styles.signup}>
             <a href="#">Signup</a>
           </div>
         </form>
