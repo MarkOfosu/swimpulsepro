@@ -13,7 +13,6 @@ const CoachPageLayout: React.FC<{ children: ReactNode }> = ({ children }) => {
     { href: '/user/coach/swimGroup', label: 'Swim Groups' },
     { href: '/user/coach/analytics', label: 'Analytics' },
     { href: '/user/coach/workout', label: 'Workout' },
-    { href: '/user/coach/metrics', label: 'Create Metric' },
   ];
 
   return (
