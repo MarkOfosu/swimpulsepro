@@ -5,6 +5,8 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { FaHome, FaUsers, FaChalkboardTeacher, FaBars } from 'react-icons/fa';
 import logo from '../../public/image/logo.png';
+import { createClient } from '@utils/supabase/client';
+import { User } from '@supabase/supabase-js';
 
 const Sidebar: React.FC = () => {
   const [collapsed, setCollapsed] = useState(false);
@@ -76,6 +78,8 @@ const Sidebar: React.FC = () => {
           <FaHome className="icon" /> <span className="text">Home</span>
         </Link>
       )}
+
+
     </div>
   );
 };
