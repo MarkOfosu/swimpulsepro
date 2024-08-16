@@ -1,0 +1,100 @@
+.menu {
+  width: 60px;
+  transition: width 0.3s ease;
+  background: #1f2a48;
+  color: white;
+  overflow: hidden;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 20px;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+}
+
+.menu:hover {
+  width: 200px;
+}
+
+.logo img {
+  width: 40px;
+  height: auto;
+  border-radius: 40px;
+  display: block;
+  margin: 10px auto;
+  
+}
+
+.pureMenuLink {
+  display: flex;
+  align-items: center; /* Align items vertically */
+  justify-content: flex-start; /* Align items to the start */
+  padding: 15px;
+  text-decoration: none;
+  color: white;
+  transition: background 0.3s ease, box-shadow 0.3s ease;
+  width: 100%;
+  position: relative;
+}
+
+.pureMenuLink:hover {
+  background: #2e3a57;
+  box-shadow: 0 0 10px rgba(0, 255, 255, 0.8);
+}
+
+.icon {
+  margin-right: 10px;
+  font-size: 1.5rem;
+  min-width: 24px; /* Ensure the icons have consistent space */
+  text-align: center;
+}
+
+.text {
+  display: none;
+  font-size: 1rem;
+  margin-left: 10px; /* Ensure consistent spacing between icon and text */
+}
+
+.menu:hover .text {
+  display: inline-block;
+}
+
+.separator {
+  width: 80%;
+  border-color: #fff;
+  margin: 10px auto;
+}
+
+.collapsed {
+  width: 60px;
+}
+
+.collapsed .text {
+  display: none;
+}
+
+.menuToggle {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 18px;
+  padding: 10px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@media screen and (max-width: 768px) {
+  .menu {
+    display: none;
+  }
+
+  .bottomNav {
+    display: flex;
+  }
+}

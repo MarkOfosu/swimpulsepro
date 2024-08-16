@@ -5,8 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { FaHome, FaUsers, FaChalkboardTeacher, FaBars } from 'react-icons/fa';
 import logo from '../../public/image/logo.png';
-import { createClient } from '@utils/supabase/client';
-import { User } from '@supabase/supabase-js';
+import styles from '../styles/SideBar.module.css';
 
 const Sidebar: React.FC = () => {
   const [collapsed, setCollapsed] = useState(false);
@@ -41,45 +40,37 @@ const Sidebar: React.FC = () => {
     localStorage.setItem('sidebar-collapsed', JSON.stringify(collapsed));
   }, [collapsed]);
 
-  const toggleSidebar = () => {
-    setCollapsed(!collapsed);
-  };
   return (
-    <div id="menu" className={collapsed ? 'collapsed' : ''}>
-      <Link href="/" className="logo">
+    <div id="menu" className={`${styles.menu} ${collapsed ? styles.collapsed : ''}`}>
+      <Link href="/" className={styles.logo}>
         <Image src={logo} alt="SwimPulsePro Logo" />
       </Link>
-      <button className="menu-toggle" onClick={toggleSidebar}>
-        <FaBars />
-      </button>
-      <Link href="/" className="pure-menu-link">
-        <FaHome className="icon" /> <span className="text">Home</span>
+      <Link href="/" className={styles.pureMenuLink}>
+        <FaHome className={styles.icon} /> <span className={styles.text}>Home</span>
       </Link>
       {userRole === 'coach' ? (
         <>
-          <Link href="/user/coach/dashboard" className="pure-menu-link">
-            <FaChalkboardTeacher className="icon" /> <span className="text">Coach Dashboard</span>
+          <Link href="/user/coach/dashboard" className={styles.pureMenuLink}>
+            <FaChalkboardTeacher className={styles.icon} /> <span className={styles.text}>Coach Dashboard</span>
           </Link>
           {isAdmin && (
             <>
-              <hr style={{ width: '80%', borderColor: '#fff', margin: '10px auto' }} />
-              <Link href="/user/team/teamOverview" className="pure-menu-link">
-                <FaUsers className="icon" /> <span className="text">Team Dashboard</span>
+              <hr className={styles.separator} />
+              <Link href="/user/team/teamOverview" className={styles.pureMenuLink}>
+                <FaUsers className={styles.icon} /> <span className={styles.text}>Team Dashboard</span>
               </Link>
             </>
           )}
         </>
       ) : userRole === 'swimmer' ? (
-        <Link href="/user/swimmer/dashboard" className="pure-menu-link">
-          <FaUsers className="icon" /> <span className="text">Swimmer Dashboard</span>
+        <Link href="/user/swimmer/dashboard" className={styles.pureMenuLink}>
+          <FaUsers className={styles.icon} /> <span className={styles.text}>Swimmer Dashboard</span>
         </Link>
       ) : (
-        <Link href="/" className="pure-menu-link">
-          <FaHome className="icon" /> <span className="text">Home</span>
+        <Link href="/" className={styles.pureMenuLink}>
+          <FaHome className={styles.icon} /> <span className={styles.text}>Home</span>
         </Link>
       )}
-
-
     </div>
   );
 };
