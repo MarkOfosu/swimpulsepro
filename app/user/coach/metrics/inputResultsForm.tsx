@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import {InputResultsFormProps} from '../../../app/utils/types';
+import {InputResultsFormProps} from '../../../utils/types';
 
 const InputResultsForm: React.FC<InputResultsFormProps> = ({ metric }) => {
   const [inputValue, setInputValue] = useState<string>('');

@@ -22,7 +22,7 @@ const TeamOverview: React.FC = () => {
   return (
     <TeamLayout>
       <h1>Team Overview</h1>
-      <Card title="Team Stats card" description="Team stats for the current season" size="large" color="dark" footer="footer info here">
+      <Card title="Team Stats card" description="Team stats for the current season" size="large" color="dark" glow>
         <p>Content on card here..</p>
       </Card>
       <button onClick={handleShowToast}>Show Success Toast</button>

@@ -1,30 +1,51 @@
-import React, { ReactNode } from 'react';
+import React, { ReactNode, useEffect, useRef } from 'react';
 import styles from '../styles/Card.module.css';
 
 interface Props {
   title: string;
   description?: string;
-  footer?: ReactNode;
   children: ReactNode;
   size?: 'small' | 'medium' | 'large';
   color?: 'default' | 'dark' | 'light' | 'primary' | 'secondary';
+  glow?: boolean; // New optional prop to enable glow effect
 }
 
-export default function Card({ title, description, footer, children, size = 'medium', color = 'default' }: Props) {
-    return (
-        <div className={`${styles.cardContainer} ${styles[size]} ${styles[color]}`}>
-          <div className={styles.cardHeader}>
-            <h3 className={styles.cardTitle}>{title}</h3>
-            {description && <p className={styles.cardDescription}>{description}</p>}
-          </div>
-          <div className={styles.cardContent}>
-            {children}
-          </div>
-          {footer && (
-            <div className={styles.cardFooter}>
-              {footer}
-            </div>
-          )}
-        </div>
-    );
+export default function Card({ title, description, children, size = 'medium', color = 'default', glow = false }: Props) {
+  const cardRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (glow) {
+      const card = cardRef.current;
+      if (card) {
+        const handleMouseMove = (e: MouseEvent) => {
+          const rect = card.getBoundingClientRect();
+          const x = e.clientX - rect.left;
+          const y = e.clientY - rect.top;
+          card.style.setProperty('--x', `${x}px`);
+          card.style.setProperty('--y', `${y}px`);
+        };
+
+        card.addEventListener('mousemove', handleMouseMove);
+
+        return () => {
+          card.removeEventListener('mousemove', handleMouseMove);
+        };
+      }
+    }
+  }, [glow]);
+
+  return (
+    <div
+      className={`${styles.cardContainer} ${styles[size]} ${styles[color]} ${glow ? styles.glow : ''}`}
+      ref={cardRef}
+    >
+      <div className={styles.cardHeader}>
+        <h3 className={styles.cardTitle}>{title}</h3>
+        {description && <p className={styles.cardDescription}>{description}</p>}
+      </div>
+      <div className={styles.cardContent}>
+        {children}
+      </div>
+    </div>
+  );
 }
