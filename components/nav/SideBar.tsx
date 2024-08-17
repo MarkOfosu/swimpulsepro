@@ -1,3 +1,4 @@
+// Sidebar.tsx
 'use client';
 
 import React, { useState, useEffect } from 'react';
@@ -6,6 +7,8 @@ import Image from 'next/image';
 import { FaHome, FaUsers, FaChalkboardTeacher, FaBars } from 'react-icons/fa';
 import logo from '../../public/image/logo.png';
 import styles from '../styles/SideBar.module.css';
+import LogoutButton from '../../app/logout/LogoutButton';
+import UserProfile from '../../components/ui/UserProfile';
 
 const Sidebar: React.FC = () => {
   const [collapsed, setCollapsed] = useState(false);
@@ -71,6 +74,10 @@ const Sidebar: React.FC = () => {
           <FaHome className={styles.icon} /> <span className={styles.text}>Home</span>
         </Link>
       )}
+      <div className={styles.signOutContainer}>
+        <UserProfile /> 
+        <LogoutButton />
+      </div>
     </div>
   );
 };

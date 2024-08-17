@@ -4,6 +4,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { FaBars, FaTimes, FaHome, FaChalkboardTeacher, FaUsers } from 'react-icons/fa';
 import styles from '../styles/CollapsibleNav.module.css';
+import UserProfile from '@components/ui/UserProfile';
+import LogoutButton from '@app/logout/LogoutButton';
 
 interface CollapsibleNavProps {
   userRole: 'coach' | 'swimmer';
@@ -63,7 +65,12 @@ const CollapsibleNav: React.FC<CollapsibleNavProps> = ({ userRole, isAdmin = fal
               <FaUsers className={styles.icon} /> Dashboard
             </Link>
           )}
-        </div>
+           <div className={styles.signOutContainer}>
+                <UserProfile /> 
+                <LogoutButton />
+            </div>
+    </div>
+      
       )}
     </div>
   );

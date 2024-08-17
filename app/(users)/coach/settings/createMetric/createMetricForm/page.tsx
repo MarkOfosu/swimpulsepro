@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { PerformanceIndicatorType, MeasurementCriteria, PerformanceIndicator } from '../../../../../utils/types';
+import { PerformanceIndicatorType, MeasurementCriteria, PerformanceIndicator } from '../../../../../lib/types';
 import { measurementCriteria } from './MeasurementCriteria';
 const CreateMetricForm: React.FC = () => {
   const [selectedIndicator, setSelectedIndicator] = useState<PerformanceIndicatorType | ''>('');

@@ -1,0 +1,32 @@
+/* styles/UserProfile.module.css */
+
+.userProfile {
+    display: flex;
+    align-items: center;
+    padding: 0 15px;
+    margin-top: 20px;
+  }
+  
+  .profileImage {
+    border-radius: 50%;
+  }
+  
+  .defaultProfileIcon {
+    margin-right: 10px;
+    font-size: 1.5rem;
+    min-width: 24px;
+    text-align: center;
+    color: white;
+  }
+  
+  .profileEmail {
+    font-size: 1rem;
+    margin-left: 10px;
+    color: white;
+    display: none;
+  }
+  
+  .menu:hover .profileEmail {
+    display: inline-block;
+  }
+  

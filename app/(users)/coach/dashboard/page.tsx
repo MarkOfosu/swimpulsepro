@@ -8,7 +8,7 @@ import {
   swimGroupsData,
   recentActivitiesData,
   upcomingEventsData,
-} from '../../../utils/testData';
+} from '../../../lib/testData';
 
 const Dashboard: React.FC = () => {
   return (
