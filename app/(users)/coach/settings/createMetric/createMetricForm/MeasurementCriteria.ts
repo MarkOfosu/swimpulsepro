@@ -1,4 +1,4 @@
-import { PerformanceIndicatorType, MeasurementCriteria} from '../../../../../utils/types';
+import { PerformanceIndicatorType, MeasurementCriteria} from '../../../../../lib/types';
 
 export const measurementCriteria: Record<PerformanceIndicatorType, MeasurementCriteria[]> = {
     'Test Set': [

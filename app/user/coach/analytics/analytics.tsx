@@ -7,7 +7,7 @@ import {
   skillAssessmentData,
   achievementRateData,
   activityTrendsData,
-} from "../../../utils/testData";
+} from "../../../lib/testData";
 import styles from "../../../styles/Analytics.module.css";
 
 // Import necessary components from Chart.js

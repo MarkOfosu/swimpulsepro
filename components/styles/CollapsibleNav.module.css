@@ -54,3 +54,11 @@
     margin-top: 60px; /* Ensure space for the collapsible menu */
   }
 }
+.signOutContainer {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column; /* Ensure the profile and logout button are stacked vertically */
+  margin-top: 50px; /* Adjust this value to add space between the last link and the sign-out container */
+}

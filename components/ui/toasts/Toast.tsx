@@ -1,14 +1,16 @@
 // File: components/ui/Toast.tsx
 import React, { useState } from 'react';
 import styles from '../../styles/Toast.module.css';
+import { v4 as uuidv4 } from 'uuid';
+
 
 
 interface ToastProps {
-    id: number;
+    id: string;
     message: string;
     type?: 'default' | 'success' | 'error';
     onClose: () => void;
-  }
+}
   
   const Toast: React.FC<ToastProps> = ({ id, message, type = 'default', onClose }) => {
     const toastClassName = `${styles.toast} ${styles[type]}`;
@@ -22,15 +24,17 @@ interface ToastProps {
   };
   
   export const useToast = () => {
-    const [toasts, setToasts] = useState<{ id: number; message: string; type: 'default' | 'success' | 'error' }[]>([]);
+    const [toasts, setToasts] = useState<{ id: string; message: string; type: 'default' | 'success' | 'error' }[]>([]);
   
+   
+    
     const showToast = (message: string, type: 'default' | 'success' | 'error' = 'default') => {
-      const id = Date.now();
+      const id = uuidv4();
       setToasts((prevToasts) => [...prevToasts, { id, message, type }]);
-      setTimeout(() => removeToast(id), 3000); // Auto-dismiss after 3 seconds
+      setTimeout(() => removeToast(id), 3000); 
     };
   
-    const removeToast = (id: number) => {
+    const removeToast = (id: string) => {
       setToasts((prevToasts) => prevToasts.filter((toast) => toast.id !== id));
     };
   

@@ -1,14 +1,11 @@
 'use server'
 
+import { redirect } from 'next/navigation';
+import { createClient } from '@/utils/supabase/server';
+
 export async function logout() {
-    const { redirect } = require('next/navigation')
-    const { createClient } = require('@/utils/supabase/server')
-
-    
-    const supabase = createClient()
-    
-    await supabase.auth.signOut()
-    
-    redirect('/')
-    }
-
+  const supabase = createClient();
+  await supabase.auth.signOut();
+  // Return a status that can be used client-side to trigger further actions
+  return { success: true, message: 'Logged out successfully' };
+}
