@@ -8,7 +8,7 @@ import { createClient } from '@/utils/supabase/client';
 import { FaUser } from 'react-icons/fa';
 import styles from '../styles/UserProfile.module.css';
 
-const UserProfile: React.FC = () => {
+export const UserProfile = () => {
   const [userEmail, setUserEmail] = useState<string | null>(null);
   const [userImage, setUserImage] = useState<string | null>(null);
 
@@ -34,25 +34,25 @@ const UserProfile: React.FC = () => {
 
     fetchUserData();
   }, []);
-
-  console.log(userEmail, userImage);
-
+  
   return (
-    <div className={styles.userProfile}>
-      {userImage ? (
-        <Image
-          src={userImage}
-          alt="User Image"
-          width={40}
-          height={40}
-          className={styles.profileImage}
-        />
-      ) : (
-        <FaUser className={styles.defaultProfileIcon} />
-      )}
-      {userEmail}
-    </div>
+    {userEmail}
+    // <div className={styles.userProfile}>
+    //     {userImage ? (
+    //         <Image
+    //         src={userImage}
+    //         alt="User Image"
+    //         width={40}
+    //         height={40}
+    //         className={styles.profileImage}
+    //         />
+    //     ) : (
+    //         <FaUser className={styles.defaultProfileIcon} />
+    //     )}
+    //     {userEmail?.split('@')[0]}
+    // </div>
+
   );
 };
 
-export default UserProfile;
+// export default UserProfile;

@@ -1,3 +1,4 @@
+/* SideBar.module.css */
 .menu {
   width: 60px;
   transition: width 0.3s ease;
@@ -101,28 +102,51 @@
   display: none;
 }
 
+.collapsed .userProfile .profileIcon {
+  margin-right: 0;
+}
+
+.collapsed .userProfile {
+  justify-content: center;
+}
+
 .signOutContainer {
   width: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
-  flex-direction: column; /* Ensure the profile and logout button are stacked vertically */
-  margin-top: 50px; /* Adjust this value to add space between the last link and the sign-out container */
+  flex-direction: column;
+  margin-top: 50px; /* Adjusted spacing */
 }
 
 .logoutButton {
   background-color: #f44336;
   color: white;
   border: none;
-  padding: 10px 20px;
+  padding: 10px;
   border-radius: 4px;
   font-size: 1rem;
   cursor: pointer;
   transition: background 0.3s ease;
+  display: flex;
+  align-items: center;
+}
+
+.logoutButton .icon {
+  margin-right: 10px;
+  font-size: 1.5rem;
 }
 
 .logoutButton:hover {
   background-color: #d32f2f;
+}
+
+.collapsed .logoutButton {
+  justify-content: center;
+}
+
+.collapsed .logoutButton .icon {
+  margin-right: 0;
 }
 
 @media screen and (max-width: 768px) {

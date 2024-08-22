@@ -1,7 +1,7 @@
 "use client"; 
 import { signup } from './actions';
 import React from 'react';
-import styles from '../styles/RegisterForm.module.css';
+import styles from '../../styles/RegisterForm.module.css';
 import WelcomeNavbar from '@app/welcome/WelcomeNavbar';
 
 const signupForm = () => {
