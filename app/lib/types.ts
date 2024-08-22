@@ -35,3 +35,32 @@ export interface InputResultsFormProps {
   metric: Metric;
 }
 
+
+export interface SwimWorkout {
+  focus: string;
+  warmup: string[];
+  preset: string[];
+  main_set: string[];
+  cooldown: string[];
+  distance?: string;
+  duration?: string;
+  intensity?: string;
+  description?: string;
+}
+
+export interface AITrainingData {
+  id: string;
+  group_id: string;
+  training_data: SwimWorkout[];
+  created_at: string;
+}
+
+export interface WorkoutData {
+  coach_id: string;
+  group_id: string;
+  workout_data: SwimWorkout;
+  created_at?: string;
+}
+
+
+

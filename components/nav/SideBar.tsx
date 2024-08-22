@@ -4,16 +4,18 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { FaHome, FaUsers, FaChalkboardTeacher, FaBars } from 'react-icons/fa';
+import { FaHome, FaUsers,FaUser,  FaChalkboardTeacher,FaSignOutAlt } from 'react-icons/fa';
 import logo from '../../public/image/logo.png';
 import styles from '../styles/SideBar.module.css';
-import LogoutButton from '../../app/logout/LogoutButton';
-import UserProfile from '../../components/ui/UserProfile';
+import {UserProfile} from '../../components/ui/UserProfile';
+import { logout } from '@app/(auth)/logout/actions';
+
 
 const Sidebar: React.FC = () => {
   const [collapsed, setCollapsed] = useState(false);
   const [userRole, setUserRole] = useState('coach'); // This should be dynamically set based on the logged-in user's role
   const isAdmin = true;
+  const userprofile = UserProfile();
 
   useEffect(() => {
     const mediaQuery = window.matchMedia('(max-width: 1024px)');
@@ -75,9 +77,16 @@ const Sidebar: React.FC = () => {
         </Link>
       )}
       <div className={styles.signOutContainer}>
-        <UserProfile /> 
-        <LogoutButton />
-      </div>
+        
+         <Link href="" className={styles.pureMenuLink}>
+        <FaUser className={styles.icon} /> <span className={styles.text}>{userprofile.userEmail?.split('@')[0]}</span>
+        
+      </Link>
+      <Link  href="/login" onClick={ () => logout()} className={styles.pureMenuLink}>
+        <FaSignOutAlt className={styles.icon} /> <span className={styles.text}>Logout</span>
+      </Link>
+     
+      </div> 
     </div>
   );
 };

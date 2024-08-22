@@ -1,6 +1,8 @@
+// LogoutButton.tsx
 'use client';
 
 import React from 'react';
+import { FaSignOutAlt } from 'react-icons/fa';
 import { useRouter } from 'next/navigation';
 import { logout } from './actions';
 import { useToast } from '@components/ui/toasts/Toast';
@@ -15,7 +17,9 @@ export default function LogoutButton() {
 
     if (result.success) {
       showToast(result.message, 'success');
-      router.push('/login'); 
+      setTimeout(() => {
+        router.push('/login');
+      }, 3000);
     } else {
       showToast('Failed to log out', 'error');
     }
@@ -24,9 +28,8 @@ export default function LogoutButton() {
   return (
     <>
       <ToastContainer /> 
-      <button onClick={handleLogout} className={style.logoutButton}>
-        Sign Out
-      </button>
+      <div onClick={handleLogout} className={style.logoutButton}>
+      </div>
     </>
   );
 }

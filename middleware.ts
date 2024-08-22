@@ -17,3 +17,35 @@ export const config = {
     '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
   ],
 }
+
+// import { NextResponse, type NextRequest } from 'next/server';
+// import { createClient } from '@utils/supabase/client';
+
+// export async function middleware(request: NextRequest) {
+//   const response = await updateSession(request);
+//   const supabase = createClient();
+//   const { data: { session } } = await supabase.auth.getSession();
+
+//   const pathname = request.nextUrl.pathname;
+
+//   // Example of role-based access control
+//   if (session) {
+//     const role = session.user.user_metadata.role;
+    
+//     if (pathname.startsWith('/user/coach') && role !== 'coach') {
+//       return NextResponse.redirect(new URL('/403', request.url));
+//     }
+
+//     if (pathname.startsWith('/user/swimmer') && role !== 'swimmer') {
+//       return NextResponse.redirect(new URL('/403', request.url));
+//     }
+//   }
+
+//   return response;
+// }
+
+// export const config = {
+//   matcher: [
+//     '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
+//   ],
+// };
