@@ -5,11 +5,29 @@ import { redirect } from 'next/navigation'
 
 import { createClient } from '@/utils/supabase/server'
 
+
+export const isLogin = async () => {
+  const supabase = createClient();
+  const {
+    data: { user },
+    error,
+  } = await supabase.auth.getUser();
+
+  // If there's an error or no user, return false
+  if (error || !user) {
+    return false;
+  }
+
+  return true;
+};
+
+  
+
 export async function login(formData: FormData) {
   const supabase = createClient()
 
   // type-casting here for convenience
-  // in practice, you should validate your inputs
+  //validate your inputs later
   const data = {
     email: formData.get('email') as string,
     password: formData.get('password') as string,
