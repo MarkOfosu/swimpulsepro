@@ -1,6 +1,22 @@
 import { createServerClient, type CookieOptions } from '@supabase/ssr'
 import { cookies } from 'next/headers'
 
+
+export const isLogin = async () => {
+  const supabase = createClient();
+  const {
+    data: { user },
+    error,
+  } = await supabase.auth.getUser();
+
+  if (error || !user) {
+    return false;
+  }
+
+  return true;
+};
+
+
 export function createClient() {
   const cookieStore = cookies()
 
