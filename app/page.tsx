@@ -6,6 +6,9 @@ import WelcomePage from './welcome/page';
 const HomePage: React.FC = () => {
   const router = useRouter();
 
+
+  
+
   return (
     <div>
         <WelcomePage />
