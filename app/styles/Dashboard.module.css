@@ -1,49 +1,139 @@
-.analytics-container {
-    padding: 20px;
-    background-color: #e0f7fa;
+/* General body and background */
+.dashboardContainer {
+  padding: 40px;
+  max-width: 1000px; /* Max width reduced for large screens */
+  margin: 0 auto;    /* Center the content horizontally */
+  width: 85%;        /* Ensure the content takes up 85% of the screen width */
+}
+
+/* Welcome Section */
+.welcomeSection {
+  background-color: #ffffff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  margin-bottom: 30px;
+}
+
+.welcomeSection h1 {
+  font-size: 2.5rem;
+  margin-bottom: 10px;
+  color: #00796b; /* Deep teal */
+}
+
+.welcomeSection p {
+  font-size: 1.1rem;
+  color: #666;
+}
+
+/* Swim Team */
+.swimTeamName {
+  font-size: 1rem; 
+  color: #0288d1; /* Brighter color for emphasis */
+  margin-bottom: 15px;
+}
+
+/* Swim Groups */
+.swimGroups {
+  background-color: #ffffff;
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.swimGroups h2 {
+  color: #00695c; /* Darker teal */
+  font-size: 1.6rem;
+  margin-bottom: 10px;
+}
+
+/* Recent Activities */
+.recentActivities {
+  background-color: #ffffff;
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.recentActivities h2 {
+  color: #00796b;
+  font-size: 1.6rem;
+}
+
+.activitiesList {
+  list-style-type: none;
+  padding-left: 0;
+}
+
+.activitiesList li {
+  font-size: 1.1rem;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+/* Upcoming Events */
+.upcomingEvents {
+  background-color: #ffffff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  margin-bottom: 30px;
+}
+
+.upcomingEvents h2 {
+  color: #00796b;
+  font-size: 1.6rem;
+}
+
+/* Quick Actions */
+.quickActions {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.quickActions button {
+  padding: 10px 20px;
+  background-color: #0288d1;
+  color: #ffffff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1rem;
+  margin: 0 10px;
+}
+
+.quickActions button:hover {
+  background-color: #0277bd;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .dashboardContainer {
+    width: 95%; /* Slightly smaller width for small screens */
+    padding: 20px; /* Reduce padding for small screens */
   }
-  
-  .search-bar-container {
-    margin-bottom: 20px;
+
+  .welcomeSection h1 {
+    font-size: 2rem; /* Adjust the font size for small screens */
   }
-  
-  .search-bar {
-    width: 300px;
-    padding: 10px;
-    font-size: 16px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    margin-right: 20px;
+
+  .swimGroups h2,
+  .recentActivities h2,
+  .upcomingEvents h2 {
+    font-size: 1.4rem; /* Adjust the heading size for small screens */
   }
-  
-  .selectors-container {
-    display: flex;
-    gap: 20px;
-    margin-bottom: 20px;
+
+  .quickActions button {
+    padding: 8px 16px; /* Adjust button size for small screens */
+    font-size: 0.9rem;
   }
-  
-  .select-box {
-    width: 200px;
-    padding: 10px;
-    font-size: 16px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
+}
+
+@media (min-width: 1200px) {
+  .dashboardContainer {
+    width: 90%;  /* Adjust the width on large screens */
+    max-width: 1100px; /* Slightly reduced max width for larger screens */
   }
-  
-  .analytics-content {
-    background-color: #ffffff;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-  }
-  
-  .analytics-content h2 {
-    font-size: 24px;
-    margin-bottom: 20px;
-    color: #00796b;
-  }
-  
-  .analytics-content canvas {
-    margin-bottom: 40px;
-  }
-  
+}

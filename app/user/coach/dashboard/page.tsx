@@ -1,6 +1,8 @@
-import React from 'react';
+'use client';
+import React, { useState, useEffect } from 'react';
 import CoachPageLayout from '../page';
 import styles from '../../../styles/Dashboard.module.css';
+import { getUserDetails } from '../../../lib/getUserDetails';
 
 // Import test data
 import {
@@ -11,13 +13,42 @@ import {
 } from '../../../lib/testData';
 
 const Dashboard: React.FC = () => {
+  const [user, setUser] = useState<any>(null);
+
+  // Fetch user details when the component mounts
+  useEffect(() => {
+    const fetchUser = async () => {
+      const userData = await getUserDetails();
+      console.log("Fetched user data:", userData); // Log the full user data
+      setUser(userData);
+    };
+
+    fetchUser();
+  }, []);
+
+  // If user data is still being fetched
+  if (!user) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <CoachPageLayout>
       <div className={styles.dashboardContainer}>
         <section className={styles.welcomeSection}>
-          <h1>Welcome, Coach [Name]!</h1>
+          <h1>Welcome, Coach {user.first_name}!</h1>
+          {/* Conditionally render the swim team name and location if it exists */}
+          {user.team ? (
+            <p className={styles.swimTeamName}>
+              Swim Team: {user.team.name}, {user.team.location}
+            </p>
+          ) : (
+            <p className={styles.swimTeamName}>
+              No swim team assigned
+            </p>
+          )}
           <p>Here is an overview of your swim team’s performance.</p>
         </section>
+
         <section className={styles.swimGroups}>
           <h2>Your Swim Groups</h2>
           <ul className={styles.groupsList}>
