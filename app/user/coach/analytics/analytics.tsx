@@ -10,7 +10,6 @@ import {
 } from "../../../lib/testData";
 import styles from "../../../styles/Analytics.module.css";
 
-// Import necessary components from Chart.js
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -25,7 +24,7 @@ import {
   RadialLinearScale,
 } from "chart.js";
 
-// Register the components and scales you want to use
+// Register the components and scales to be used
 ChartJS.register(
   CategoryScale,
   LinearScale,
