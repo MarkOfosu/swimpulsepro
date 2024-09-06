@@ -11,15 +11,13 @@ export async function getUserDetails() {
     return null;
   }
 
-  const userId = user.id;
-  console.log("User ID being queried:", userId);
+  console.log("User ID being queried:", user.id);
 
-  // Fetch the user's profile from the profiles table
+  // Fetch the user's profile, no need for explicit user ID filtering
   const { data: profileData, error: profileError } = await supabase
     .from('profiles')
     .select('first_name, last_name, email, role')
-    .eq('id', userId)
-    .single();
+    .single(); // Automatically scoped to the logged-in user with RLS
 
   if (profileError) {
     console.error('Error fetching profile:', profileError);
@@ -28,13 +26,12 @@ export async function getUserDetails() {
 
   console.log("Profile data fetched:", profileData);
 
-  // If the user is a swimmer, get their specific details
+  // Fetch additional data based on the user's role
   if (profileData?.role === 'swimmer') {
     const { data: swimmerData, error: swimmerError } = await supabase
       .from('swimmers')
       .select('date_of_birth')
-      .eq('user_id', userId)
-      .single();
+      .single(); // No need to filter by user_id, RLS handles it
 
     if (swimmerError) {
       console.error('Error fetching swimmer details:', swimmerError);
@@ -48,24 +45,21 @@ export async function getUserDetails() {
     };
   }
 
-  // If the user is a coach, get their specific details
   if (profileData?.role === 'coach') {
     const { data: coachData, error: coachError } = await supabase
       .from('coaches')
       .select('team_id')
-      .eq('user_id', userId)
-      .single();
+      .single(); // No need to filter by user_id, RLS handles it
 
     if (coachError) {
       console.error('Error fetching coach details:', coachError);
       return profileData; // Return basic profile if coach details fail
     }
 
-    // Get team details
     const { data: teamData, error: teamError } = await supabase
       .from('teams')
       .select('name, location')
-      .eq('id', coachData.team_id)
+      .eq('id', coachData.team_id) // We still need this filter since team_id isn't tied to RLS
       .single();
 
     if (teamError) {
@@ -73,13 +67,11 @@ export async function getUserDetails() {
       return profileData; // Return basic profile if team details fail
     }
 
-    // Return consolidated coach data
     return {
       ...profileData,
       team: teamData,
     };
   }
 
-  // Default return for basic profile data
-  return profileData;
+  return profileData; // Return profile data if no additional role-specific data is needed
 }
