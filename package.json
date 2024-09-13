@@ -6,9 +6,12 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "generate": "graphql-codegen",
+    "prettier": "prettier --write src/gql"
   },
   "dependencies": {
+    "@apollo/client": "^3.11.8",
     "@fortawesome/fontawesome-free": "^6.6.0",
     "@fortawesome/free-solid-svg-icons": "^6.6.0",
     "@fortawesome/react-fontawesome": "^0.2.2",
@@ -19,8 +22,10 @@
     "@next-auth/prisma-adapter": "^1.0.7",
     "@prisma/adapter-pg": "^5.17.0",
     "@prisma/client": "^5.17.0",
+    "@supabase/auth-helpers-nextjs": "^0.10.0",
     "@supabase/ssr": "^0.4.0",
-    "@supabase/supabase-js": "^2.45.1",
+    "@supabase/supabase-js": "^2.45.4",
+    "graphql": "^16.9.0",
     "langchain": "^0.2.16",
     "langsmith": "^0.1.41",
     "next": "14.2.5",
@@ -29,16 +34,19 @@
     "react-chartjs-2": "^5.2.0",
     "react-dom": "^18",
     "react-icons": "^5.2.1",
-    "react-spinners": "^0.14.1"
+    "react-spinners": "^0.14.1",
+    "supabase": "^1.192.5"
   },
   "devDependencies": {
+    "@graphql-codegen/cli": "^5.0.2",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "@types/uuid": "^10.0.0",
     "eslint": "^8",
     "eslint-config-next": "14.2.5",
+    "prettier": "^3.3.3",
     "prisma": "^5.17.0",
-    "typescript": "^5"
+    "typescript": "^5.6.2"
   }
 }

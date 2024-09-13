@@ -1,112 +1,82 @@
-
-
-// 'use server'
-
-// import { revalidatePath } from 'next/cache'
-// import { redirect } from 'next/navigation'
-// import { createClient } from '@/utils/supabase/server'
-
-// export async function signup(formData: FormData) {
-//   const supabase = createClient()
-
-//   // Collect additional form data
-//   const firstName = formData.get('firstName') as string
-//   const lastName = formData.get('lastName') as string
-//   const swimTeam = formData.get('swimTeam') as string
-//   const swimTeamLocation = formData.get('swimTeamLocation') as string
-//   const email = formData.get('email') as string
-//   const password = formData.get('password') as string
-
-//   // Sign up the user with email and password
-//   // const data = {
-//   //       email: formData.get('email') as string,
-//   //       password: formData.get('password') as string,
-//   //     }
-
-//   const {data, error } = await supabase.auth.signUp({
-//     email,
-//     password,
-//     options: {
-//       data: {
-//         first_name: firstName,
-//         last_name: lastName,
-//         swim_team: swimTeam,
-//         swim_team_location: swimTeamLocation,
-//       },
-//     },
-//   })
-
-
-
-//   if (error) {
-//     redirect('/error')
-//   }
-
-//   revalidatePath('/', 'layout')
-//   redirect('/')
-// }
-
-
+import { dateTimestampProvider } from './../../../node_modules/rxjs/src/internal/scheduler/dateTimestampProvider';
 'use server'
 
-import { revalidatePath } from 'next/cache';
-import { redirect } from 'next/navigation';
 import { createClient } from '@/utils/supabase/server';
 
 export async function signup(formData: FormData) {
   const supabase = createClient();
 
-  const firstName = formData.get('firstName') as string;
-  const lastName = formData.get('lastName') as string;
-  const email = formData.get('email') as string;
-  const password = formData.get('password') as string;
-  const confirmPassword = formData.get('confirmPassword') as string;
-  const role = formData.get('role') as 'coach' | 'swimmer'; // Collect the role
+  try {
+    const firstName = formData.get('firstName') as string;
+    const lastName = formData.get('lastName') as string;
+    const email = formData.get('email') as string;
+    const password = formData.get('password') as string;
+    const confirmPassword = formData.get('confirmPassword') as string;
+    const role = formData.get('role') as 'coach' | 'swimmer';
 
-  // Check for confirm password match
-  if (password !== confirmPassword) {
-    redirect('/error?message=Passwords do not match');
-    return;
-  }
+    // Check if all necessary fields are filled
+    if (!firstName || !lastName || !email || !password || !confirmPassword || !role) {
+      return { error: 'Missing required fields' };
+    }
 
-  // Collect additional form data based on the role
-  let additionalData: any = {};
-  if (role === 'coach') {
-    additionalData = {
-      swim_team: formData.get('swimTeam') as string,
-      swim_team_location: formData.get('swimTeamLocation') as string,
-    };
-  } else if (role === 'swimmer') {
-    additionalData = {
-      date_of_birth: formData.get('dateOfBirth') as string,
-    };
-  }
+    // Check for password confirmation match
+    if (password !== confirmPassword) {
+      return { error: 'Passwords do not match' };
+    }
 
-  // Sign up the user with email and password
-  const { data, error } = await supabase.auth.signUp({
-    email,
-    password,
-    options: {
-      data: {
-        first_name: firstName,
-        last_name: lastName,
-        role,  // Add role to the data
-        ...additionalData, // Add the specific data based on the role
+    // Collect additional form data based on the role
+    let additionalData: any = {};
+    if (role === 'coach') {
+      const swimTeam = formData.get('swimTeam') as string;
+      const swimTeamLocation = formData.get('swimTeamLocation') as string;
+
+      if (!swimTeam || !swimTeamLocation) {
+        return { error: 'Missing swim team or location' };
+      }
+
+      additionalData = {
+        swim_team: swimTeam,
+        swim_team_location: swimTeamLocation,
+      };
+    } else if (role === 'swimmer') {
+      const dateOfBirth = formData.get('dateOfBirth') 
+
+      if (!dateOfBirth) {
+        return { error: 'Missing date of birth' };
+      }
+
+      additionalData = {
+        date_of_birth: dateOfBirth,
+      };
+    }
+
+    // Sign up the user with email and password
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: {
+          first_name: firstName,
+          last_name: lastName,
+          role,
+          ...additionalData,
+        },
       },
-    },
-  });
+    });
 
-  if (error) {
-    console.error('Supabase Error:', error); // Log the full error
-    redirect('/error?message=' + encodeURIComponent(error.message));
-    return;
+    if (error) {
+      // Return the error message instead of redirecting
+      return { error: error.message };
+    }
+
+    // Return the session data to the client
+    return {
+      accessToken: data.session?.access_token,
+      refreshToken: data.session?.refresh_token,
+      expiresAt: data.session?.expires_at,
+    };
+  } catch (e) {
+    console.error('Unexpected error during signup:', e);
+    return { error: 'An unexpected error occurred' };
   }
-  
-
-  revalidatePath('/', 'layout')
-  redirect('/')
 }
-
-
-
-

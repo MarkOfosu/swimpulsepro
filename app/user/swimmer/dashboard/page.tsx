@@ -1,18 +1,17 @@
 'use client';
 import React, { useState, useEffect } from 'react';
-import CoachPageLayout from '../page';
+import SwimmerPageLayout from '../page';  // Assuming a SwimmerPageLayout component
 import styles from '../../../styles/Dashboard.module.css';
 import { getUserDetails } from '../../../lib/getUserDetails';
 
 // Import test data
 import {
   swimmersPerformanceData,
-  swimGroupsData,
   recentActivitiesData,
   upcomingEventsData,
 } from '../../../lib/testData';
 
-const Dashboard: React.FC = () => {
+const SwimmerDashboard: React.FC = () => {
   const [user, setUser] = useState<any>(null);
   const [error, setError] = useState<string | null>(null); // For error handling
 
@@ -21,6 +20,7 @@ const Dashboard: React.FC = () => {
     const fetchUser = async () => {
       try {
         const userData = await getUserDetails();
+        console.log("Fetched user data:", userData); // Log the full user data
         setUser(userData);
       } catch (err) {
         console.error('Error fetching user data:', err);
@@ -42,30 +42,33 @@ const Dashboard: React.FC = () => {
   }
 
   return (
-    <CoachPageLayout>
+    <SwimmerPageLayout>
       <div className={styles.dashboardContainer}>
         <section className={styles.welcomeSection}>
-          <h1>Welcome, Coach {user.first_name}!</h1>
-          {/* Conditionally render the swim team name and location if it exists */}
+          <h1>Welcome, {user.first_name}!</h1>
+          
           {user.team ? (
             <p className={styles.swimTeamName}>
-              Swim Team: {user.team.name}, {user.team.location}
+              Your Swim Coach: {user.team.name}, Location: {user.team.location}
             </p>
           ) : (
             <p className={styles.swimTeamName}>
-              No swim team assigned
+              You currently don&apos;t have a coach assigned.
             </p>
           )}
-          <p>Here is an overview of your swim team’s performance.</p>
+          <p>Here is an overview of your recent performance.</p>
         </section>
 
-        <section className={styles.swimGroups}>
-          <h2>Your Swim Groups</h2>
-          <ul className={styles.groupsList}>
-            {swimGroupsData.map((group, index) => (
-              <li key={index}>{group.groupName}</li>
+        <section className={styles.recentActivities}>
+          <h2>Your Performance Overview</h2>
+          {/* <ul className={styles.performanceList}>
+            {swimmersPerformanceData.map((performance: { swimmer: string; date: string; metric: string; value: number; }, index) => (
+              <li key={index}>
+                <p>{`Date: ${performance.date}, Event: ${performance.metric}, Time: ${performance.value}, Outcome: ${performance.swimmer}`}</p>
+              </li>
             ))}
-          </ul>
+          </ul> */}
+          <p>Performance data will be displayed here.</p>
         </section>
 
         <section className={styles.recentActivities}>
@@ -73,14 +76,14 @@ const Dashboard: React.FC = () => {
           <ul className={styles.activitiesList}>
             {recentActivitiesData.map((activity, index) => (
               <li key={index}>
-                <p>{`${activity.activity} - ${activity.swimmer} on ${activity.date}: ${activity.outcome}`}</p>
+                <p>{`${activity.activity} on ${activity.date}: ${activity.outcome}`}</p>
               </li>
             ))}
           </ul>
         </section>
 
         <section className={styles.upcomingEvents}>
-          <h2>Upcoming Events</h2>
+          <h2>Upcoming Swim Events</h2>
           <div className={styles.calendarView}>
             {upcomingEventsData.map((event, index) => (
               <div key={index}>
@@ -93,12 +96,12 @@ const Dashboard: React.FC = () => {
 
         <section className={styles.quickActions}>
           <h2>Quick Actions</h2>
-          <button>Add New Performance Indicator</button>
-          <button>Create New Swim Group</button>
+          <button>View Detailed Performance</button>
+          <button>Connect with Coach</button>
         </section>
       </div>
-    </CoachPageLayout>
+    </SwimmerPageLayout>
   );
 };
 
-export default Dashboard;
+export default SwimmerDashboard;

@@ -18,6 +18,7 @@ const SwimGroupsPage: React.FC = () => {
   // Supabase client
   const supabase = createClient();
 
+
   // Fetch swim groups from Supabase
   useEffect(() => {
     const fetchSwimGroups = async () => {
@@ -26,13 +27,15 @@ const SwimGroupsPage: React.FC = () => {
         const { data, error } = await supabase
           .from('swim_groups')
           .select('id, name, description, coach_id, created_at, updated_at'); // Fetch the necessary fields
-
+   
         if (error) {
           console.error('Error fetching swim groups:', error);
           setErrorMessage('Failed to fetch swim groups. Please try again.');
           showToast('Failed to fetch swim groups', 'error');
         } else {
           setSwimGroups(data);
+          console.log(data)
+
           showToast('Swim groups fetched successfully', 'success');
         }
       } catch (error) {
