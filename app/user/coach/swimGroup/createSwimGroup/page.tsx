@@ -32,7 +32,7 @@ const CreateSwimGroup: React.FC = () => {
     const { data: coachData, error: coachError } = await supabase
       .from('coaches')
       .select('id')
-      .eq('user_id', user.id)  // Use user.id to fetch the coach's ID
+      .eq('id', user.id)  // Use user.id to fetch the coach's ID
       .single();
   
     if (coachError || !coachData) {
@@ -41,6 +41,7 @@ const CreateSwimGroup: React.FC = () => {
       showToast('Coach not found. Please try again.', 'error'); // Show error toast
       return;
     }
+
   
     // Insert swim group with the correct coach_id
     const { data, error } = await supabase
@@ -61,6 +62,7 @@ const CreateSwimGroup: React.FC = () => {
       showToast('Swim group created successfully', 'success'); // Show success toast
       setDescription('');
       setGroupName('');
+      setErrorMessage('')
     }
   };
 

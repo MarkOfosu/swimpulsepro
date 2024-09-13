@@ -136,3 +136,22 @@ To run the project locally, you will need a local PostgreSQL database. Make sure
 
 ```sh
 DATABASE_URL="postgresql://user:password@localhost:5432/swimpro"
+
+
+##using graphql in supabase - Complete Apollo + GraphQL Code Generator Flow
+Configure codegen.ts: Create the configuration for generating types.
+Write GraphQL Queries: Write your queries in a separate graphql/queries folder.
+Run Codegen: Generate types using npx graphql-codegen.
+Use Queries with Types: Use generated types in your React components for querying or mutating data.
+Step-by-Step Setup Process
+Step 1: Install Dependencies
+You need the following dependencies:
+
+@apollo/client for Apollo Client integration
+graphql for handling GraphQL logic
+@graphql-codegen/cli for setting up the GraphQL code generation
+Plugins for generating TypeScript types from GraphQL schema
+
+
+npm install @apollo/client graphql
+npm install -D typescript @graphql-codegen/cli @graphql-codegen/typescript @graphql-codegen/typescript-operations @graphql-codegen/typescript-react-apollo

@@ -1,48 +1,31 @@
-'use server'
+// 'use server'
 
-import { revalidatePath } from 'next/cache'
-import { redirect } from 'next/navigation'
+// import { revalidatePath } from 'next/cache'
+// import { redirect } from 'next/navigation'
+// import { createClient } from '@/utils/supabase/client'
 
-import { createClient } from '@/utils/supabase/server'
+// export async function login(formData: FormData) {
+//   const supabase = createClient()
 
+//   // Prepare login data
+//   const loginData = {
+//     email: formData.get('email') as string,
+//     password: formData.get('password') as string,
+//   }
 
-export const isLogin = async () => {
-  const supabase = createClient();
-  const {
-    data: { user },
-    error,
-  } = await supabase.auth.getUser();
+//   // Attempt to sign in with email and password
+//   const { data: session, error } = await supabase.auth.signInWithPassword(loginData);
 
-  // If there's an error or no user, return false
-  if (error || !user) {
-    return false;
-  }
+//   // Handle errors
+//   if (error) {
+//     console.error('Error during login:', error);
+//     redirect('/error');
+//     return;
+//   }
 
-  return true;
-};
-
+//   // Revalidate cache
+//   revalidatePath('/');
   
-
-export async function login(formData: FormData) {
-  const supabase = createClient()
-
-  // type-casting here for convenience
-  //validate your inputs later
-  const data = {
-    email: formData.get('email') as string,
-    password: formData.get('password') as string,
-  }
-
-  const { error } = await supabase.auth.signInWithPassword(data)
-
-  if (error) {
-    redirect('/error')
-  }
-
-
-
-  revalidatePath('/', 'layout')
-  //for now redirect to coach dashboard
-  redirect('/user/coach/dashboard')
- 
-}
+//   // Redirect to client-side login page for role-based redirection
+//   redirect('/');
+// }

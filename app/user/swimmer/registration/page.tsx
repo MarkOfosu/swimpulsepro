@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSearchParams } from 'next/navigation';
+import SwimPageLayout from '../page';
 
 const SwimmerRegistration: React.FC = () => {
   const [firstName, setFirstName] = useState('');
@@ -36,17 +37,21 @@ const SwimmerRegistration: React.FC = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <h2>Join {groupInfo.groupName} under {groupInfo.teamName}</h2>
-      <p>Coach: {groupInfo.coachName}</p>
-      <input type="text" value={firstName} onChange={(e) => setFirstName(e.target.value)} placeholder="First Name" required />
-      <input type="text" value={lastName} onChange={(e) => setLastName(e.target.value)} placeholder="Last Name" required />
-      <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email" required />
-      <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Password" required />
-      <input type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} placeholder="Confirm Password" required />
-      <button type="submit">Join Swim Group</button>
-    </form>
-  );
+    <SwimPageLayout>
+      <form onSubmit={handleSubmit}>
+        <h2>Join {groupInfo.groupName} under {groupInfo.teamName}</h2>
+        <p>Coach: {groupInfo.coachName}</p>
+        <input type="text" value={firstName} onChange={(e) => setFirstName(e.target.value)} placeholder="First Name" required />
+        <input type="text" value={lastName} onChange={(e) => setLastName(e.target.value)} placeholder="Last Name" required />
+        <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email" required />
+        <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Password" required />
+        <input type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} placeholder="Confirm Password" required />
+        <button type="submit">Join Swim Group</button>
+      </form>
+ 
+  </SwimPageLayout>
+   );
 };
+
 
 export default SwimmerRegistration;
