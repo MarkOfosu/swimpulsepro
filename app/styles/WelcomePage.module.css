@@ -1,15 +1,15 @@
 
 /* styles/WelcomePage.module.css */
 
-.container {
+/* .container {
     display: flex;
     flex-direction: column;
     align-items: center;
     background: #133c63;
     row-gap: 20px;
-  }
+  } */
   
-  .banner {
+  /* .banner {
     margin-top: 90px;
     display: flex;
     justify-content: center;
@@ -18,7 +18,83 @@
     font-size: 2.5em;
     text-align: center;
     padding: 20px;
+  } */
+
+
+
+
+  
+  /* WelcomePage.module.css */
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  margin-top: 20px;
+  background-color: rgb(29, 19, 86);
+}
+
+/* Adjusted width for images */
+.imageSection {
+  width: 80%; /* Default width for large screens */
+  max-width: 1200px; /* Maximum width to prevent images from becoming too large */
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 60vh;
+}
+
+.image {
+  width: 100%;
+  height: auto;
+}
+
+/* Responsive settings */
+@media (max-width: 1024px) {
+  .imageSection {
+    width: 90%; /* Slightly wider on smaller screens */
+    height: 100vh
   }
-  
- 
-  
+}
+
+@media (max-width: 768px) {
+  .imageSection {
+    width: 100%; /* Full width on mobile devices */
+    padding: 10px;
+  }
+}
+
+/* Styles for the feature container */
+.featureContainer {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: flex-start;
+  width: 100%;
+  padding: 20px;
+}
+
+.feature {
+  width:100%; /* Three items per row on large screens */
+  margin: 10px;
+  text-align: center;
+}
+
+.featureImage {
+  width: 100%;
+  height: auto;
+}
+
+/* Adjust feature items for smaller screens */
+@media (max-width: 1024px) {
+  .feature {
+    width: 45%; /* Two items per row on medium screens */
+  }
+}
+
+@media (max-width: 768px) {
+  .feature {
+    width: 100%; /* One item per row on small screens */
+  }
+}
