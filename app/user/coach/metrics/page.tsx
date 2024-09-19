@@ -1,7 +1,7 @@
 "use client";
 import CoachPageLayout from "../page"
 import CreateMetricForm from "./createMetricForm";
-import InputResultsForm from "./inputResultsForm";
+import SwimmerMetricInput from "./swimmerMetricInput";
 
 
 const metricsPage = () => {
@@ -12,7 +12,7 @@ const metricsPage = () => {
         <CreateMetricForm />
 
         <p>swimmer will submit results in something like this</p>
-        <InputResultsForm metric={{ id: "1", name: '50m Freestyle', type: 'Test Set', swimmerId: '1' }} />
+        <SwimmerMetricInput />
 
         </div>
         </CoachPageLayout>
