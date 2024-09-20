@@ -2,113 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { createClient } from '../../../../utils/supabase/client';
 import styles from '../../../styles/MetricCreationForm.module.css';
 import TipsSection from './TipsSection';
+import { MetricCategory, TimeTrialMetric, DistanceChallengeMetric, TechniqueAssessmentMetric, EnduranceTestMetric, SprintPerformanceMetric, DrillProficiencyMetric, StrengthBenchmarkMetric, RecoveryMetricMetric, RaceAnalysisMetric, ProgressTrackerMetric, BaseFitnessTestMetric, Metric, SwimGroup } from '../../../lib/types';
 
 const supabase = createClient();
 
-enum MetricCategory {
-  TimeTrial = 'TIME_TRIAL',
-  DistanceChallenge = 'DISTANCE_CHALLENGE',
-  TechniqueAssessment = 'TECHNIQUE_ASSESSMENT',
-  EnduranceTest = 'ENDURANCE_TEST',
-  SprintPerformance = 'SPRINT_PERFORMANCE',
-  DrillProficiency = 'DRILL_PROFICIENCY',
-  StrengthBenchmark = 'STRENGTH_BENCHMARK',
-  RecoveryMetric = 'RECOVERY_METRIC',
-  RaceAnalysis = 'RACE_ANALYSIS',
-  ProgressTracker = 'PROGRESS_TRACKER',
-  BaseFitnessTest = 'BASE_FITNESS_TEST'
-}
 
-interface BaseMetric {
-  id?: string;
-  name: string;
-  description: string;
-  category: MetricCategory;
-  unit: string;
-  group_id: string;
-}
-
-interface TimeTrialMetric extends BaseMetric {
-  distance: number;
-  strokeStyle: string;
-  calculationMethod: 'BEST_TIME' | 'AVERAGE_TIME' | 'TIME_IMPROVEMENT';
-}
-
-interface DistanceChallengeMetric extends BaseMetric {
-  timeLimit: number;
-  strokeStyle: string;
-  calculationMethod: 'TOTAL_DISTANCE' | 'AVERAGE_PACE' | 'DISTANCE_IMPROVEMENT';
-}
-
-interface TechniqueAssessmentMetric extends BaseMetric {
-  techniqueElements: string[];
-  calculationMethod: 'SCORE' | 'IMPROVEMENT_PERCENTAGE';
-}
-
-interface EnduranceTestMetric extends BaseMetric {
-  duration: number;
-  restIntervals: number;
-  calculationMethod: 'TOTAL_LAPS' | 'AVERAGE_PACE' | 'TIME_TO_FATIGUE';
-}
-
-interface SprintPerformanceMetric extends BaseMetric {
-  distance: number;
-  repetitions: number;
-  calculationMethod: 'PEAK_SPEED' | 'AVERAGE_SPEED' | 'REACTION_TIME';
-}
-
-interface DrillProficiencyMetric extends BaseMetric {
-  drillName: string;
-  focusArea: string;
-  calculationMethod: 'REPETITION_COUNT' | 'QUALITY_SCORE' | 'IMPROVEMENT_RATE';
-}
-
-interface StrengthBenchmarkMetric extends BaseMetric {
-  exerciseName: string;
-  equipment: string;
-  calculationMethod: 'MAXIMUM_WEIGHT' | 'REPETITION_COUNT' | 'POWER_OUTPUT';
-}
-
-interface RecoveryMetricMetric extends BaseMetric {
-  trainingLoad: number;
-  recoveryTime: number;
-  calculationMethod: 'HEART_RATE_VARIABILITY' | 'PERCEIVED_EXERTION' | 'SLEEP_QUALITY';
-}
-
-interface RaceAnalysisMetric extends BaseMetric {
-  raceDistance: number;
-  strokeStyle: string;
-  calculationMethod: 'SPLIT_TIMES' | 'TURN_EFFICIENCY' | 'STROKE_COUNT';
-}
-
-interface ProgressTrackerMetric extends BaseMetric {
-  baselineValue: number;
-  targetValue: number;
-  timeframe: number;
-  calculationMethod: 'PERCENTAGE_IMPROVEMENT' | 'CONSISTENCY_SCORE' | 'GOAL_ACHIEVEMENT_RATE';
-}
-
-interface BaseFitnessTestMetric extends BaseMetric {
-  testType: 'single' | 'multi';
-  totalDistance: number;
-  totalTime: number;
-  part1Distance?: number;
-  part1Time?: number;
-  restDuration?: number;
-  part2Distance?: number;
-  part2Time?: number;
-  strokeStyle: string;
-  calculationMethod: 'AVERAGE_PACE' | 'TOTAL_TIME' | 'PACE_COMPARISON';
-}
-
-type Metric = TimeTrialMetric | DistanceChallengeMetric | TechniqueAssessmentMetric | EnduranceTestMetric |
-               SprintPerformanceMetric | DrillProficiencyMetric | StrengthBenchmarkMetric | RecoveryMetricMetric |
-               RaceAnalysisMetric | ProgressTrackerMetric | BaseFitnessTestMetric;
-
-interface SwimGroup {
-  id: string;
-  name: string;
-}
 
 const MetricCreationForm: React.FC = () => {
   const [metric, setMetric] = useState<Partial<Metric>>({
