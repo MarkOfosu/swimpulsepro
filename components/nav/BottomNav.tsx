@@ -1,13 +1,15 @@
 'use client';
 
-import { useState } from 'react';
+import React from 'react';
 import Link from 'next/link';
-import { FaHome, FaUsers, FaChalkboardTeacher, FaClipboardList, FaCog } from 'react-icons/fa';
+import { FaHome, FaUsers, FaChalkboardTeacher } from 'react-icons/fa';
 
-const BottomNav: React.FC = () => {
-  const [userRole, setUserRole] = useState('coach'); // This should be dynamically set based on the logged-in user
-  const isAdmin = true; // This should be dynamically set based on the logged-in user
+interface BottomNavProps {
+  userRole: 'coach' | 'swimmer';
+  isAdmin: boolean;
+}
 
+const BottomNav: React.FC<BottomNavProps> = ({ userRole, isAdmin }) => {
   return (
     <div className="bottom-nav">
       <Link href="/" className="pure-menu-link">
@@ -28,11 +30,7 @@ const BottomNav: React.FC = () => {
         <Link href="/user/swimmer/dashboard" className="pure-menu-link">
           <FaUsers className="icon" />
         </Link>
-      ) : (
-        <Link href="/" className="pure-menu-link">
-          <FaHome className="icon" />
-        </Link>
-      )}
+      ) : null}
     </div>
   );
 };

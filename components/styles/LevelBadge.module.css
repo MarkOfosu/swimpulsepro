@@ -1,0 +1,23 @@
+.levelBadge {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 3rem;
+    height: 3rem;
+    border-radius: 50%;
+    background-color: #ffd700;
+    color: #000;
+    font-weight: bold;
+    text-align: center;
+    box-shadow: 0 0 0 2px #fff, 0 0 0 4px #ffd700;
+  }
+  
+  .levelText {
+    font-size: 0.6rem;
+    text-transform: uppercase;
+  }
+  
+  .levelNumber {
+    font-size: 1.2rem;
+  }
