@@ -47,7 +47,6 @@ CREATE TABLE IF NOT EXISTS metrics (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     group_id UUID REFERENCES swim_groups(id) ON DELETE CASCADE,  -- group_id referencing swim_groups
     name VARCHAR,
-    type VARCHAR,
     description TEXT,
     created_at TIMESTAMPTZ DEFAULT NOW(),
     updated_at TIMESTAMPTZ DEFAULT NOW()
