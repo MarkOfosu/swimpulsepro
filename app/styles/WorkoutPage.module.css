@@ -1,103 +1,111 @@
 .container {
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 20px;
-    background-color: #f0f8ff;
-    border-radius: 8px;
-  }
-  
-  .title {
-    text-align: center;
-    font-size: 2.5em;
-    margin-bottom: 20px;
-    color: #2c3e50;
-  }
-  
-  .buttonGroup {
-    text-align: center;
-    margin-bottom: 30px;
-  }
-  
-  .optionButton {
-    margin: 0 10px;
-    padding: 10px 20px;
-    font-size: 1.2em;
-    color: #fff;
-    background-color: #3498db;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-  }
-  
-  .optionButton:hover {
-    background-color: #2980b9;
-  }
-  
-  .sectionTitle {
-    font-size: 1.5em;
-    color: #2980b9;
-    margin-bottom: 10px;
-  }
-  
-  .workoutsSection, .createWorkoutSection {
-    margin-bottom: 30px;
-  }
-  
-  .workoutList {
-    list-style-type: none;
-    padding: 0;
-  }
-  
-  .workoutItem {
-    background-color: #ecf0f1;
-    border: 1px solid #bdc3c7;
-    padding: 15px;
-    margin-bottom: 10px;
-    border-radius: 4px;
-  }
-  
-  .formGroup {
-    margin-bottom: 15px;
-  }
-  
-  .formLabel {
-    display: block;
-    margin-bottom: 5px;
-    font-weight: bold;
-    color: #2c3e50;
-  }
-  
-  .formSelect, .formInput, .formTextarea {
-    width: 100%;
-    padding: 10px;
-    font-size: 1em;
-    border: 1px solid #bdc3c7;
-    border-radius: 4px;
-    color: #2c3e50;
-  }
-  
-  .generateButton, .saveButton, .searchButton {
-    display: block;
-    width: 100%;
-    padding: 10px;
-    margin-top: 10px;
-    font-size: 1.2em;
-    color: #fff;
-    background-color: #3498db;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-  }
-  
-  .generateButton:hover, .saveButton:hover, .searchButton:hover {
-    background-color: #2980b9;
-  }
-  
-  .generatedWorkout {
-    margin-top: 20px;
-    background-color: #ecf0f1;
-    padding: 15px;
-    border-radius: 4px;
-    border: 1px solid #bdc3c7;
-  }
-  
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: var(--primary-light);
+  border-radius: 8px;
+  box-shadow: 0 4px 15px rgba(144, 52, 107, 0.3);
+}
+
+.title {
+  text-align: center;
+  font-size: 2.5em;
+  margin-bottom: 20px;
+  color: var(--text-light);
+  text-shadow: 0 0 10px var(--accent-pink);
+}
+
+.buttonGroup {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.optionButton {
+  margin: 0 10px;
+  padding: 10px 20px;
+  font-size: 1.2em;
+  color: var(--text-light);
+  background-color: var(--secondary-dark);
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.optionButton:hover {
+  background-color: var(--secondary-light);
+  box-shadow: 0 0 15px var(--accent-purple);
+}
+
+.sectionTitle {
+  font-size: 1.5em;
+  color: var(--accent-teal);
+  margin-bottom: 10px;
+}
+
+.workoutsSection, .createWorkoutSection {
+  margin-bottom: 30px;
+}
+
+.workoutList {
+  list-style-type: none;
+  padding: 0;
+}
+
+.workoutItem {
+  background-color: var(--primary-dark);
+  border: 1px solid var(--secondary-light);
+  padding: 15px;
+  margin-bottom: 10px;
+  border-radius: 4px;
+  color: var(--text-light);
+}
+
+.formGroup {
+  margin-bottom: 15px;
+}
+
+.formLabel {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+  color: var(--accent-teal);
+}
+
+.formSelect, .formInput, .formTextarea {
+  width: 100%;
+  padding: 10px;
+  font-size: 1em;
+  border: 1px solid var(--secondary-light);
+  border-radius: 4px;
+  color: var(--text-light);
+  background-color: var(--primary-dark);
+}
+
+.generateButton, .saveButton, .searchButton {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  margin-top: 10px;
+  font-size: 1.2em;
+  color: var(--text-light);
+  background-color: var(--accent-purple);
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.generateButton:hover, .saveButton:hover, .searchButton:hover {
+  background-color: var(--accent-pink);
+  box-shadow: 0 0 15px var(--accent-teal);
+}
+
+.generatedWorkout {
+  margin-top: 20px;
+  background-color: var(--primary-dark);
+  padding: 15px;
+  border-radius: 4px;
+  border: 1px solid var(--secondary-light);
+  color: var(--text-light);
+}

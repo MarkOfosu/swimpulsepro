@@ -4,9 +4,16 @@
     padding: 2rem;
     border-radius: 8px;
     margin-bottom: 2rem;
-    position: relative; /* Make sure the container is relative so the gradient can be positioned correctly */
-    overflow: hidden; /* Ensure the glow stays inside the container */
-    background-color: #202fd8;
+    position: relative;
+    overflow: hidden;
+    background-color: var(--primary-dark);
+    box-shadow: 0 4px 15px rgba(144, 52, 107, 0.3);
+    transition: all 0.3s ease;
+}
+
+.featureContainer:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 20px rgba(144, 52, 107, 0.4);
 }
 
 .featureContainer::before {
@@ -17,17 +24,17 @@
     transform: translateX(-50%);
     width: 150%;
     height: 100%;
-    background: radial-gradient(circle, rgba(236, 160, 165, 0.6) 0%, transparent 70%);
-    pointer-events: none; /* Ensure it's not interactive */
-    z-index: 0; /* Make sure the glow is behind the content */
+    background: radial-gradient(circle, rgba(249, 168, 212, 0.3) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
 }
 
 .featureContent {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    position: relative; /* Ensure the content stays above the gradient */
-    z-index: 1; /* Ensure content is above the gradient */
+    position: relative;
+    z-index: 1;
 }
 
 .featureImage {
@@ -35,16 +42,23 @@
     height: auto;
     border-radius: 8px;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+    transition: transform 0.3s ease;
+}
+
+.featureImage:hover {
+    transform: scale(1.05);
 }
 
 .mainContent {
     max-width: 55%;
-    color: white;
+    color: var(--text-light);
 }
 
 .mainContent h2 {
     font-size: 2rem;
     margin-bottom: 1rem;
+    color: var(--accent-teal);
+    text-shadow: 0 0 10px rgba(94, 234, 212, 0.3);
 }
 
 .mainContent p {
@@ -54,22 +68,26 @@
 
 .metricTable {
     width: 100%;
-    border-collapse: collapse;
+    border-collapse: separate;
+    border-spacing: 0;
     margin-top: 1rem;
+    overflow: hidden;
+    border-radius: 8px;
 }
 
 .metricTable th, .metricTable td {
     padding: 0.75rem;
-    border: 1px solid #ddd;
+    border: 1px solid var(--secondary-light);
 }
 
 .metricTable th {
-    background-color: #3c3c5c;
-    color: #fff;
+    background-color: var(--secondary-dark);
+    color: var(--text-light);
 }
 
 .metricTable td {
-    color: #f5f5f5;
+    color: var(--text-light);
+    background-color: var(--primary-light);
 }
 
 .subContent ul {
@@ -79,4 +97,28 @@
 
 .subContent li {
     margin-bottom: 0.5rem;
+    color: var(--accent-pink);
+}
+
+@media (max-width: 768px) {
+    .featureContent {
+        flex-direction: column;
+    }
+
+    .featureImage,
+    .mainContent {
+        max-width: 100%;
+    }
+
+    .featureImage {
+        margin-bottom: 1rem;
+    }
+
+    .mainContent h2 {
+        font-size: 1.8rem;
+    }
+
+    .mainContent p {
+        font-size: 1rem;
+    }
 }

@@ -2,17 +2,18 @@
 .welcomeNavbar {
   display: flex;
   align-items: center;
-  justify-content: space-between; /* Adjust spacing */
+  justify-content: space-between;
   padding: 1rem 2rem;
-  background-color: #1f2a48;
+  background-color: var(--primary-dark);
   width: 100%;
   position: fixed;
   top: 0;
   left: 0;
   z-index: 1000;
-  overflow-x: auto; /* Allow horizontal scrolling */
+  overflow-x: auto;
   height: 70px;
-  white-space: nowrap; 
+  white-space: nowrap;
+  box-shadow: 0 2px 10px rgba(144, 52, 107, 0.3);
 }
 
 /* Logo styling */
@@ -23,15 +24,16 @@
 }
 
 .logo img {
-  width: 50px; /* Default size for smaller screens */
-  height: 50px; /* Default size for smaller screens */
-  border-radius: 50%; /* Make the logo rounded */
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  box-shadow: 0 0 10px var(--accent-purple);
 }
 
 @media (min-width: 1024px) {
   .logo img {
-    width: 80px; /* Bigger size for desktops */
-    height: 80px; /* Bigger size for desktops */
+    width: 80px;
+    height: 80px;
   }
 }
 
@@ -40,7 +42,7 @@
   list-style: none;
   display: flex;
   gap: 1rem;
-  margin: 0 auto; /* Center the links */
+  margin: 0 auto;
   padding: 0;
 }
 
@@ -52,21 +54,23 @@
 /* Link styling */
 .welcomeNavLinks a {
   text-decoration: none;
-  color: #f086af;
+  color: var(--accent-teal);
   font-weight: 900;
   padding: 0.5rem 1rem;
   border-radius: 5px;
-  transition: background-color 0.3s ease, color 0.3s ease;
+  transition: all 0.3s ease;
 }
 
 /* Hover effect for links */
 .welcomeNavLinks a:hover {
-  background-color: rgba(0, 170, 255, 0.2);
+  background-color: var(--secondary-dark);
+  color: var(--text-light);
+  box-shadow: 0 0 15px var(--accent-purple);
 }
 
 /* Active link styling */
 .welcomeNavLinks a:active {
-  color: #00aaff;
+  color: var(--accent-pink);
 }
 
 /* Add padding to the right end */

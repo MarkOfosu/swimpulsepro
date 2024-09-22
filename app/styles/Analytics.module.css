@@ -1,70 +1,109 @@
 /* Analytics.module.css */
 
 .analyticsContainer {
-    padding: 20px;
-  }
-  
-  .searchBarContainer {
-    position: relative;
-    width: 300px;
-    margin-bottom: 20px;
-  }
-  
-  .searchInput {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    font-size: 16px;
-  }
-  
-  .suggestionsList {
-    position: absolute;
-    top: 100%; /* Positioning the list right below the search input */
-    left: 0;
-    right: 0;
-    background-color: white;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    max-height: 150px; /* Optional: limit the height */
-    overflow-y: auto;
-    z-index: 10; /* Ensure the suggestions appear above other elements */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Optional: add a subtle shadow */
-  }
-  
-  .suggestionItem {
-    padding: 10px;
-    cursor: pointer;
-    font-size: 16px;
-    transition: background-color 0.2s ease;
-  }
-  
-  .suggestionItem:hover {
-    background-color: #f0f0f0;
-  }
-  
-  .selectionContainer {
-    margin-bottom: 20px;
-  }
-  
-  .groupSelector, .swimmerSelector {
-    padding: 10px;
-    margin-right: 10px;
-    border-radius: 4px;
-    font-size: 16px;
-  }
-  
-  .groupOverview {
-    margin-top: 20px;
-  }
-  
-  .chartSection {
-    margin-bottom: 30px;
-  }
-  
-  .chartTitle {
-    font-size: 1.5em;
-    margin-bottom: 15px;
-  }
-  
-  
+  padding: 20px;
+  background: var(--background-gradient);
+  color: var(--text-light);
+  border-radius: 8px;
+  box-shadow: 0 4px 15px rgba(144, 52, 107, 0.3);
+}
+
+.searchBarContainer {
+  position: relative;
+  width: 300px;
+  margin-bottom: 20px;
+}
+
+.searchInput {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid var(--secondary-light);
+  border-radius: 4px;
+  font-size: 16px;
+  background-color: var(--primary-dark);
+  color: var(--text-light);
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.searchInput:focus {
+  border-color: var(--accent-purple);
+  box-shadow: 0 0 10px var(--accent-purple);
+  outline: none;
+}
+
+.suggestionsList {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background-color: var(--primary-light);
+  border: 1px solid var(--secondary-light);
+  border-radius: 4px;
+  max-height: 150px;
+  overflow-y: auto;
+  z-index: 10;
+  box-shadow: 0 4px 8px rgba(144, 52, 107, 0.3);
+}
+
+.suggestionItem {
+  padding: 10px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.2s ease, color 0.2s ease;
+  color: var(--text-light);
+}
+
+.suggestionItem:hover {
+  background-color: var(--secondary-dark);
+  color: var(--accent-teal);
+}
+
+.selectionContainer {
+  margin-bottom: 20px;
+}
+
+.groupSelector, .swimmerSelector {
+  padding: 10px;
+  margin-right: 10px;
+  border-radius: 4px;
+  font-size: 16px;
+  background-color: var(--primary-dark);
+  color: var(--text-light);
+  border: 1px solid var(--secondary-light);
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.groupSelector:focus, .swimmerSelector:focus {
+  border-color: var(--accent-purple);
+  box-shadow: 0 0 10px var(--accent-purple);
+  outline: none;
+}
+
+.groupOverview {
+  margin-top: 20px;
+  padding: 20px;
+  background-color: var(--primary-light);
+  border-radius: 8px;
+  box-shadow: 0 4px 15px rgba(144, 52, 107, 0.2);
+}
+
+.chartSection {
+  margin-bottom: 30px;
+  padding: 20px;
+  background-color: var(--primary-light);
+  border-radius: 8px;
+  box-shadow: 0 4px 15px rgba(144, 52, 107, 0.2);
+}
+
+.chartTitle {
+  font-size: 1.5em;
+  margin-bottom: 15px;
+  color: var(--accent-teal);
+  text-shadow: 0 0 5px var(--accent-purple);
+}
+
+
+
+
+
+

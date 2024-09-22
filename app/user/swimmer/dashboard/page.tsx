@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import SwimmerPageLayout from '../page';  // Assuming a SwimmerPageLayout component
 import styles from '../../../styles/Dashboard.module.css';
 import { getUserDetails } from '../../../lib/getUserDetails';
+import Loader from '@components/ui/Loader';
 
 // Import test data
 import {
@@ -33,7 +34,7 @@ const SwimmerDashboard: React.FC = () => {
 
   // If user data is still being fetched
   if (!user && !error) {
-    return <div>Loading...</div>;
+    return <Loader />;
   }
 
   // Handle error state

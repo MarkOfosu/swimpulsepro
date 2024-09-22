@@ -1,4 +1,5 @@
 import React from 'react';
+import '../styles/ContentNavBar.module.css'
 
 interface ContentNavBarProps {
     links: { href: string; label: string }[];

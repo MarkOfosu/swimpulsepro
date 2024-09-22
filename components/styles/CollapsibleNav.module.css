@@ -1,18 +1,24 @@
 .collapsibleMenuContainer {
   width: 100%;
-  background-color: #1f2a48;
+  background-color: var(--primary-dark);
   padding: 10px;
   z-index: 1001;
   display: none; /* Hide by default and show only on small screens */
+  box-shadow: 0 2px 10px rgba(144, 52, 107, 0.3);
 }
 
 .menuIcon {
   cursor: pointer;
   font-size: 2rem;
-  color: white;
+  color: var(--accent-teal);
   display: flex;
   align-items: center;
   justify-content: flex-end; /* Align icon to the right */
+  transition: color 0.3s ease;
+}
+
+.menuIcon:hover {
+  color: var(--accent-pink);
 }
 
 .collapsibleMenuList {
@@ -20,28 +26,58 @@
   top: 50px; /* Adjust this value to avoid overlap */
   right: 0;
   width: 200px;
-  background-color: rgba(31, 42, 72, 0.9);
+  background-color: rgba(3, 9, 69, 0.95); /* Using primary-dark with slight transparency */
   z-index: 1000;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-  border-radius: 4px;
+  box-shadow: 0 5px 15px rgba(144, 52, 107, 0.5);
+  border-radius: 8px;
   padding: 10px 0;
+  transition: all 0.3s ease;
 }
 
 .pureMenuLink {
   display: block;
   padding: 15px 20px;
   text-decoration: none;
-  color: white;
+  color: var(--text-light);
   font-size: 1.5rem;
-  transition: background 0.3s ease;
+  transition: all 0.3s ease;
 }
 
 .pureMenuLink:hover {
-  background: #4a5878;
+  background: var(--secondary-dark);
+  color: var(--accent-teal);
+  box-shadow: inset 0 0 10px var(--accent-purple);
 }
 
 .icon {
-  margin-right: 8px;
+  margin-right: 12px;
+  color: var(--accent-teal);
+  transition: color 0.3s ease;
+}
+
+.pureMenuLink:hover .icon {
+  color: var(--accent-pink);
+}
+
+.signOutContainer {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  margin-top: 20px;
+  padding: 15px 0;
+  border-top: 1px solid var(--secondary-light);
+}
+
+.signOutContainer .pureMenuLink {
+  color: var(--accent-pink);
+  font-weight: bold;
+}
+
+.signOutContainer .pureMenuLink:hover {
+  background: var(--secondary-dark);
+  color: var(--text-light);
 }
 
 /* Show collapsible menu on small screens */
@@ -53,12 +89,20 @@
   .content-navbar {
     margin-top: 60px; /* Ensure space for the collapsible menu */
   }
-}
-.signOutContainer {
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column; /* Ensure the profile and logout button are stacked vertically */
-  margin-top: 50px; /* Adjust this value to add space between the last link and the sign-out container */
+
+  /* Add a subtle animation for menu appearance */
+  @keyframes slideIn {
+    from {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .collapsibleMenuList {
+    animation: slideIn 0.3s ease forwards;
+  }
 }
