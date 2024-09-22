@@ -1,145 +1,317 @@
 .metricsPage {
-    font-family: Arial, sans-serif;
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 20px;
-    background-color: #f5f5f5;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  }
-  
-  .pageTitle {
-    color: #333;
-    font-size: 24px;
-    margin-bottom: 20px;
-    text-align: center;
-  }
-  
-  .guideSection {
-    background-color: #ffffff;
-    border: 1px solid #e0e0e0;
-    border-radius: 4px;
-    padding: 10px;
-    margin-bottom: 15px;
-  }
-  
-  .sectionTitle {
-    color: #1a2b4a;
-    font-size: 18px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 10px;
-    background-color: #f0f5ff;
-    border-radius: 4px;
-    transition: background-color 0.3s ease;
-  }
-  
-  .sectionTitle:hover {
-    background-color: #e0e8ff;
-  }
-  
-  .sectionTitle::after {
-    content: '▼';
-    font-size: 12px;
-  }
-  
-  .sectionTitle.expanded::after {
-    content: '▲';
-  }
-  
-  .form {
-    display: grid;
-    gap: 15px;
-    background-color: #ffffff;
-    border: 1px solid #e0e0e0;
-    border-radius: 4px;
-    padding: 20px;
-  }
-  
-  .label {
-    font-weight: bold;
-    margin-bottom: 5px;
-    color: #333;
-  }
-  
-  .input,
-  .select,
-  .textarea {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    font-size: 14px;
-    box-sizing: border-box;
-  }
-  
-  .textarea {
-    min-height: 100px;
-    resize: vertical;
-  }
-  
-  .button {
-    background-color: #4a90e2;
-    color: white;
-    border: none;
-    padding: 12px 20px;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 16px;
-    transition: background-color 0.3s;
-  }
-  
-  .button:hover {
-    background-color: #357abd;
-  }
-  
-  @media (max-width: 600px) {
-    .metricsPage {
-      padding: 10px;
-    }
-  
-    .form {
-      grid-template-columns: 1fr;
-    }
-  }
-  
-  
-  .preview {
-    margin-top: 20px;
+  font-family: 'Arial', sans-serif;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  background: var(--background-gradient);
+  color: var(--text-light);
+  border-radius: 8px;
+  box-shadow: 0 4px 15px rgba(144, 52, 107, 0.3);
+}
+
+.pageTitle {
+  color: var(--accent-teal);
+  font-size: 32px;
+  margin-bottom: 20px;
+  text-align: center;
+  text-transform: uppercase;
+  text-shadow: 0 0 10px var(--accent-purple);
+}
+
+.guideSection {
+  background-color: var(--primary-light);
+  border: 1px solid var(--secondary-light);
+  border-radius: 4px;
+  padding: 15px;
+  margin-bottom: 20px;
+  transition: box-shadow 0.3s ease;
+}
+
+.guideSection:hover {
+  box-shadow: 0 0 15px var(--accent-pink);
+}
+
+.sectionTitle {
+  color: var(--accent-teal);
+  font-size: 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px;
+  background-color: var(--primary-dark);
+  border-radius: 4px;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.sectionTitle:hover {
+  background-color: var(--secondary-dark);
+  color: var(--accent-pink);
+}
+
+.form {
+  display: grid;
+  gap: 20px;
+  background-color: var(--primary-light);
+  border: 1px solid var(--secondary-light);
+  border-radius: 4px;
+  padding: 25px;
+}
+
+.label {
+  font-weight: bold;
+  margin-bottom: 5px;
+  color: var(--accent-teal);
+}
+
+.input,
+.select,
+.textarea {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid var(--secondary-light);
+  border-radius: 4px;
+  font-size: 14px;
+  background-color: var(--primary-dark);
+  color: var(--text-light);
+  box-sizing: border-box;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.input:focus,
+.select:focus,
+.textarea:focus {
+  border-color: var(--accent-purple);
+  box-shadow: 0 0 10px var(--accent-purple);
+}
+
+.textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+.button {
+  background-color: var(--secondary-dark);
+  color: var(--text-light);
+  border: none;
+  padding: 12px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s, box-shadow 0.3s;
+}
+
+.button:hover {
+  background-color: var(--secondary-light);
+  box-shadow: 0 0 15px var(--accent-pink);
+}
+
+.preview {
+  margin-top: 25px;
+  padding: 20px;
+  border: 1px solid var(--secondary-light);
+  border-radius: 5px;
+  background-color: var(--primary-light);
+}
+
+.buttonGroup {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 25px;
+}
+
+.timeInputContainer {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.timeInput {
+  width: 60px;
+  text-align: center;
+  background-color: var(--primary-dark);
+  color: var(--text-light);
+  border: 1px solid var(--secondary-light);
+  border-radius: 4px;
+  padding: 8px;
+}
+
+@media (max-width: 600px) {
+  .metricsPage {
     padding: 15px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    background-color: #f9f9f9;
-  }
-  
-  .buttonGroup {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 20px;
-  }
-  
-  .button {
-    padding: 10px 15px;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-  }
-  
-  .button:hover {
-    background-color: #0056b3;
   }
 
-  .timeInputContainer {
-    display: flex;
-    align-items: center;
-    gap: 5px;
+  .form {
+    grid-template-columns: 1fr;
   }
-  
-  .timeInput {
-    width: 50px;
-    text-align: center;
+}
+
+/* 
+.metricsPage {
+  font-family: 'Roboto', Arial, sans-serif;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 30px;
+  background: var(--background-gradient);
+  color: var(--text-light);
+  border-radius: 12px;
+  box-shadow: 0 8px 30px rgba(5, 68, 94, 0.2);
+}
+
+.pageTitle {
+  color: var(--secondary-light);
+  font-size: 36px;
+  margin-bottom: 30px;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.guideSection {
+  background-color: rgba(24, 154, 180, 0.1);
+  border: 1px solid var(--secondary-light);
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 25px;
+  transition: all 0.3s ease;
+}
+
+.guideSection:hover {
+  box-shadow: 0 0 20px rgba(117, 230, 218, 0.3);
+  transform: translateY(-2px);
+}
+
+.sectionTitle {
+  color: var(--accent-teal);
+  font-size: 22px;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px;
+  background-color: rgba(5, 68, 94, 0.8);
+  border-radius: 6px;
+  transition: all 0.3s ease;
+}
+
+.sectionTitle:hover {
+  background-color: var(--primary-light);
+  color: var(--secondary-light);
+}
+
+.form {
+  display: grid;
+  gap: 25px;
+  background-color: rgba(24, 154, 180, 0.1);
+  border: 1px solid var(--secondary-light);
+  border-radius: 8px;
+  padding: 30px;
+}
+
+.label {
+  font-weight: 500;
+  margin-bottom: 8px;
+  color: var(--secondary-light);
+}
+
+.input,
+.select,
+.textarea {
+  width: 100%;
+  padding: 14px;
+  border: 1px solid var(--secondary-light);
+  border-radius: 6px;
+  font-size: 16px;
+  background-color: rgba(5, 68, 94, 0.6);
+  color: var(--text-light);
+  box-sizing: border-box;
+  transition: all 0.3s ease;
+}
+
+.input:focus,
+.select:focus,
+.textarea:focus {
+  border-color: var(--accent-teal);
+  box-shadow: 0 0 15px rgba(0, 194, 203, 0.5);
+  outline: none;
+}
+
+.textarea {
+  min-height: 120px;
+  resize: vertical;
+}
+
+.button {
+  background-color: var(--accent-blue);
+  color: var(--text-light);
+  border: none;
+  padding: 14px 24px;
+  border-radius: 30px;
+  cursor: pointer;
+  font-size: 18px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.button:hover {
+  background-color: var(--accent-teal);
+  box-shadow: 0 0 20px rgba(0, 194, 203, 0.5);
+  transform: translateY(-2px);
+}
+
+.preview {
+  margin-top: 30px;
+  padding: 25px;
+  border: 1px solid var(--secondary-light);
+  border-radius: 8px;
+  background-color: rgba(24, 154, 180, 0.1);
+}
+
+.buttonGroup {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 30px;
+}
+
+.timeInputContainer {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.timeInput {
+  width: 70px;
+  text-align: center;
+  background-color: rgba(5, 68, 94, 0.6);
+  color: var(--text-light);
+  border: 1px solid var(--secondary-light);
+  border-radius: 6px;
+  padding: 10px;
+  font-size: 16px;
+}
+
+@media (max-width: 600px) {
+  .metricsPage {
+    padding: 20px;
   }
+
+  .form {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .pageTitle {
+    font-size: 28px;
+  }
+
+  .button {
+    width: 100%;
+  }
+
+  .buttonGroup {
+    flex-direction: column;
+    gap: 15px;
+  }
+} */

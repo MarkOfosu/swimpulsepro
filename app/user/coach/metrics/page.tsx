@@ -10,10 +10,6 @@ const metricsPage = () => {
         <div>
         <h1>Metrics Page</h1>
         <CreateMetricForm />
-
-        <p>swimmer will submit results in something like this</p>
-        <SwimmerMetricInput />
-
         </div>
         </CoachPageLayout>
     );

@@ -1,38 +1,49 @@
 /* SideBar.module.css */
 .menu {
   width: 60px;
-  transition: width 0.3s ease;
-  background: #1f2a48;
-  color: white;
+  transition: all 0.3s ease;
+  background: var(--primary-dark);
+  color: var(--text-light);
   overflow: hidden;
   height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding-top: 20px;
-  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+  padding-top: 10px;
+  box-shadow: 2px 0 15px rgba(144, 52, 107, 0.3);
   position: fixed;
   top: 0;
   left: 0;
   z-index: 1000;
+  border-right: 2px solid var(--secondary-light);
 }
 
 .menu:hover {
   width: 200px;
 }
 
+.logo {
+  margin-bottom: 20px;
+}
+
 .logo img {
-  width: 40px;
+  width: 50px;
   height: auto;
-  border-radius: 40px;
+  border-radius: 50%;
   display: block;
-  margin: 10px auto;
+  margin: 0 auto;
+  box-shadow: 0 0 15px var(--accent-purple);
+  transition: all 0.3s ease;
+}
+
+.menu:hover .logo img {
+  width: 60px;
 }
 
 .userProfile {
   display: flex;
   align-items: center;
-  margin-top: 20px;
+  margin-top: 10px;
   padding: 0 15px;
 }
 
@@ -41,12 +52,14 @@
   font-size: 1.5rem;
   min-width: 24px;
   text-align: center;
+  color: var(--accent-teal);
 }
 
 .profileEmail {
   display: none;
   font-size: 1rem;
   margin-left: 10px;
+  color: var(--text-light);
 }
 
 .menu:hover .profileEmail {
@@ -55,32 +68,33 @@
 
 .pureMenuLink {
   display: flex;
-  align-items: center; /* Align items vertically */
-  justify-content: flex-start; /* Align items to the start */
+  align-items: center;
+  justify-content: flex-start;
   padding: 15px;
   text-decoration: none;
-  color: white;
-  transition: background 0.3s ease, box-shadow 0.3s ease;
+  color: var(--text-light);
+  transition: all 0.3s ease;
   width: 100%;
   position: relative;
 }
 
 .pureMenuLink:hover {
-  background: #2e3a57;
-  box-shadow: 0 0 10px rgba(0, 255, 255, 0.8);
+  background: var(--secondary-dark);
+  box-shadow: 0 0 15px var(--accent-pink);
 }
 
 .icon {
   margin-right: 10px;
   font-size: 1.5rem;
-  min-width: 24px; /* Ensure the icons have consistent space */
+  min-width: 24px;
   text-align: center;
+  color: var(--accent-teal);
 }
 
 .text {
   display: none;
   font-size: 1rem;
-  margin-left: 10px; /* Ensure consistent spacing between icon and text */
+  margin-left: 10px;
 }
 
 .menu:hover .text {
@@ -89,7 +103,7 @@
 
 .separator {
   width: 80%;
-  border-color: #fff;
+  border-color: var(--secondary-light);
   margin: 10px auto;
 }
 
@@ -116,18 +130,19 @@
   justify-content: center;
   align-items: center;
   flex-direction: column;
-  margin-top: 50px; /* Adjusted spacing */
+  margin-top: auto;
+  padding-bottom: 20px;
 }
 
 .logoutButton {
-  background-color: #f44336;
-  color: white;
+  background-color: var(--accent-pink);
+  color: var(--primary-dark);
   border: none;
   padding: 10px;
-  border-radius: 4px;
+  border-radius: 20px;
   font-size: 1rem;
   cursor: pointer;
-  transition: background 0.3s ease;
+  transition: all 0.3s ease;
   display: flex;
   align-items: center;
 }
@@ -135,10 +150,12 @@
 .logoutButton .icon {
   margin-right: 10px;
   font-size: 1.5rem;
+  color: var(--primary-dark);
 }
 
 .logoutButton:hover {
-  background-color: #d32f2f;
+  background-color: var(--accent-purple);
+  box-shadow: 0 0 15px var(--accent-teal);
 }
 
 .collapsed .logoutButton {
@@ -156,5 +173,7 @@
 
   .bottomNav {
     display: flex;
+    background-color: var(--primary-dark);
+    border-top: 1px solid var(--secondary-light);
   }
 }

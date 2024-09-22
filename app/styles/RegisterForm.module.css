@@ -5,17 +5,18 @@
   flex-direction: column;
   padding-top: 100px;
   padding-bottom: 100px;
-  background: #1f293a;
+  background: var(--background-gradient);
+  min-height: 100vh;
 }
 
 .registerBox {
-  width: 90%; /* Adjust the width to cover more space */
-  max-width: 500px; /* Ensure the form doesn't become too wide */
+  width: 90%;
+  max-width: 500px;
   padding: 40px;
-  background: #000;
+  background: var(--primary-dark);
   border-radius: 20px;
   text-align: center;
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 0 30px rgba(144, 52, 107, 0.5);
 }
 
 .registerBox form {
@@ -27,8 +28,9 @@
 
 .registerBox h2 {
   font-size: 2.5em;
-  color: #00fffc;
+  color: var(--accent-teal);
   margin-bottom: 30px;
+  text-shadow: 0 0 10px rgba(94, 234, 212, 0.3);
 }
 
 .inputBox {
@@ -41,18 +43,19 @@
   width: 100%;
   height: 50px;
   background: transparent;
-  border: 2px solid #2c4766;
+  border: 2px solid var(--secondary-light);
   outline: none;
   border-radius: 10px;
   font-size: 1em;
-  color: #fff;
+  color: var(--text-light);
   padding: 0 20px;
-  transition: 0.5s;
+  transition: all 0.3s ease;
 }
 
 .inputBox input:focus,
 .inputBox input:valid {
-  border-color: #00fffc;
+  border-color: var(--accent-teal);
+  box-shadow: 0 0 10px rgba(94, 234, 212, 0.3);
 }
 
 .inputBox label {
@@ -61,10 +64,10 @@
   left: 20px;
   transform: translateY(-50%);
   font-size: 1em;
-  color: #fff;
+  color: var(--text-light);
   pointer-events: none;
-  transition: 0.5s ease;
-  background-color: #000;
+  transition: all 0.3s ease;
+  background-color: var(--primary-dark);
   padding: 0 5px;
 }
 
@@ -72,24 +75,45 @@
 .inputBox input:valid ~ label {
   top: -10px;
   font-size: 0.8em;
-  color: #00fffc;
+  color: var(--accent-teal);
 }
 
 .btn {
   width: 50%;
   height: 50px;
-  border-radius: 45px;
-  background: #00fffc;
+  border-radius: 25px;
+  background: var(--accent-purple);
   border: none;
   outline: none;
   cursor: pointer;
   font-size: 1em;
-  color: #1f293a;
+  color: var(--text-light);
   font-weight: 600;
   margin-top: 20px;
-  transition: background-color 0.3s;
+  transition: all 0.3s ease;
 }
 
 .btn:hover {
-  background-color: #00d0d0;
+  background-color: var(--accent-pink);
+  box-shadow: 0 0 15px var(--accent-teal);
+  transform: translateY(-3px);
+}
+
+@media (max-width: 768px) {
+  .registerBox {
+    width: 95%;
+    padding: 30px;
+  }
+
+  .registerBox h2 {
+    font-size: 2em;
+  }
+
+  .inputBox {
+    width: 90%;
+  }
+
+  .btn {
+    width: 70%;
+  }
 }
