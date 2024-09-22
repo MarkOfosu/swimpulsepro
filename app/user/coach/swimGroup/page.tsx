@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import CoachPageLayout from '../page';
 import CreateSwimGroup from './createSwimGroup/page';
-import Card from '@components/ui/Card';
+import {Card} from '@components/ui/Card';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@/utils/supabase/client'; // Assuming you have a Supabase client setup
 import { useToast } from '@components/ui/toasts/Toast'; // Assuming you're using a toast notification system
@@ -83,14 +83,16 @@ const SwimGroupsPage: React.FC = () => {
       <div className="flex-container">
         {swimGroups.length > 0 ? (
           swimGroups.map((group) => (
-            <Card
-              size="small"
-              color="dark"
-              title={group.name}
-              description={group.description}
-              key={group.id} // Use group ID as key
-              glow={true}
-            >
+            // <Card
+            //   size="small"
+            //   color="dark"
+            //   title={group.name}
+            //   description={group.description}
+            //   key={group.id} // Use group ID as key
+            //   glow={true}
+            // >
+            <Card key={group.id}>
+
               <button
                 onClick={() => router.push(`/coach/swimGroup/${group.id}/addSwimmer`)}
                 className="button"

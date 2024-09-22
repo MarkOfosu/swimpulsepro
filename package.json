@@ -25,9 +25,11 @@
     "@supabase/auth-helpers-nextjs": "^0.10.0",
     "@supabase/ssr": "^0.4.0",
     "@supabase/supabase-js": "^2.45.4",
+    "@types/recharts": "^1.8.29",
     "graphql": "^16.9.0",
     "langchain": "^0.2.16",
     "langsmith": "^0.1.41",
+    "lucide-react": "^0.445.0",
     "next": "14.2.5",
     "pg": "^8.12.0",
     "react": "^18",
@@ -35,6 +37,7 @@
     "react-dom": "^18",
     "react-icons": "^5.2.1",
     "react-spinners": "^0.14.1",
+    "recharts": "^2.12.7",
     "supabase": "^1.192.5"
   },
   "devDependencies": {

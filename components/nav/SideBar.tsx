@@ -1,21 +1,21 @@
-// Sidebar.tsx
 'use client';
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { FaHome, FaUsers,FaUser,  FaChalkboardTeacher,FaSignOutAlt } from 'react-icons/fa';
+import { FaHome, FaUsers, FaUser, FaChalkboardTeacher, FaSignOutAlt } from 'react-icons/fa';
 import logo from '../../public/image/logo.png';
 import styles from '../styles/SideBar.module.css';
-import {UserProfile} from '../../components/ui/UserProfile';
 import { logout } from '@app/(auth)/logout/actions';
 
+interface SidebarProps {
+  userRole: 'coach' | 'swimmer';
+  isAdmin: boolean;
+  userEmail: string;
+}
 
-const Sidebar: React.FC = () => {
+const Sidebar: React.FC<SidebarProps> = ({ userRole, isAdmin, userEmail }) => {
   const [collapsed, setCollapsed] = useState(false);
-  const [userRole, setUserRole] = useState('coach'); // This should be dynamically set based on the logged-in user's role
-  const isAdmin = true;
-  const userprofile = UserProfile();
 
   useEffect(() => {
     const mediaQuery = window.matchMedia('(max-width: 1024px)');
@@ -71,22 +71,15 @@ const Sidebar: React.FC = () => {
         <Link href="/user/swimmer/dashboard" className={styles.pureMenuLink}>
           <FaUsers className={styles.icon} /> <span className={styles.text}>Swimmer Dashboard</span>
         </Link>
-      ) : (
-        <Link href="/" className={styles.pureMenuLink}>
-          <FaHome className={styles.icon} /> <span className={styles.text}>Home</span>
-        </Link>
-      )}
+      ) : null}
       <div className={styles.signOutContainer}>
-        
-         <Link href="" className={styles.pureMenuLink}>
-        <FaUser className={styles.icon} /> <span className={styles.text}>{userprofile.userEmail?.split('@')[0]}</span>
-        
-      </Link>
-      <Link  href="/login" onClick={ () => logout()} className={styles.pureMenuLink}>
-        <FaSignOutAlt className={styles.icon} /> <span className={styles.text}>Logout</span>
-      </Link>
-     
-      </div> 
+        <Link href="" className={styles.pureMenuLink}>
+          <FaUser className={styles.icon} /> <span className={styles.text}>{userEmail.split('@')[0]}</span>
+        </Link>
+        <Link href="/login" onClick={() => logout()} className={styles.pureMenuLink}>
+          <FaSignOutAlt className={styles.icon} /> <span className={styles.text}>Logout</span>
+        </Link>
+      </div>
     </div>
   );
 };

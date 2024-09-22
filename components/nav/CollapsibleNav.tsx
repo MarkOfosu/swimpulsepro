@@ -2,21 +2,19 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
-import { FaBars, FaTimes, FaHome, FaChalkboardTeacher, FaUsers,FaUser,FaSignOutAlt } from 'react-icons/fa';
+import { FaBars, FaTimes, FaHome, FaChalkboardTeacher, FaUsers, FaUser, FaSignOutAlt } from 'react-icons/fa';
 import styles from '../styles/CollapsibleNav.module.css';
-import {UserProfile} from '@components/ui/UserProfile';
-import LogoutButton from '@app/(auth)/logout/LogoutButton';
 import { logout } from '@app/(auth)/logout/actions';
 
 interface CollapsibleNavProps {
   userRole: 'coach' | 'swimmer';
-  isAdmin?: boolean;
+  isAdmin: boolean;
+  userEmail: string;
 }
 
-const CollapsibleNav: React.FC<CollapsibleNavProps> = ({ userRole, isAdmin = false }) => {
+const CollapsibleNav: React.FC<CollapsibleNavProps> = ({ userRole, isAdmin, userEmail }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
-  const userprofile = UserProfile();
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -69,13 +67,13 @@ const CollapsibleNav: React.FC<CollapsibleNavProps> = ({ userRole, isAdmin = fal
           )}
           <div className={styles.signOutContainer}>
             <Link href="/" className={styles.pureMenuLink}>
-            <FaUser className={styles.icon} /> <span className={styles.text}>{userprofile.userEmail?.split('@')[0]}</span>
+              <FaUser className={styles.icon} /> <span className={styles.text}>{userEmail.split('@')[0]}</span>
             </Link>
-            <Link  href="/login" onClick={ () => logout()} className={styles.pureMenuLink}>
+            <Link href="/login" onClick={() => logout()} className={styles.pureMenuLink}>
               <FaSignOutAlt className={styles.icon} /> <span className={styles.text}>Logout</span>
             </Link>
           </div>
-    </div>
+        </div>
       )}
     </div>
   );
