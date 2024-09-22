@@ -3,10 +3,10 @@ import React, { useState, useEffect } from 'react';
 import CoachPageLayout from '../page';
 import styles from '../../../styles/Dashboard.module.css';
 import { getUserDetails } from '../../../lib/getUserDetails';
+import Loader from '@components/ui/Loader';
 
 // Import test data
 import {
-  swimmersPerformanceData,
   swimGroupsData,
   recentActivitiesData,
   upcomingEventsData,
@@ -33,7 +33,14 @@ const Dashboard: React.FC = () => {
 
   // If user data is still being fetched
   if (!user && !error) {
-    return <div>Loading...</div>;
+      return (
+        <CoachPageLayout>
+          <div className="page-heading">
+            <h1>Coach Overview</h1>
+          </div>
+          <Loader />
+        </CoachPageLayout>
+      );
   }
 
   // Handle error state

@@ -2,11 +2,27 @@ import React, { useState, useEffect } from 'react';
 import { createClient } from '../../../../utils/supabase/client';
 import styles from '../../../styles/MetricCreationForm.module.css';
 import TipsSection from './TipsSection';
-import { MetricCategory, TimeTrialMetric, DistanceChallengeMetric, TechniqueAssessmentMetric, EnduranceTestMetric, SprintPerformanceMetric, DrillProficiencyMetric, StrengthBenchmarkMetric, RecoveryMetricMetric, RaceAnalysisMetric, ProgressTrackerMetric, BaseFitnessTestMetric, Metric, SwimGroup } from '../../../lib/types';
+import { 
+  MetricCategory, 
+  TimeTrialMetric, 
+  DistanceChallengeMetric, 
+  TechniqueAssessmentMetric, 
+  EnduranceTestMetric, 
+  SprintPerformanceMetric, 
+  DrillProficiencyMetric, 
+  StrengthBenchmarkMetric, 
+  RecoveryMetricMetric, 
+  RaceAnalysisMetric, 
+  ProgressTrackerMetric, 
+  BaseFitnessTestMetric, 
+  Metric, 
+  SwimGroup 
+} from '../../../lib/types';
 
 const supabase = createClient();
 
-
+const strokeOptions = ['Freestyle', 'Backstroke', 'Breaststroke', 'Butterfly', 'Individual Medley'];
+const unitOptions = ['time', 'meters', 'yards', 'laps', 'points', 'percent', 'score', 'reps', 'sets', 'count'];
 
 const MetricCreationForm: React.FC = () => {
   const [metric, setMetric] = useState<Partial<Metric>>({
@@ -17,6 +33,7 @@ const MetricCreationForm: React.FC = () => {
     group_id: '',
   });
   const [coachGroups, setCoachGroups] = useState<SwimGroup[]>([]);
+  const [showPreview, setShowPreview] = useState(false);
 
   useEffect(() => {
     fetchCoachGroups();
@@ -43,6 +60,21 @@ const MetricCreationForm: React.FC = () => {
     setMetric(prevMetric => ({ ...prevMetric, [name]: value }));
   };
 
+  const handleTimeChange = (e: React.ChangeEvent<HTMLInputElement>, fieldName: string) => {
+    const { name, value } = e.target;
+    setMetric(prevMetric => {
+      const fieldValue = prevMetric[fieldName as keyof Metric] as Record<string, number> | undefined;
+  
+      return {
+        ...prevMetric,
+        [fieldName]: {
+          ...(fieldValue || {}),
+          [name]: value === '' ? 0 : parseInt(value, 10)
+        }
+      };
+    });
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
@@ -52,11 +84,65 @@ const MetricCreationForm: React.FC = () => {
       
       if (error) throw error;
       console.log('Metric created successfully:', data);
-      // Reset form or show success message
+      alert('Metric created successfully!');
+      resetForm();
     } catch (error) {
       console.error('Error creating metric:', error);
-      // Show error message to user
+      alert('Error creating metric. Please try again.');
     }
+  };
+
+  const resetForm = () => {
+    setMetric({
+      category: MetricCategory.TimeTrial,
+      name: '',
+      description: '',
+      unit: '',
+      group_id: '',
+    });
+    setShowPreview(false);
+  };
+
+  const renderTimeInput = (fieldName: string, label: string) => {
+    const timeValue = metric[fieldName as keyof Metric] as { hours?: number; minutes?: number; seconds?: number } || {};
+    return (
+      <div>
+        <label className={styles.label}>{label}</label>
+        <div className={styles.timeInputContainer}>
+          <input
+            type="number"
+            name="hours"
+            value={timeValue.hours || 0}
+            onChange={(e) => handleTimeChange(e, fieldName)}
+            min="0"
+            placeholder="HH"
+            className={styles.timeInput}
+          />
+          :
+          <input
+            type="number"
+            name="minutes"
+            value={timeValue.minutes || 0}
+            onChange={(e) => handleTimeChange(e, fieldName)}
+            min="0"
+            max="59"
+            placeholder="MM"
+            className={styles.timeInput}
+          />
+          :
+          <input
+            type="number"
+            name="seconds"
+            value={timeValue.seconds || 0}
+            onChange={(e) => handleTimeChange(e, fieldName)}
+            min="0"
+            max="59"
+            placeholder="SS"
+            className={styles.timeInput}
+          />
+        </div>
+      </div>
+    );
   };
 
   const renderCategorySpecificFields = () => {
@@ -64,7 +150,7 @@ const MetricCreationForm: React.FC = () => {
       case MetricCategory.TimeTrial:
         return (
           <>
-            <label className={styles.label}>Distance (m)</label>
+            <label className={styles.label}>Distance</label>
             <input
               className={styles.input}
               name="distance"
@@ -73,14 +159,19 @@ const MetricCreationForm: React.FC = () => {
               onChange={handleInputChange}
               required
             />
-            <label className={styles.label}>Stroke Style</label>
-            <input
-              className={styles.input}
-              name="strokeStyle"
-              value={(metric as TimeTrialMetric).strokeStyle || ''}
+            <label className={styles.label}>Stroke</label>
+            <select
+              className={styles.select}
+              name="stroke"
+              value={(metric as TimeTrialMetric).stroke || ''}
               onChange={handleInputChange}
               required
-            />
+            >
+              <option value="">Select a stroke</option>
+              {strokeOptions.map(stroke => (
+                <option key={stroke} value={stroke}>{stroke}</option>
+              ))}
+            </select>
             <label className={styles.label}>Calculation Method</label>
             <select
               className={styles.select}
@@ -98,23 +189,20 @@ const MetricCreationForm: React.FC = () => {
       case MetricCategory.DistanceChallenge:
         return (
           <>
-            <label className={styles.label}>Time Limit (seconds)</label>
-            <input
-              className={styles.input}
-              name="timeLimit"
-              type="number"
-              value={(metric as DistanceChallengeMetric).timeLimit || ''}
+            {renderTimeInput('timeLimit', 'Time Limit')}
+            <label className={styles.label}>Stroke</label>
+            <select
+              className={styles.select}
+              name="stroke"
+              value={(metric as DistanceChallengeMetric).stroke || ''}
               onChange={handleInputChange}
               required
-            />
-            <label className={styles.label}>Stroke Style</label>
-            <input
-              className={styles.input}
-              name="strokeStyle"
-              value={(metric as DistanceChallengeMetric).strokeStyle || ''}
-              onChange={handleInputChange}
-              required
-            />
+            >
+              <option value="">Select a stroke</option>
+              {strokeOptions.map(stroke => (
+                <option key={stroke} value={stroke}>{stroke}</option>
+              ))}
+            </select>
             <label className={styles.label}>Calculation Method</label>
             <select
               className={styles.select}
@@ -124,7 +212,6 @@ const MetricCreationForm: React.FC = () => {
               required
             >
               <option value="TOTAL_DISTANCE">Total Distance</option>
-              <option value="AVERAGE_PACE">Average Pace</option>
               <option value="DISTANCE_IMPROVEMENT">Distance Improvement</option>
             </select>
           </>
@@ -137,7 +224,14 @@ const MetricCreationForm: React.FC = () => {
               className={styles.input}
               name="techniqueElements"
               value={(metric as TechniqueAssessmentMetric).techniqueElements?.join(',') || ''}
-              onChange={handleInputChange}
+              onChange={(e) => {
+                const elements = e.target.value.split(',').map(elem => elem.trim());
+                setMetric(prevMetric => ({ 
+                  ...prevMetric, 
+                  techniqueElements: elements,
+                  resultFields: elements.map(elem => ({ name: elem, type: 'number', min: 1, max: 5 }))
+                }));
+              }}
               placeholder="e.g., Body position, Arm pull, Kick"
               required
             />
@@ -157,24 +251,38 @@ const MetricCreationForm: React.FC = () => {
       case MetricCategory.EnduranceTest:
         return (
           <>
-            <label className={styles.label}>Duration (minutes)</label>
+            <label className={styles.label}>Distance per Rep </label>
             <input
               className={styles.input}
-              name="duration"
+              name="distance"
               type="number"
-              value={(metric as EnduranceTestMetric).duration || ''}
+              value={(metric as EnduranceTestMetric).distance || ''}
               onChange={handleInputChange}
               required
             />
-            <label className={styles.label}>Rest Intervals (seconds)</label>
+            <label className={styles.label}>Stroke</label>
+            <select
+              className={styles.select}
+              name="stroke"
+              value={(metric as EnduranceTestMetric).stroke || ''}
+              onChange={handleInputChange}
+              required
+            >
+              <option value="">Select a stroke</option>
+              {strokeOptions.map(stroke => (
+                <option key={stroke} value={stroke}>{stroke}</option>
+              ))}
+            </select>
+            <label className={styles.label}>Total Reps</label>
             <input
               className={styles.input}
-              name="restIntervals"
+              name="totalReps"
               type="number"
-              value={(metric as EnduranceTestMetric).restIntervals || ''}
+              value={(metric as EnduranceTestMetric).totalReps || ''}
               onChange={handleInputChange}
               required
             />
+            {renderTimeInput('interval', 'Target Interval')}
             <label className={styles.label}>Calculation Method</label>
             <select
               className={styles.select}
@@ -183,8 +291,8 @@ const MetricCreationForm: React.FC = () => {
               onChange={handleInputChange}
               required
             >
-              <option value="TOTAL_LAPS">Total Laps</option>
-              <option value="AVERAGE_PACE">Average Pace</option>
+              <option value="TOTAL_COMPLETED">Total Completed Reps</option>
+              <option value="FASTEST_POSSIBLE_SENDOFF">Fastest Possible Sendoff/Interval</option>
               <option value="TIME_TO_FATIGUE">Time to Fatigue</option>
             </select>
           </>
@@ -192,7 +300,7 @@ const MetricCreationForm: React.FC = () => {
       case MetricCategory.SprintPerformance:
         return (
           <>
-            <label className={styles.label}>Distance (m)</label>
+            <label className={styles.label}>Distance </label>
             <input
               className={styles.input}
               name="distance"
@@ -304,15 +412,7 @@ const MetricCreationForm: React.FC = () => {
               onChange={handleInputChange}
               required
             />
-            <label className={styles.label}>Recovery Time (hours)</label>
-            <input
-              className={styles.input}
-              name="recoveryTime"
-              type="number"
-              value={(metric as RecoveryMetricMetric).recoveryTime || ''}
-              onChange={handleInputChange}
-              required
-            />
+            {renderTimeInput('recoveryTime', 'Recovery Time')}
             <label className={styles.label}>Calculation Method</label>
             <select
               className={styles.select}
@@ -330,7 +430,7 @@ const MetricCreationForm: React.FC = () => {
       case MetricCategory.RaceAnalysis:
         return (
           <>
-            <label className={styles.label}>Race Distance (m)</label>
+            <label className={styles.label}>Race Distance </label>
             <input
               className={styles.input}
               name="raceDistance"
@@ -339,14 +439,19 @@ const MetricCreationForm: React.FC = () => {
               onChange={handleInputChange}
               required
             />
-            <label className={styles.label}>Stroke Style</label>
-            <input
-              className={styles.input}
-              name="strokeStyle"
-              value={(metric as RaceAnalysisMetric).strokeStyle || ''}
+            <label className={styles.label}>Stroke</label>
+            <select
+              className={styles.select}
+              name="stroke"
+              value={(metric as RaceAnalysisMetric).stroke || ''}
               onChange={handleInputChange}
               required
-            />
+            >
+              <option value="">Select a stroke</option>
+              {strokeOptions.map(stroke => (
+                <option key={stroke} value={stroke}>{stroke}</option>
+              ))}
+            </select>
             <label className={styles.label}>Calculation Method</label>
             <select
               className={styles.select}
@@ -412,40 +517,26 @@ const MetricCreationForm: React.FC = () => {
             <select
               className={styles.select}
               name="testType"
-              value={(metric as BaseFitnessTestMetric).testType || 'single'}
+              value={(metric as BaseFitnessTestMetric).testType || ''}
               onChange={handleInputChange}
               required
             >
-              <option value="single">Single Distance</option>
-              <option value="multi">Multi-Part</option>
+              <option value="single">Single</option>
+              <option value="multi">Multi</option>
             </select>
-
-            {(metric as BaseFitnessTestMetric).testType === 'single' && (
-              <>
-                <label className={styles.label}>Total Distance (m)</label>
-                <input
-                  className={styles.input}
-                  name="totalDistance"
-                  type="number"
-                  value={(metric as BaseFitnessTestMetric).totalDistance || ''}
-                  onChange={handleInputChange}
-                  required
-                />
-                <label className={styles.label}>Total Time (seconds)</label>
-                <input
-                  className={styles.input}
-                  name="totalTime"
-                  type="number"
-                  value={(metric as BaseFitnessTestMetric).totalTime || ''}
-                  onChange={handleInputChange}
-                  required
-                />
-              </>
-            )}
-
+            <label className={styles.label}>Total Distance </label>
+            <input
+              className={styles.input}
+              name="totalDistance"
+              type="number"
+              value={(metric as BaseFitnessTestMetric).totalDistance || ''}
+              onChange={handleInputChange}
+              required
+            />
+            {renderTimeInput('totalTime', 'Total Time')}
             {(metric as BaseFitnessTestMetric).testType === 'multi' && (
               <>
-                <label className={styles.label}>Part 1 Distance (m)</label>
+                <label className={styles.label}>Part 1 Distance </label>
                 <input
                   className={styles.input}
                   name="part1Distance"
@@ -454,25 +545,9 @@ const MetricCreationForm: React.FC = () => {
                   onChange={handleInputChange}
                   required
                 />
-                <label className={styles.label}>Part 1 Time (seconds)</label>
-                <input
-                  className={styles.input}
-                  name="part1Time"
-                  type="number"
-                  value={(metric as BaseFitnessTestMetric).part1Time || ''}
-                  onChange={handleInputChange}
-                  required
-                />
-                <label className={styles.label}>Rest Duration (seconds)</label>
-                <input
-                  className={styles.input}
-                  name="restDuration"
-                  type="number"
-                  value={(metric as BaseFitnessTestMetric).restDuration || ''}
-                  onChange={handleInputChange}
-                  required
-                />
-                <label className={styles.label}>Part 2 Distance (m)</label>
+                {renderTimeInput('part1Time', 'Part 1 Time')}
+                {renderTimeInput('restDuration', 'Rest Duration')}
+                <label className={styles.label}>Part 2 Distance</label>
                 <input
                   className={styles.input}
                   name="part2Distance"
@@ -481,26 +556,22 @@ const MetricCreationForm: React.FC = () => {
                   onChange={handleInputChange}
                   required
                 />
-                <label className={styles.label}>Part 2 Time (seconds)</label>
-                <input
-                  className={styles.input}
-                  name="part2Time"
-                  type="number"
-                  value={(metric as BaseFitnessTestMetric).part2Time || ''}
-                  onChange={handleInputChange}
-                  required
-                />
+                {renderTimeInput('part2Time', 'Part 2 Time')}
               </>
             )}
-
-            <label className={styles.label}>Stroke Style</label>
-            <input
-              className={styles.input}
-              name="strokeStyle"
-              value={(metric as BaseFitnessTestMetric).strokeStyle || ''}
+            <label className={styles.label}>Stroke</label>
+            <select
+              className={styles.select}
+              name="stroke"
+              value={(metric as BaseFitnessTestMetric).stroke || ''}
               onChange={handleInputChange}
               required
-            />
+            >
+              <option value="">Select a stroke</option>
+              {strokeOptions.map(stroke => (
+                <option key={stroke} value={stroke}>{stroke}</option>
+              ))}
+            </select>
             <label className={styles.label}>Calculation Method</label>
             <select
               className={styles.select}
@@ -518,6 +589,200 @@ const MetricCreationForm: React.FC = () => {
       default:
         return null;
     }
+  };
+
+  // const addResultField = () => {
+  //   setMetric(prevMetric => ({
+  //     ...prevMetric,
+  //     resultFields: [
+  //       ...(prevMetric.resultFields || []),
+  //       { name: '', type: 'number', min: 0, max: 100 }
+  //     ]
+  //   }));
+  // };
+
+  // const updateResultField = (index: number, field: string, value: string | number) => {
+  //   setMetric(prevMetric => {
+  //     const updatedFields = [...(prevMetric.resultFields || [])];
+  //     updatedFields[index] = { ...updatedFields[index], [field]: value };
+  //     return { ...prevMetric, resultFields: updatedFields };
+  //   });
+  // };
+
+  // const renderResultFields = () => {
+  //   return (
+  //     <div>
+  //       <h3>Result Fields</h3>
+  //       {metric.resultFields?.map((field, index) => (
+  //         <div key={index} className={styles.resultField}>
+  //           <input
+  //             className={styles.input}
+  //             placeholder="Field Name"
+  //             value={field.name}
+  //             onChange={(e) => updateResultField(index, 'name', e.target.value)}
+  //           />
+  //           <select
+  //             className={styles.select}
+  //             value={field.type}
+  //             onChange={(e) => updateResultField(index, 'type', e.target.value)}
+  //           >
+  //             <option value="number">Number</option>
+  //             <option value="text">Text</option>
+  //           </select>
+  //           {field.type === 'number' && (
+  //             <>
+  //               <input
+  //                 className={styles.input}
+  //                 type="number"
+  //                 placeholder="Min"
+  //                 value={field.min}
+  //                 onChange={(e) => updateResultField(index, 'min', parseInt(e.target.value))}
+  //               />
+  //               <input
+  //                 className={styles.input}
+  //                 type="number"
+  //                 placeholder="Max"
+  //                 value={field.max}
+  //                 onChange={(e) => updateResultField(index, 'max', parseInt(e.target.value))}
+  //               />
+  //             </>
+  //           )}
+  //         </div>
+  //       ))}
+  //       <button type="button" onClick={addResultField} className={styles.button}>
+  //         Add Result Field
+  //       </button>
+  //     </div>
+  //   );
+  // };
+
+  const renderMetricPreview = () => {
+    if (!showPreview) return null;
+    return (
+      <div className={styles.preview}>
+        <h3>Metric Preview</h3>
+        <p><strong>Name:</strong> {metric.name}</p>
+        <p><strong>Category:</strong> {metric.category}</p>
+        <p><strong>Description:</strong> {metric.description}</p>
+        <p><strong>Unit:</strong> {metric.unit}</p>
+        <p><strong>Group:</strong> {coachGroups.find(g => g.id === metric.group_id)?.name}</p>
+        {renderCategorySpecificPreview()}
+      </div>
+    );
+  };
+
+  const renderCategorySpecificPreview = () => {
+    switch (metric.category) {
+      case MetricCategory.TimeTrial:
+        return (
+          <>
+            <p><strong>Distance:</strong> {(metric as TimeTrialMetric).distance}{metric.unit === 'yards' ? ' yd' : ' m'}</p>
+            <p><strong>Stroke:</strong> {(metric as TimeTrialMetric).stroke}</p>
+            <p><strong>Calculation Method:</strong> {(metric as TimeTrialMetric).calculationMethod}</p>
+          </>
+        );
+      case MetricCategory.DistanceChallenge:
+        return (
+          <>
+            <p><strong>Time Limit:</strong> {formatTime((metric as DistanceChallengeMetric).timeLimit)}</p>
+            <p><strong>Stroke:</strong> {(metric as DistanceChallengeMetric).stroke}</p>
+            <p><strong>Calculation Method:</strong> {(metric as DistanceChallengeMetric).calculationMethod}</p>
+          </>
+        );
+      case MetricCategory.TechniqueAssessment:
+        return (
+          <>
+            <p><strong>Technique Elements:</strong> {(metric as TechniqueAssessmentMetric).techniqueElements?.join(', ')}</p>
+            <p><strong>Calculation Method:</strong> {(metric as TechniqueAssessmentMetric).calculationMethod}</p>
+          </>
+        );
+      case MetricCategory.EnduranceTest:
+        return (
+          <>
+            <p><strong>Distance per Rep:</strong> {(metric as EnduranceTestMetric).distance} {metric.unit === 'yards' ? 'yd' : 'm'}</p>
+            <p><strong>Stroke:</strong> {(metric as EnduranceTestMetric).stroke}</p>
+            <p><strong>Total Reps:</strong> {(metric as EnduranceTestMetric).totalReps}</p>
+            <p><strong>Target Interval:</strong> {formatTime((metric as EnduranceTestMetric).interval)}</p>
+            <p><strong>Calculation Method:</strong> {(metric as EnduranceTestMetric).calculationMethod}</p>
+          </>
+        );
+      case MetricCategory.SprintPerformance:
+        return (
+          <>
+            <p><strong>Distance:</strong> {(metric as SprintPerformanceMetric).distance} {metric.unit === 'yards' ? 'yd' : 'm'}</p>
+            <p><strong>Repetitions:</strong> {(metric as SprintPerformanceMetric).repetitions}</p>
+            <p><strong>Calculation Method:</strong> {(metric as SprintPerformanceMetric).calculationMethod}</p>
+          </>
+        );
+      case MetricCategory.DrillProficiency:
+        return (
+          <>
+            <p><strong>Drill Name:</strong> {(metric as DrillProficiencyMetric).drillName}</p>
+            <p><strong>Focus Area:</strong> {(metric as DrillProficiencyMetric).focusArea}</p>
+            <p><strong>Calculation Method:</strong> {(metric as DrillProficiencyMetric).calculationMethod}</p>
+          </>
+        );
+      case MetricCategory.StrengthBenchmark:
+        return (
+          <>
+            <p><strong>Exercise Name:</strong> {(metric as StrengthBenchmarkMetric).exerciseName}</p>
+            <p><strong>Equipment:</strong> {(metric as StrengthBenchmarkMetric).equipment}</p>
+            <p><strong>Calculation Method:</strong> {(metric as StrengthBenchmarkMetric).calculationMethod}</p>
+          </>
+        );
+      case MetricCategory.RecoveryMetric:
+        return (
+          <>
+            <p><strong>Training Load:</strong> {(metric as RecoveryMetricMetric).trainingLoad}</p>
+            <p><strong>Recovery Time:</strong> {formatTime((metric as RecoveryMetricMetric).recoveryTime)}</p>
+            <p><strong>Calculation Method:</strong> {(metric as RecoveryMetricMetric).calculationMethod}</p>
+          </>
+        );
+      case MetricCategory.RaceAnalysis:
+        return (
+          <>
+            <p><strong>Race Distance:</strong> {(metric as RaceAnalysisMetric).raceDistance} {metric.unit === 'yards' ? 'yd' : 'm'}</p>
+            <p><strong>Stroke:</strong> {(metric as RaceAnalysisMetric).stroke}</p>
+            <p><strong>Calculation Method:</strong> {(metric as RaceAnalysisMetric).calculationMethod}</p>
+          </>
+        );
+      case MetricCategory.ProgressTracker:
+        return (
+          <>
+            <p><strong>Baseline Value:</strong> {(metric as ProgressTrackerMetric).baselineValue}</p>
+            <p><strong>Target Value:</strong> {(metric as ProgressTrackerMetric).targetValue}</p>
+            <p><strong>Timeframe:</strong> {(metric as ProgressTrackerMetric).timeframe} days</p>
+            <p><strong>Calculation Method:</strong> {(metric as ProgressTrackerMetric).calculationMethod}</p>
+          </>
+        );
+      case MetricCategory.BaseFitnessTest:
+        return (
+          <>
+            <p><strong>Test Type:</strong> {(metric as BaseFitnessTestMetric).testType}</p>
+            <p><strong>Total Distance:</strong> {(metric as BaseFitnessTestMetric).totalDistance} {metric.unit === 'yards' ? 'yd' : 'm'}</p>
+            <p><strong>Total Time:</strong> {formatTime((metric as BaseFitnessTestMetric).totalTime)}</p>
+            <p><strong>Stroke:</strong> {(metric as BaseFitnessTestMetric).stroke}</p>
+            <p><strong>Calculation Method:</strong> {(metric as BaseFitnessTestMetric).calculationMethod}</p>
+            {(metric as BaseFitnessTestMetric).testType === 'multi' && (
+              <>
+                <p><strong>Part 1 Distance:</strong> {(metric as BaseFitnessTestMetric).part1Distance} {metric.unit === 'yards' ? 'yd' : 'm'}</p>
+                <p><strong>Part 1 Time:</strong> {formatTime((metric as BaseFitnessTestMetric).part1Time)}</p>
+                <p><strong>Rest Duration:</strong> {formatTime((metric as BaseFitnessTestMetric).restDuration)}</p>
+                <p><strong>Part 2 Distance:</strong> {(metric as BaseFitnessTestMetric).part2Distance} {metric.unit === 'yards' ? 'yd' : 'm'}</p>
+                <p><strong>Part 2 Time:</strong> {formatTime((metric as BaseFitnessTestMetric).part2Time)}</p>
+              </>
+            )}
+          </>
+        );
+      default:
+        return null;
+    }
+  };
+
+  const formatTime = (timeObj: any) => {
+    if (!timeObj) return '';
+    const { hours = 0, minutes = 0, seconds = 0 } = timeObj;
+    return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
   };
 
   return (
@@ -561,14 +826,18 @@ const MetricCreationForm: React.FC = () => {
         />
 
         <label className={styles.label}>Unit</label>
-        <input
-          className={styles.input}
+        <select
+          className={styles.select}
           name="unit"
           value={metric.unit}
           onChange={handleInputChange}
-          placeholder="Unit (e.g., seconds, meters)"
           required
-        />
+        >
+          <option value="">Select a unit</option>
+          {unitOptions.map(unit => (
+            <option key={unit} value={unit}>{unit}</option>
+          ))}
+        </select>
 
         <label className={styles.label}>Group</label>
         <select
@@ -586,8 +855,16 @@ const MetricCreationForm: React.FC = () => {
 
         {renderCategorySpecificFields()}
 
-        <button className={styles.button} type="submit">Create Metric</button>
+        <div className={styles.buttonGroup}>
+          <button className={styles.button} type="submit">Create Metric</button>
+          <button className={styles.button} type="button" onClick={() => setShowPreview(!showPreview)}>
+            {showPreview ? 'Hide Preview' : 'Show Preview'}
+          </button>
+          <button className={styles.button} type="button" onClick={resetForm}>Reset Form</button>
+        </div>
       </form>
+
+      {renderMetricPreview()}
     </div>
   );
 };

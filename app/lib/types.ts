@@ -65,18 +65,20 @@ export interface BaseMetric {
   category: MetricCategory;
   unit: string;
   group_id: string;
+  timeValue?: number; 
 }
 
 export interface TimeTrialMetric extends BaseMetric {
   distance: number;
-  strokeStyle: string;
+  stroke: string;
   calculationMethod: 'BEST_TIME' | 'AVERAGE_TIME' | 'TIME_IMPROVEMENT';
 }
 
 export interface DistanceChallengeMetric extends BaseMetric {
+  distance: any;
   timeLimit: number;
-  strokeStyle: string;
-  calculationMethod: 'TOTAL_DISTANCE' | 'AVERAGE_PACE' | 'DISTANCE_IMPROVEMENT';
+  stroke: string;
+  calculationMethod: 'TOTAL_DISTANCE' | 'DISTANCE_IMPROVEMENT';
 }
 
 export interface TechniqueAssessmentMetric extends BaseMetric {
@@ -85,9 +87,11 @@ export interface TechniqueAssessmentMetric extends BaseMetric {
 }
 
 export interface EnduranceTestMetric extends BaseMetric {
-  duration: number;
-  restIntervals: number;
-  calculationMethod: 'TOTAL_LAPS' | 'AVERAGE_PACE' | 'TIME_TO_FATIGUE';
+  distance: number;
+  stroke: string;
+  totalReps: number;
+  interval: number;
+  calculationMethod: 'TOTAL_COMPLETED' | 'FASTEST_POSSIBLE_SENDOFF/INTERVAL' | 'TIME_TO_FATIGUE';
 }
 
 export interface SprintPerformanceMetric extends BaseMetric {
@@ -116,7 +120,7 @@ export interface RecoveryMetricMetric extends BaseMetric {
 
 export interface RaceAnalysisMetric extends BaseMetric {
   raceDistance: number;
-  strokeStyle: string;
+  stroke: string;
   calculationMethod: 'SPLIT_TIMES' | 'TURN_EFFICIENCY' | 'STROKE_COUNT';
 }
 
@@ -136,9 +140,10 @@ export interface BaseFitnessTestMetric extends BaseMetric {
   restDuration?: number;
   part2Distance?: number;
   part2Time?: number;
-  strokeStyle: string;
+  stroke: string;
   calculationMethod: 'AVERAGE_PACE' | 'TOTAL_TIME' | 'PACE_COMPARISON';
 }
+
 
 export type Metric = TimeTrialMetric | DistanceChallengeMetric | TechniqueAssessmentMetric | EnduranceTestMetric |
                      SprintPerformanceMetric | DrillProficiencyMetric | StrengthBenchmarkMetric | RecoveryMetricMetric |
@@ -149,19 +154,18 @@ export interface SwimGroup {
   name: string;
 }
 
-// Additional types from the original definition
-export type MetricType = 'Test Set' | 'Goal Time' | 'Progress Metric' | 'Performance Benchmark';
 
-export interface SimpleMetric {
-  id: string;
-  name: string;
-  type: MetricType;
-  description?: string;
-  maxReps?: number;  // Optional, used for 'Test Set' with 'reps'
-  goalTime?: string; // Optional, used for 'Goal Time'
-  swimmerId: string;
-}
 
-export interface InputResultsFormProps {
-  metric: SimpleMetric;
-}
+// export interface SimpleMetric {
+//   id: string;
+//   name: string;
+//   type: MetricType;
+//   description?: string;
+//   maxReps?: number;  // Optional, used for 'Test Set' with 'reps'
+//   goalTime?: string; // Optional, used for 'Goal Time'
+//   swimmerId: string;
+// }
+
+// export interface InputResultsFormProps {
+//   metric: SimpleMetric;
+// }
