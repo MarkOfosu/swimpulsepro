@@ -104,3 +104,42 @@
       grid-template-columns: 1fr;
     }
   }
+  
+  
+  .preview {
+    margin-top: 20px;
+    padding: 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+  }
+  
+  .buttonGroup {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+  }
+  
+  .button {
+    padding: 10px 15px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .button:hover {
+    background-color: #0056b3;
+  }
+
+  .timeInputContainer {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  
+  .timeInput {
+    width: 50px;
+    text-align: center;
+  }

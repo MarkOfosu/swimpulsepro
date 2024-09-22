@@ -7,6 +7,7 @@ import Card from '@components/ui/Card';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@/utils/supabase/client'; // Assuming you have a Supabase client setup
 import { useToast } from '@components/ui/toasts/Toast'; // Assuming you're using a toast notification system
+import Loader from '@components/ui/Loader';
 
 const SwimGroupsPage: React.FC = () => {
   const [swimGroups, setSwimGroups] = useState<any[]>([]); // State for swim groups
@@ -57,7 +58,7 @@ const SwimGroupsPage: React.FC = () => {
         <div className="page-heading">
           <h1>Swim Groups</h1>
         </div>
-        <p>Loading swim groups...</p>
+        <Loader />
       </CoachPageLayout>
     );
   }
