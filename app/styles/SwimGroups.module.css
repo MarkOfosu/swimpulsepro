@@ -1,0 +1,66 @@
+.pageContainer {
+    padding: 2rem;
+    background-color: #0d0e33; 
+  }
+  
+  .pageTitle {
+    font-size: 2.5rem;
+    color: #ff9999; /* Light coral color for "Swim Groups" title */
+    margin-bottom: 2rem;
+  }
+  
+  .swimGroupsGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 3rem;
+  }
+  
+  .swimGroupCard {
+    background-color: #050439; /* Dark blue background for cards */
+    color: white;
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .swimGroupCard h2 {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .swimGroupCard p {
+    color: #030949; /* Light grey for description */
+    margin-bottom: 1rem;
+  }
+  
+  .addSwimmerButton {
+    background-color: #085065; /* Light blue button */
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .createGroupSection {
+    text-align: center;
+    margin-top: 3rem;
+  }
+  
+  .createGroupButton {
+    background-color: #042649;
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 4px;
+    font-size: 1rem;
+    cursor: pointer;
+  }
+  
+  .createGroupForm {
+    margin-top: 2rem;
+    background-color: #090d16; /* Light teal background for form */
+    padding: 2rem;
+    border-radius: 8px;
+  }

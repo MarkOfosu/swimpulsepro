@@ -1,7 +1,7 @@
 .pageWrapper {
     min-height: 100vh;
-    background: linear-gradient(to bottom, #1a202c, #2d3748);
-    color: #e2e8f0;
+    background: rgb(8, 1, 80)  ;
+    color: #ffffff;
     padding: 2rem 0;
   }
   
@@ -9,6 +9,7 @@
     max-width: 1200px;
     margin: 0 auto;
     padding: 0 2rem;
+   
   }
   
   .loading {
@@ -17,13 +18,13 @@
     align-items: center;
     height: 100vh;
     font-size: 1.5rem;
-    color: #a0aec0;
+    color: #05336e;
   }
   
   .heading {
     display: flex;
     align-items: flex-start;
-    background: #2d3748;
+    background: #6e2d60;
     border-radius: 0.5rem;
     padding: 1.5rem;
     margin-bottom: 2rem;
@@ -69,8 +70,8 @@
   
   .levelBadge {
     background: linear-gradient(135deg, #f6ad55, #ed8936);
-    color: #1a202c;
-    font-size: 0.9rem;
+    color: #034d15;
+    font-size: 0.7rem;
     font-weight: bold;
     padding: 0.3rem 0.6rem;
     border-radius: 0.5rem;
@@ -82,6 +83,8 @@
     justify-content: center;
     transition: all 0.3s ease;
     border: 2px solid #fbd38d;
+    max-width: 40%  ;
+  
   }
   
   .levelBadge:hover {
@@ -105,20 +108,20 @@
   .progressBar {
     flex-grow: 1;
     height: 0.5rem;
-    background-color: #4a5568;
+    background-color: #1a1c1f;
     border-radius: 0.25rem;
     overflow: hidden;
   }
   
   .progressBarFill {
     height: 100%;
-    background-color: #3182ce;
+    background-color: #1fae0f;
     transition: width 0.3s ease;
   }
   
   .xpInfo {
     font-size: 0.8rem;
-    color: #a0aec0;
+    color: #0beee7;
     white-space: nowrap;
   }
   
@@ -127,14 +130,14 @@
   }
   
   .tabsList {
-    background-color: #2d3748;
+    background-color: #ffffff;
     padding: 0.5rem;
     border-radius: 0.5rem;
     margin-bottom: 1rem;
   }
   
   .card {
-    background-color: #2d3748;
+    background-color: #ffffff;
     border-radius: 0.5rem;
     overflow: hidden;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -143,13 +146,14 @@
   .sectionTitle {
     font-size: 1.5rem;
     font-weight: 600;
-    color: #f7fafc;
+    color: #920a57;
     margin-bottom: 1rem;
   }
   
   .goalCard {
     padding: 1.5rem;
     margin: 1rem 0;
+    background-color: #f7fafc;
   }
   
   .goal {
@@ -161,16 +165,16 @@
     justify-content: space-between;
     align-items: center;
     margin-bottom: 0.5rem;
-    color: #a0aec0;
+    color: #0f0e29;
   }
   
   .goalProgress {
     height: 0.5rem;
-    background-color: #4a5568;
+    background-color: #c5aeb2;
   }
   
   .goalProgress[data-state="loading"] {
-    background-color: #4299e1;
+    background-color: #408d09;
   }
   
   .achievementsGrid {
@@ -183,7 +187,7 @@
     display: flex;
     align-items: center;
     padding: 1rem;
-    background-color: #4a5568;
+    background-color: #791852;
     border-radius: 0.5rem;
     transition: transform 0.2s ease-in-out;
   }
@@ -226,7 +230,7 @@
   }
   
   .achievementCard {
-    background-color: #3a4556;
+    background-color: #0c0267;
     border-radius: 0.5rem;
     padding: 1rem;
     display: flex;
@@ -257,7 +261,7 @@
     text-align: center;
     padding: 1.5rem;
     transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
-    color: #1a202c;
+    color: #5f0508;
   }
   
   .statCard:hover {

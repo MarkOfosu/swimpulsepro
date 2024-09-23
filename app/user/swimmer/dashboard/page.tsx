@@ -44,7 +44,7 @@ const SwimmerDashboard: React.FC = () => {
 
   return (
     <SwimmerPageLayout>
-      <div className={styles.dashboardContainer}>
+      <div>
         <section className={styles.welcomeSection}>
           <h1>Welcome, {user.first_name}!</h1>
           

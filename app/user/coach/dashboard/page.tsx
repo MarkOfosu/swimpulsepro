@@ -50,7 +50,7 @@ const Dashboard: React.FC = () => {
 
   return (
     <CoachPageLayout>
-      <div className={styles.dashboardContainer}>
+      <div>
         <section className={styles.welcomeSection}>
           <h1>Welcome, Coach {user.first_name}!</h1>
           {/* Conditionally render the swim team name and location if it exists */}

@@ -2,7 +2,7 @@
 
 .analyticsContainer {
   padding: 20px;
-  background: var(--background-gradient);
+  background: rgb(18, 5, 68);
   color: var(--text-light);
   border-radius: 8px;
   box-shadow: 0 4px 15px rgba(144, 52, 107, 0.3);
@@ -15,19 +15,18 @@
 }
 
 .searchInput {
-  width: 100%;
+  width: 70%;
   padding: 10px;
   border: 1px solid var(--secondary-light);
   border-radius: 4px;
   font-size: 16px;
-  background-color: var(--primary-dark);
+  background-color: rgb(18, 5, 68);
   color: var(--text-light);
   transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 .searchInput:focus {
   border-color: var(--accent-purple);
-  box-shadow: 0 0 10px var(--accent-purple);
   outline: none;
 }
 
@@ -36,7 +35,7 @@
   top: 100%;
   left: 0;
   right: 0;
-  background-color: var(--primary-light);
+  background-color:rgb(18, 5, 68);
   border: 1px solid var(--secondary-light);
   border-radius: 4px;
   max-height: 150px;
@@ -54,8 +53,8 @@
 }
 
 .suggestionItem:hover {
-  background-color: var(--secondary-dark);
-  color: var(--accent-teal);
+  background-color: rgb(18, 5, 68);
+  color: rgb(3, 52, 53);
 }
 
 .selectionContainer {
@@ -67,39 +66,37 @@
   margin-right: 10px;
   border-radius: 4px;
   font-size: 16px;
-  background-color: var(--primary-dark);
+  background-color: rgb(18, 5, 68);
   color: var(--text-light);
   border: 1px solid var(--secondary-light);
   transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 .groupSelector:focus, .swimmerSelector:focus {
-  border-color: var(--accent-purple);
-  box-shadow: 0 0 10px var(--accent-purple);
+  border-color: rgb(219, 98, 5);
   outline: none;
 }
 
 .groupOverview {
   margin-top: 20px;
   padding: 20px;
-  background-color: var(--primary-light);
+  background-color: white;
   border-radius: 8px;
-  box-shadow: 0 4px 15px rgba(144, 52, 107, 0.2);
 }
 
 .chartSection {
   margin-bottom: 30px;
   padding: 20px;
-  background-color: var(--primary-light);
+  background-color: rgb(243, 185, 164);
   border-radius: 8px;
-  box-shadow: 0 4px 15px rgba(144, 52, 107, 0.2);
+  max-width: 500px;
+  max-height: 800px;
 }
 
 .chartTitle {
   font-size: 1.5em;
   margin-bottom: 15px;
-  color: var(--accent-teal);
-  text-shadow: 0 0 5px var(--accent-purple);
+  color: rgb(18, 5, 68);
 }
 
 

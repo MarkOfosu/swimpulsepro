@@ -66,7 +66,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
   return null;
 };
 
-const GamifiedSwimmerInterface: React.FC<GamifiedSwimmerInterfaceProps> = ({ swimmerId }) => {
+const SwimmerProfilePage: React.FC<GamifiedSwimmerInterfaceProps> = ({ swimmerId }) => {
   const [swimmer, setSwimmer] = React.useState<Swimmer | null>(null);
   const [performanceData, setPerformanceData] = React.useState<PerformanceData[]>([]);
 
@@ -250,4 +250,4 @@ const GamifiedSwimmerInterface: React.FC<GamifiedSwimmerInterfaceProps> = ({ swi
   );
 };
 
-export default GamifiedSwimmerInterface;
+export default SwimmerProfilePage;

@@ -8,7 +8,7 @@ const metricsPage = () => {
     return (
         <CoachPageLayout>
         <div>
-        <h1>Metrics Page</h1>
+        {/* <h1>Metrics Page</h1> */}
         <CreateMetricForm />
         </div>
         </CoachPageLayout>

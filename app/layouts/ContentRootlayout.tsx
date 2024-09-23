@@ -1,12 +1,14 @@
+// ContentRootLayout.tsx
 'use client';
 import React, { useState, useEffect } from 'react';
 import ContentNavBar from '@components/nav/ContentNavBar';
-import '../globals.css';
 import Sidebar from '@components/nav/SideBar';
 import BottomNav from '@components/nav/BottomNav';
 import CollapsibleNav from '@components/nav/CollapsibleNav';
 import { getUserDetails } from '../lib/getUserDetails';
 import Loader from '@components/ui/Loader';
+import styles from '../styles/ContentRootLayout.module.css';
+
 interface ContentRootLayoutProps {
   links: { href: string; label: string }[];
   children: React.ReactNode;
@@ -59,16 +61,22 @@ const ContentRootLayout: React.FC<ContentRootLayoutProps> = ({ links, children }
   }
 
   return (
-    <div className="content-layout">
+    <div className={styles.contentLayout}>
       <CollapsibleNav userRole={user.role} isAdmin={user.isAdmin} userEmail={user.email} />
       <ContentNavBar links={links} />
-      <div className="content-main">
-        <Sidebar userRole={user.role} isAdmin={user.isAdmin} userEmail={user.email} />
-        {React.Children.map(children, child =>
-          React.isValidElement(child)
-            ? React.cloneElement(child as React.ReactElement<any>, { user })
-            : child
-        )}
+      <div className={styles.contentMain}>
+        <Sidebar 
+          userRole={user.role} 
+          isAdmin={user.isAdmin} 
+          userEmail={user.email}
+        />
+        <div className={styles.contentArea}>
+          {React.Children.map(children, child =>
+            React.isValidElement(child)
+              ? React.cloneElement(child as React.ReactElement<any>, { user })
+              : child
+          )}
+        </div>
         <BottomNav userRole={user.role} isAdmin={user.isAdmin} />
       </div>
     </div>

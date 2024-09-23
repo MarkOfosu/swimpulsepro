@@ -1,69 +1,51 @@
 /* SideBar.module.css */
+
 .menu {
   width: 60px;
   transition: all 0.3s ease;
-  background: var(--primary-dark);
-  color: var(--text-light);
+  background: rgb(7, 7, 77); /* Fully opaque background */
+  color: var(--text-color);
   overflow: hidden;
   height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding-top: 10px;
-  box-shadow: 2px 0 15px rgba(144, 52, 107, 0.3);
+  padding-top: 20px;
+  box-shadow: 2px 0 15px rgba(0, 0, 0, 0.2);
   position: fixed;
   top: 0;
   left: 0;
   z-index: 1000;
-  border-right: 2px solid var(--secondary-light);
+}
+
+.menu::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(1, 1, 84, 0.2); /* Transparent overlay */
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
 }
 
 .menu:hover {
   width: 200px;
 }
 
-.logo {
-  margin-bottom: 20px;
+.menu:hover::after {
+  opacity: 1;
 }
 
 .logo img {
-  width: 50px;
+  width: 40px;
   height: auto;
-  border-radius: 50%;
+  border-radius: 40px;
   display: block;
-  margin: 0 auto;
-  box-shadow: 0 0 15px var(--accent-purple);
-  transition: all 0.3s ease;
-}
-
-.menu:hover .logo img {
-  width: 60px;
-}
-
-.userProfile {
-  display: flex;
-  align-items: center;
-  margin-top: 10px;
-  padding: 0 15px;
-}
-
-.profileIcon {
-  margin-right: 10px;
-  font-size: 1.5rem;
-  min-width: 24px;
-  text-align: center;
-  color: var(--accent-teal);
-}
-
-.profileEmail {
-  display: none;
-  font-size: 1rem;
-  margin-left: 10px;
-  color: var(--text-light);
-}
-
-.menu:hover .profileEmail {
-  display: inline-block;
+  margin: 10px auto;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
 }
 
 .pureMenuLink {
@@ -72,15 +54,16 @@
   justify-content: flex-start;
   padding: 15px;
   text-decoration: none;
-  color: var(--text-light);
-  transition: all 0.3s ease;
+  color: var(--text-color);
+  transition: background 0.3s ease, color 0.3s ease;
   width: 100%;
   position: relative;
+  z-index: 1; /* Ensure links are above the overlay */
 }
 
 .pureMenuLink:hover {
-  background: var(--secondary-dark);
-  box-shadow: 0 0 15px var(--accent-pink);
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
 }
 
 .icon {
@@ -88,7 +71,7 @@
   font-size: 1.5rem;
   min-width: 24px;
   text-align: center;
-  color: var(--accent-teal);
+  color: var(--text-color);
 }
 
 .text {
@@ -103,25 +86,9 @@
 
 .separator {
   width: 80%;
-  border-color: var(--secondary-light);
+  border-color: var(--text-color);
+  opacity: 0.3;
   margin: 10px auto;
-}
-
-.collapsed {
-  width: 60px;
-}
-
-.collapsed .text,
-.collapsed .profileEmail {
-  display: none;
-}
-
-.collapsed .userProfile .profileIcon {
-  margin-right: 0;
-}
-
-.collapsed .userProfile {
-  justify-content: center;
 }
 
 .signOutContainer {
@@ -132,48 +99,21 @@
   flex-direction: column;
   margin-top: auto;
   padding-bottom: 20px;
+  position: relative;
+  z-index: 1; /* Ensure sign out container is above the overlay */
 }
 
-.logoutButton {
-  background-color: var(--accent-pink);
-  color: var(--primary-dark);
-  border: none;
-  padding: 10px;
-  border-radius: 20px;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  display: flex;
-  align-items: center;
+.signOutContainer .pureMenuLink {
+  color: var(--text-color);
 }
 
-.logoutButton .icon {
-  margin-right: 10px;
-  font-size: 1.5rem;
-  color: var(--primary-dark);
-}
-
-.logoutButton:hover {
-  background-color: var(--accent-purple);
-  box-shadow: 0 0 15px var(--accent-teal);
-}
-
-.collapsed .logoutButton {
-  justify-content: center;
-}
-
-.collapsed .logoutButton .icon {
-  margin-right: 0;
+.signOutContainer .pureMenuLink:hover {
+  background: rgba(255, 255, 255, 0.2);
+  color: #ffffff;
 }
 
 @media screen and (max-width: 768px) {
   .menu {
     display: none;
-  }
-
-  .bottomNav {
-    display: flex;
-    background-color: var(--primary-dark);
-    border-top: 1px solid var(--secondary-light);
   }
 }
