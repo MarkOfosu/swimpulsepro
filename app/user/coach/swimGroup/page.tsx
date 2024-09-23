@@ -3,31 +3,28 @@
 import { useState, useEffect } from 'react';
 import CoachPageLayout from '../page';
 import CreateSwimGroup from './createSwimGroup/page';
-import {Card} from '@components/ui/Card';
+import Card2 from '@components/ui/Card2';
 import { useRouter } from 'next/navigation';
-import { createClient } from '@/utils/supabase/client'; // Assuming you have a Supabase client setup
-import { useToast } from '@components/ui/toasts/Toast'; // Assuming you're using a toast notification system
+import { createClient } from '@/utils/supabase/client';
+import { useToast } from '@components/ui/toasts/Toast';
 import Loader from '@components/ui/Loader';
+import styles from '../../../styles/SwimGroups.module.css';
 
 const SwimGroupsPage: React.FC = () => {
-  const [swimGroups, setSwimGroups] = useState<any[]>([]); // State for swim groups
-  const [loading, setLoading] = useState(true); // Loading state for swim groups
-  const [errorMessage, setErrorMessage] = useState(''); // Error state for any issues
+  const [swimGroups, setSwimGroups] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [errorMessage, setErrorMessage] = useState('');
   const router = useRouter();
-  const { showToast, ToastContainer } = useToast(); // Toast notifications
-
-  // Supabase client
+  const { showToast, ToastContainer } = useToast();
   const supabase = createClient();
 
-
-  // Fetch swim groups from Supabase
   useEffect(() => {
     const fetchSwimGroups = async () => {
       try {
-        setLoading(true); // Set loading to true while fetching
+        setLoading(true);
         const { data, error } = await supabase
           .from('swim_groups')
-          .select('id, name, description, coach_id, created_at, updated_at'); // Fetch the necessary fields
+          .select('id, name, description, coach_id');
    
         if (error) {
           console.error('Error fetching swim groups:', error);
@@ -35,78 +32,74 @@ const SwimGroupsPage: React.FC = () => {
           showToast('Failed to fetch swim groups', 'error');
         } else {
           setSwimGroups(data);
-          console.log(data)
-
-          showToast('Swim groups fetched successfully', 'success');
         }
       } catch (error) {
         console.error('Unexpected error:', error);
         setErrorMessage('An unexpected error occurred.');
         showToast('Unexpected error occurred', 'error');
       } finally {
-        setLoading(false); // Set loading to false after fetching
+        setLoading(false);
       }
     };
 
     fetchSwimGroups();
   }, []);
 
-  // Display loading state
   if (loading) {
     return (
       <CoachPageLayout>
-        <div className="page-heading">
-          <h1>Swim Groups</h1>
+        <div className={styles.pageContainer}>
+          <h1 className={styles.pageHeading}>Swim Groups</h1>
+          <Loader />
         </div>
-        <Loader />
       </CoachPageLayout>
     );
   }
 
-  // Display error message if any
   if (errorMessage) {
     return (
       <CoachPageLayout>
-        <div className="page-heading">
-          <h1>Swim Groups</h1>
+        <div className={styles.pageContainer}>
+          <h1 className={styles.pageHeading}>Swim Groups</h1>
+          <p className={styles.errorMessage}>{errorMessage}</p>
         </div>
-        <p style={{ color: 'red' }}>{errorMessage}</p>
       </CoachPageLayout>
     );
   }
 
   return (
     <CoachPageLayout>
-      <div className="page-heading">
-        <h1>Swim Groups</h1>
-      </div>
-      <div className="flex-container">
-        {swimGroups.length > 0 ? (
-          swimGroups.map((group) => (
-            // <Card
-            //   size="small"
-            //   color="dark"
-            //   title={group.name}
-            //   description={group.description}
-            //   key={group.id} // Use group ID as key
-            //   glow={true}
-            // >
-            <Card key={group.id}>
-
-              <button
-                onClick={() => router.push(`/coach/swimGroup/${group.id}/addSwimmer`)}
-                className="button"
+      <div className={styles.pageContainer}>
+        <h1 className={styles.pageHeading}>Swim Groups</h1>
+        <div className={styles.swimGroupsGrid}>
+          {swimGroups.length > 0 ? (
+            swimGroups.map((group) => (
+              <Card2
+                size="small"
+                color="dark"
+                title={group.name}
+                description={group.description}
+                key={group.id}
+                glow={true}
+               
               >
-                Add Swimmer
-              </button>
-            </Card>
-          ))
-        ) : (
-          <p>No swim groups available.</p>
-        )}
+                <button
+                  onClick={() => router.push(`/coach/swimGroup/${group.id}/addSwimmer`)}
+                  className={styles.addSwimmerButton}
+                >
+                  Add Swimmer
+                </button>
+              </Card2>
+            ))
+          ) : (
+            <p className={styles.noGroupsMessage}>No swim groups available.</p>
+          )}
+        </div>
+        <div className={styles.createGroupSection}>
+          <CreateSwimGroup />
+        </div>
       </div>
-      <CreateSwimGroup />
-      <ToastContainer /> {/* Toast container for notifications */}
+      <ToastContainer />
     </CoachPageLayout>
   );
 };

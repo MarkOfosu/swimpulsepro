@@ -1,0 +1,33 @@
+/* ContentRootLayout.module.css */
+.contentLayout {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    width: 100%;
+  }
+  
+  .contentMain {
+    display: flex;
+    flex-grow: 1;
+    overflow: hidden;
+  }
+  
+  .contentArea {
+    flex-grow: 1;
+    overflow-y: auto;
+    padding: 20px;
+    transition: margin-left 0.3s ease;
+    margin-left: 60px;
+  
+  }
+  
+  .contentArea.sidebarExpanded {
+    margin-left: 140px; /* 200px (expanded width) - 60px (collapsed width) */
+  }
+  
+  @media screen and (max-width: 768px) {
+    .contentArea,
+    .contentArea.sidebarExpanded {
+      margin-left: 0;
+    }
+  }

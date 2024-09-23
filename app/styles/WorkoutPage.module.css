@@ -2,17 +2,19 @@
   max-width: 800px;
   margin: 0 auto;
   padding: 20px;
-  background-color: var(--primary-light);
+  background-color: rgb(2, 2, 79);
+  
   border-radius: 8px;
-  box-shadow: 0 4px 15px rgba(144, 52, 107, 0.3);
+  /* box-shadow: 0 4px 15px rgba(144, 52, 107, 0.3); */
+  max-width: 1100px;
 }
 
 .title {
   text-align: center;
   font-size: 2.5em;
   margin-bottom: 20px;
-  color: var(--text-light);
-  text-shadow: 0 0 10px var(--accent-pink);
+  color: rgb(6, 170, 172);
+
 }
 
 .buttonGroup {
@@ -24,8 +26,11 @@
   margin: 0 10px;
   padding: 10px 20px;
   font-size: 1.2em;
-  color: var(--text-light);
-  background-color: var(--secondary-dark);
+  color: white;
+  
+  background-color: var(--text-light);
+  
+  
   border: none;
   border-radius: 4px;
   cursor: pointer;
@@ -34,7 +39,7 @@
 
 .optionButton:hover {
   background-color: var(--secondary-light);
-  box-shadow: 0 0 15px var(--accent-purple);
+  /* box-shadow: 0 0 15px var(--accent-purple); */
 }
 
 .sectionTitle {
@@ -53,12 +58,12 @@
 }
 
 .workoutItem {
-  background-color: var(--primary-dark);
+  background-color: white;
   border: 1px solid var(--secondary-light);
   padding: 15px;
   margin-bottom: 10px;
   border-radius: 4px;
-  color: var(--text-light);
+  color: white;
 }
 
 .formGroup {
@@ -69,7 +74,7 @@
   display: block;
   margin-bottom: 5px;
   font-weight: bold;
-  color: var(--accent-teal);
+  color: rgb(195, 126, 133)
 }
 
 .formSelect, .formInput, .formTextarea {
@@ -79,7 +84,7 @@
   border: 1px solid var(--secondary-light);
   border-radius: 4px;
   color: var(--text-light);
-  background-color: var(--primary-dark);
+  background-color: white;
 }
 
 .generateButton, .saveButton, .searchButton {
@@ -89,7 +94,8 @@
   margin-top: 10px;
   font-size: 1.2em;
   color: var(--text-light);
-  background-color: var(--accent-purple);
+  background-color: rgb(53, 66, 118);
+  
   border: none;
   border-radius: 4px;
   cursor: pointer;
@@ -97,8 +103,7 @@
 }
 
 .generateButton:hover, .saveButton:hover, .searchButton:hover {
-  background-color: var(--accent-pink);
-  box-shadow: 0 0 15px var(--accent-teal);
+  background-color: rgb(3, 96, 136);
 }
 
 .generatedWorkout {
@@ -107,5 +112,5 @@
   padding: 15px;
   border-radius: 4px;
   border: 1px solid var(--secondary-light);
-  color: var(--text-light);
+  color: white;
 }

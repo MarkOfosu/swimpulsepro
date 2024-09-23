@@ -3,23 +3,27 @@
   max-width: 800px;
   margin: 0 auto;
   padding: 20px;
-  background: var(--background-gradient);
+  background:rgb(255, 255, 255);
+  
+  
   color: var(--text-light);
   border-radius: 8px;
   box-shadow: 0 4px 15px rgba(144, 52, 107, 0.3);
 }
 
 .pageTitle {
-  color: var(--accent-teal);
+  color: rgb(231, 114, 161);
+  
+  
   font-size: 32px;
   margin-bottom: 20px;
   text-align: center;
   text-transform: uppercase;
-  text-shadow: 0 0 10px var(--accent-purple);
+  /* text-shadow: 0 0 10px var(--accent-purple); */
 }
 
 .guideSection {
-  background-color: var(--primary-light);
+  background-color:rgb(1, 1, 60);
   border: 1px solid var(--secondary-light);
   border-radius: 4px;
   padding: 15px;
@@ -39,7 +43,7 @@
   align-items: center;
   justify-content: space-between;
   padding: 10px;
-  background-color: var(--primary-dark);
+  background-color: rgb(1, 1, 60);
   border-radius: 4px;
   transition: background-color 0.3s ease, color 0.3s ease;
 }
@@ -52,7 +56,7 @@
 .form {
   display: grid;
   gap: 20px;
-  background-color: var(--primary-light);
+  background-color: rgb(2, 2, 61);
   border: 1px solid var(--secondary-light);
   border-radius: 4px;
   padding: 25px;
@@ -72,7 +76,7 @@
   border: 1px solid var(--secondary-light);
   border-radius: 4px;
   font-size: 14px;
-  background-color: var(--primary-dark);
+  background-color: white;
   color: var(--text-light);
   box-sizing: border-box;
   transition: border-color 0.3s ease, box-shadow 0.3s ease;
@@ -91,7 +95,8 @@
 }
 
 .button {
-  background-color: var(--secondary-dark);
+  background-color: rgb(139, 54, 74);
+  
   color: var(--text-light);
   border: none;
   padding: 12px 20px;
@@ -111,7 +116,7 @@
   padding: 20px;
   border: 1px solid var(--secondary-light);
   border-radius: 5px;
-  background-color: var(--primary-light);
+  background-color: rgb(1, 1, 60);
 }
 
 .buttonGroup {

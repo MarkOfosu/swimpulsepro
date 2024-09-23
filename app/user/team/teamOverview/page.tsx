@@ -3,7 +3,7 @@
 // app/team/team-overview/page.tsx
 import React from 'react';
 import TeamLayout from '../page';
-import {Card} from '@components/ui/Card';
+import Card2 from '@components/ui/Card2';
 
 import { useToast } from '../../../../components/ui/toasts/Toast';
 
@@ -22,10 +22,9 @@ const TeamOverview: React.FC = () => {
   return (
     <TeamLayout>
       <h1>Team Overview</h1>
-      {/* <Card title="Team Stats card" description="Team stats for the current season" size="large" color="dark" glow> */}
-      <Card>
-        <p>Content on card here..</p>
-      </Card>
+      <Card2 title="Team Stats card" description="Team stats for the current season" size="large" color="dark" glow>
+        <p>Team stats go here...</p>
+      </Card2>
       <button onClick={handleShowToast}>Show Success Toast</button>
       <button onClick={handleShowErrorToast}>Show Error Toast</button>
       <button onClick={() => showToast('This is a default notification!')}>Show Default Toast</button>
