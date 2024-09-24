@@ -7,6 +7,7 @@ import {
   SwimGroup,
   BaseMetric
 } from '../../../lib/types';
+import { useToast } from '@components/ui/toasts/Toast';
 
 const supabase = createClient();
 
@@ -23,6 +24,7 @@ const MetricCreationForm: React.FC = () => {
   });
   const [coachGroups, setCoachGroups] = useState<SwimGroup[]>([]);
   const [showPreview, setShowPreview] = useState(false);
+
 
   useEffect(() => {
     fetchCoachGroups();
@@ -116,20 +118,18 @@ const MetricCreationForm: React.FC = () => {
         group_id: metric.group_id,
         details: metric.details
       };
-      console.log('metric', metric);
+     
 
       const { data, error } = await supabase
         .from('metrics')
         .insert([metricData]);
       
       if (error) throw error;
-      console.log('Metric created successfully:', data);
       alert('Metric created successfully!');
       resetForm();
     } catch (error) {
       console.error('Error creating metric:', error);
       alert('Error creating metric. Please try again.');
-      console.log('metric', metric);
     }
   };
 
@@ -423,7 +423,7 @@ const MetricCreationForm: React.FC = () => {
             {metric.details?.targetIntervalType === 'RELATIVE' && renderRelativeTimeInput('relativeInterval', 'Relative Interval')}
           </>
         );
-        case MetricCategory.SprintPerformance:
+      case MetricCategory.SprintPerformance:
         return (
           <>
             <label className={styles.label}>Distance</label>
@@ -766,6 +766,182 @@ const MetricCreationForm: React.FC = () => {
     }
   };
 
+  const renderMetricPreview = () => {
+    if (!showPreview) return null;
+    return (
+      <div className={styles.preview}>
+        <h3>Metric Preview</h3>
+        <p><strong>Name:</strong> {metric.name}</p>
+        <p><strong>Category:</strong> {metric.category}</p>
+        <p><strong>Description:</strong> {metric.description}</p>
+        <p><strong>Unit:</strong> {metric.details?.unit}</p>
+        <p><strong>Group:</strong> {coachGroups.find(g => g.id === metric.group_id)?.name}</p>
+        {renderCategorySpecificPreview()}
+      </div>
+    );
+  };
+
+  const renderCategorySpecificPreview = () => {
+    switch (metric.category) {
+      case MetricCategory.TimeTrial:
+        return (
+          <>
+            <p><strong>Distance:</strong> {metric.details?.distance} {metric.details?.unit}</p>
+            <p><strong>Stroke:</strong> {metric.details?.stroke}</p>
+            <p><strong>Calculation Method:</strong> {metric.details?.calculationMethod}</p>
+            {metric.details?.calculationMethod === 'TARGET_TIME' && (
+              <>
+                <p><strong>Target Time Type:</strong> {metric.details?.targetTimeType}</p>
+                {metric.details?.targetTimeType === 'MANUAL' && (
+                  <p><strong>Target Time:</strong> {formatTime(metric.details?.targetTime)}</p>
+                )}
+                {metric.details?.targetTimeType === 'RELATIVE' && (
+                  <p><strong>Relative Time:</strong> {metric.details?.relativeTimeOperation}{metric.details?.relativeTime} seconds</p>
+                )}
+              </>
+            )}
+          </>
+        );
+      case MetricCategory.DistanceChallenge:
+        return (
+          <>
+            <p><strong>Time Limit:</strong> {formatTime(metric.details?.timeLimit)}</p>
+            <p><strong>Stroke:</strong> {metric.details?.stroke}</p>
+            <p><strong>Calculation Method:</strong> {metric.details?.calculationMethod}</p>
+          </>
+        );
+      case MetricCategory.TechniqueAssessment:
+        return (
+          <>
+            <p><strong>Technique Elements:</strong> {metric.details?.techniqueElements?.join(', ')}</p>
+            <p><strong>Calculation Method:</strong> {metric.details?.calculationMethod}</p>
+          </>
+        );
+      case MetricCategory.EnduranceTest:
+        return (
+          <>
+            <p><strong>Distance per Rep:</strong> {metric.details?.distance} {metric.details?.unit}</p>
+            <p><strong>Stroke:</strong> {metric.details?.stroke}</p>
+            <p><strong>Total Reps:</strong> {metric.details?.totalReps}</p>
+            <p><strong>Calculation Method:</strong> {metric.details?.calculationMethod}</p>
+            {metric.details?.calculationMethod === 'TARGET_TIME' && (
+              <>
+                <p><strong>Target Time Type:</strong> {metric.details?.targetTimeType}</p>
+                {metric.details?.targetTimeType === 'MANUAL' && (
+                  <p><strong>Target Time:</strong> {formatTime(metric.details?.targetTime)}</p>
+                )}
+                {metric.details?.targetTimeType === 'RELATIVE' && (
+                  <p><strong>Relative Time:</strong> {metric.details?.relativeTimeOperation}{metric.details?.relativeTime} seconds</p>
+                )}
+              </>
+            )}
+            <p><strong>Target Interval Type:</strong> {metric.details?.targetIntervalType}</p>
+            {metric.details?.targetIntervalType === 'MANUAL' && (
+              <p><strong>Target Interval:</strong> {formatTime(metric.details?.interval)}</p>
+            )}
+            {metric.details?.targetIntervalType === 'RELATIVE' && (
+              <p><strong>Relative Interval:</strong> {metric.details?.relativeIntervalOperation}{metric.details?.relativeInterval} seconds</p>
+            )}
+          </>
+        );
+      case MetricCategory.SprintPerformance:
+        return (
+          <>
+            <p><strong>Distance:</strong> {metric.details?.distance} {metric.details?.unit}</p>
+            <p><strong>Repetitions:</strong> {metric.details?.repetitions}</p>
+            <p><strong>Calculation Method:</strong> {metric.details?.calculationMethod}</p>
+            {metric.details?.calculationMethod === 'TARGET_TIME' && (
+              <>
+                <p><strong>Target Time Type:</strong> {metric.details?.targetTimeType}</p>
+                {metric.details?.targetTimeType === 'MANUAL' && (
+                  <p><strong>Target Time:</strong> {formatTime(metric.details?.targetTime)}</p>
+                )}
+                {metric.details?.targetTimeType === 'RELATIVE' && (
+                  <p><strong>Relative Time:</strong> {metric.details?.relativeTimeOperation}{metric.details?.relativeTime} seconds</p>
+                )}
+              </>
+            )}
+          </>
+        );
+      case MetricCategory.DrillProficiency:
+        return (
+          <>
+            <p><strong>Drill Name:</strong> {metric.details?.drillName}</p>
+            <p><strong>Focus Area:</strong> {metric.details?.focusArea}</p>
+            <p><strong>Calculation Method:</strong> {metric.details?.calculationMethod}</p>
+          </>
+        );
+      case MetricCategory.StrengthBenchmark:
+        return (
+          <>
+            <p><strong>Exercise Name:</strong> {metric.details?.exerciseName}</p>
+            <p><strong>Equipment:</strong> {metric.details?.equipment}</p>
+            <p><strong>Calculation Method:</strong> {metric.details?.calculationMethod}</p>
+          </>
+        );
+      case MetricCategory.RecoveryMetric:
+        return (
+          <>
+            <p><strong>Training Load:</strong> {metric.details?.trainingLoad}</p>
+            <p><strong>Recovery Time:</strong> {formatTime(metric.details?.recoveryTime)}</p>
+            <p><strong>Calculation Method:</strong> {metric.details?.calculationMethod}</p>
+          </>
+        );
+      case MetricCategory.RaceAnalysis:
+        return (
+          <>
+            <p><strong>Race Distance:</strong> {metric.details?.raceDistance} {metric.details?.unit}</p>
+            <p><strong>Stroke:</strong> {metric.details?.stroke}</p>
+            <p><strong>Calculation Method:</strong> {metric.details?.calculationMethod}</p>
+          </>
+        );
+      case MetricCategory.ProgressTracker:
+        return (
+          <>
+            <p><strong>Baseline Value:</strong> {metric.details?.baselineValue}</p>
+            <p><strong>Target Value:</strong> {metric.details?.targetValue}</p>
+            <p><strong>Timeframe:</strong> {metric.details?.timeframe} days</p>
+            <p><strong>Calculation Method:</strong> {metric.details?.calculationMethod}</p>
+          </>
+        );
+      case MetricCategory.BaseFitnessTest:
+        return (
+          <>
+            <p><strong>Test Type:</strong> {metric.details?.testType}</p>
+            <p><strong>Total Distance:</strong> {metric.details?.totalDistance} {metric.details?.unit}</p>
+            <p><strong>Stroke:</strong> {metric.details?.stroke}</p>
+            <p><strong>Calculation Method:</strong> {metric.details?.calculationMethod}</p>
+            {metric.details?.calculationMethod === 'TARGET_TIME' && (
+              <>
+                <p><strong>Target Time Type:</strong> {metric.details?.targetTimeType}</p>
+                {metric.details?.targetTimeType === 'MANUAL' && (
+                  <p><strong>Target Time:</strong> {formatTime(metric.details?.targetTime)}</p>
+                )}
+                {metric.details?.targetTimeType === 'RELATIVE' && (
+                  <p><strong>Relative Time:</strong> {metric.details?.relativeTimeOperation}{metric.details?.relativeTime} seconds</p>
+                )}
+              </>
+            )}
+            {metric.details?.testType === 'multi' && (
+              <>
+                <p><strong>Part 1 Distance:</strong> {metric.details?.part1Distance} {metric.details?.unit}</p>
+                <p><strong>Rest Duration:</strong> {formatTime(metric.details?.restDuration)}</p>
+                <p><strong>Part 2 Distance:</strong> {metric.details?.part2Distance} {metric.details?.unit}</p>
+              </>
+            )}
+          </>
+        );
+      default:
+        return null;
+    }
+  };
+
+  const formatTime = (timeObj: any) => {
+    if (!timeObj) return '';
+    const { hours = 0, minutes = 0, seconds = 0 } = timeObj;
+    return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+  };
+
   return (
     <div className={styles.metricsPage}>
       <h1 className={styles.pageTitle}>Create a New Swim Metric</h1>
@@ -845,12 +1021,7 @@ const MetricCreationForm: React.FC = () => {
         </div>
       </form>
 
-      {showPreview && (
-        <div className={styles.preview}>
-          <h3>Metric Preview</h3>
-          <pre>{JSON.stringify(metric, null, 2)}</pre>
-        </div>
-      )}
+      {renderMetricPreview()}
     </div>
   );
 };
