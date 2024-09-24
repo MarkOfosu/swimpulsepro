@@ -24,6 +24,7 @@ const MetricCreationForm: React.FC = () => {
   });
   const [coachGroups, setCoachGroups] = useState<SwimGroup[]>([]);
   const [showPreview, setShowPreview] = useState(false);
+  const { showToast, ToastContainer } = useToast();
 
 
   useEffect(() => {
@@ -125,11 +126,11 @@ const MetricCreationForm: React.FC = () => {
         .insert([metricData]);
       
       if (error) throw error;
-      alert('Metric created successfully!');
+      showToast('Metric created successfully!', 'success');
       resetForm();
     } catch (error) {
       console.error('Error creating metric:', error);
-      alert('Error creating metric. Please try again.');
+      showToast('Error creating metric. Please try again.', 'error');
     }
   };
 
@@ -1022,7 +1023,9 @@ const MetricCreationForm: React.FC = () => {
       </form>
 
       {renderMetricPreview()}
+      <ToastContainer />
     </div>
+
   );
 };
 
