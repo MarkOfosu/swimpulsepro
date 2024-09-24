@@ -63,91 +63,164 @@ export interface BaseMetric {
   name: string;
   description: string;
   category: MetricCategory;
-  unit: string;
   group_id: string;
-  timeValue?: number; 
+  details: Record<string, any>; 
+  unit?: string; 
 }
 
 export interface TimeTrialMetric extends BaseMetric {
-  distance: number;
-  stroke: string;
-  calculationMethod: 'BEST_TIME' | 'AVERAGE_TIME' | 'TIME_IMPROVEMENT';
+  details: {
+    distance: number;
+    stroke: string;
+    calculationMethod: 'BEST_TIME' | 'AVERAGE_TIME' | 'TIME_IMPROVEMENT' | 'TARGET_TIME';
+    unit: string;
+    targetTimeType?: 'MANUAL' | 'RELATIVE';
+    targetTime?: { hours: number; minutes: number; seconds: number };
+    relativeTime?: number;
+  };
 }
 
 export interface DistanceChallengeMetric extends BaseMetric {
-  distance: any;
-  timeLimit: number;
-  stroke: string;
-  calculationMethod: 'TOTAL_DISTANCE' | 'DISTANCE_IMPROVEMENT';
+  details: {
+    timeLimit: { hours: number; minutes: number; seconds: number };
+    stroke: string;
+    calculationMethod: 'TOTAL_DISTANCE' | 'DISTANCE_IMPROVEMENT';
+    unit: string;
+  };
 }
 
 export interface TechniqueAssessmentMetric extends BaseMetric {
-  techniqueElements: string[];
-  calculationMethod: 'SCORE' | 'IMPROVEMENT_PERCENTAGE';
+  details: {
+    techniqueElements: string[];
+    calculationMethod: 'SCORE' | 'IMPROVEMENT_PERCENTAGE';
+  };
 }
+
 
 export interface EnduranceTestMetric extends BaseMetric {
-  distance: number;
-  stroke: string;
-  totalReps: number;
-  interval: number;
-  calculationMethod: 'TOTAL_COMPLETED' | 'FASTEST_POSSIBLE_SENDOFF/INTERVAL' | 'TIME_TO_FATIGUE';
+
+  details: {
+
+    distance: number;
+
+    stroke: string;
+
+    totalReps: number;
+
+    interval: {
+
+      hours: number;
+
+      minutes: number;
+
+      seconds: number;
+
+    };
+
+    calculationMethod: 'TARGET_TIME' | 'TOTAL_COMPLETED' | 'FASTEST_POSSIBLE_SENDOFF' | 'TIME_TO_FATIGUE';
+
+    unit: string;
+
+    targetTimeType?: 'MANUAL' | 'RELATIVE';
+
+    targetTime?: {
+
+      hours: number;
+
+      minutes: number;
+
+      seconds: number;
+
+    };
+
+    targetIntervalType?: 'MANUAL' | 'RELATIVE'; // Added property
+
+    relativeInterval?: number; // Added property for relative interval
+
+  };
+
 }
 
+
 export interface SprintPerformanceMetric extends BaseMetric {
-  distance: number;
-  repetitions: number;
-  calculationMethod: 'PEAK_SPEED' | 'AVERAGE_SPEED' | 'REACTION_TIME';
+  details: {
+    distance: number;
+    repetitions: number;
+    calculationMethod: 'PEAK_SPEED' | 'AVERAGE_SPEED' | 'REACTION_TIME' | 'TARGET_TIME';
+    unit: string;
+    targetTimeType?: 'MANUAL' | 'RELATIVE';
+    targetTime?: { hours: number; minutes: number; seconds: number };
+    relativeTime?: number;
+  };
 }
 
 export interface DrillProficiencyMetric extends BaseMetric {
-  drillName: string;
-  focusArea: string;
-  calculationMethod: 'REPETITION_COUNT' | 'QUALITY_SCORE' | 'IMPROVEMENT_RATE';
+  details: {
+    drillName: string;
+    focusArea: string;
+    calculationMethod: 'REPETITION_COUNT' | 'QUALITY_SCORE' | 'IMPROVEMENT_RATE';
+  };
 }
 
 export interface StrengthBenchmarkMetric extends BaseMetric {
-  exerciseName: string;
-  equipment: string;
-  calculationMethod: 'MAXIMUM_WEIGHT' | 'REPETITION_COUNT' | 'POWER_OUTPUT';
+  details: {
+    exerciseName: string;
+    equipment: string;
+    calculationMethod: 'MAXIMUM_WEIGHT' | 'REPETITION_COUNT' | 'POWER_OUTPUT';
+    unit: string;
+  };
 }
 
 export interface RecoveryMetricMetric extends BaseMetric {
-  trainingLoad: number;
-  recoveryTime: number;
-  calculationMethod: 'HEART_RATE_VARIABILITY' | 'PERCEIVED_EXERTION' | 'SLEEP_QUALITY';
+  details: {
+    trainingLoad: number;
+    recoveryTime: { hours: number; minutes: number; seconds: number };
+    calculationMethod: 'HEART_RATE_VARIABILITY' | 'PERCEIVED_EXERTION' | 'SLEEP_QUALITY';
+  };
 }
 
 export interface RaceAnalysisMetric extends BaseMetric {
-  raceDistance: number;
-  stroke: string;
-  calculationMethod: 'SPLIT_TIMES' | 'TURN_EFFICIENCY' | 'STROKE_COUNT';
+  details: {
+    raceDistance: number;
+    stroke: string;
+    calculationMethod: 'SPLIT_TIMES' | 'TURN_EFFICIENCY' | 'STROKE_COUNT';
+    unit: string;
+  };
 }
 
 export interface ProgressTrackerMetric extends BaseMetric {
-  baselineValue: number;
-  targetValue: number;
-  timeframe: number;
-  calculationMethod: 'PERCENTAGE_IMPROVEMENT' | 'CONSISTENCY_SCORE' | 'GOAL_ACHIEVEMENT_RATE';
+  details: {
+    baselineValue: number;
+    targetValue: number;
+    timeframe: number;
+    calculationMethod: 'PERCENTAGE_IMPROVEMENT' | 'CONSISTENCY_SCORE' | 'GOAL_ACHIEVEMENT_RATE';
+    unit: string;
+  };
 }
 
 export interface BaseFitnessTestMetric extends BaseMetric {
-  testType: 'single' | 'multi';
-  totalDistance: number;
-  totalTime: number;
-  part1Distance?: number;
-  part1Time?: number;
-  restDuration?: number;
-  part2Distance?: number;
-  part2Time?: number;
-  stroke: string;
-  calculationMethod: 'AVERAGE_PACE' | 'TOTAL_TIME' | 'PACE_COMPARISON';
+  details: {
+    testType: 'single' | 'multi';
+    totalDistance: number;
+    totalTime?: { hours: number; minutes: number; seconds: number };
+    part1Distance?: number;
+    part1Time?: { hours: number; minutes: number; seconds: number };
+    restDuration?: { hours: number; minutes: number; seconds: number };
+    part2Distance?: number;
+    part2Time?: { hours: number; minutes: number; seconds: number };
+    stroke: string;
+    calculationMethod: 'AVERAGE_PACE' | 'TOTAL_TIME' | 'PACE_COMPARISON' | 'TARGET_TIME';
+    unit: string;
+    targetTimeType?: 'MANUAL' | 'RELATIVE';
+    targetTime?: { hours: number; minutes: number; seconds: number };
+    relativeTime?: number;
+  };
 }
-
 
 export type Metric = TimeTrialMetric | DistanceChallengeMetric | TechniqueAssessmentMetric | EnduranceTestMetric |
                      SprintPerformanceMetric | DrillProficiencyMetric | StrengthBenchmarkMetric | RecoveryMetricMetric |
-                     RaceAnalysisMetric | ProgressTrackerMetric | BaseFitnessTestMetric;
+                      RaceAnalysisMetric | ProgressTrackerMetric | BaseFitnessTestMetric;
+
 
 export interface SwimGroup {
   id: string;
