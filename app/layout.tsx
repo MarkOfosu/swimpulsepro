@@ -1,39 +1,36 @@
-//app/layout.tsx
 import React, { ReactNode } from 'react';
-import Sidebar from '../components/nav/SideBar';
-import BottomNav from '@components/nav/BottomNav';
+import dynamic from 'next/dynamic';
 import Footer from '../components/ui/Footer';
 import './globals.css';
-import WelcomePage from './welcome/page';
+
+const ClientApolloProvider = dynamic(
+  () => import('../components/ClientApolloProvider'),
+  { ssr: false }
+);
 
 export const metadata = {
   title: 'SwimPulsePro',
   description: 'Swim Training Fit Analysis and Tracking Tool',
   icons: {
-    icon: [
-      '/favicon.ico?v=4',
-    ],
+    icon: ['/favicon.ico?v=4'],
     apple: '/apple-touch-icon.png?v=4',
-    shortcut: [
-      '/apple-touch-icon.png',
-    ],
+    shortcut: ['/apple-touch-icon.png'],
   },
   manifest: '/site.webmanifest',
 };
 
-
-function RootLayout({ children}: { readonly children: ReactNode}) {
-  const signedin = true;
-
+function RootLayout({ children }: { readonly children: ReactNode }) {
   return (
     <html lang='en'>
       <head>
         <title>{metadata.title}</title>
         <meta name='description' content={metadata.description} />
       </head>
-      <body> 
-          <main className='content'>{children}</main>   
-         <Footer />
+      <body>
+        <ClientApolloProvider>
+          <main className='content'>{children}</main>
+          <Footer />
+        </ClientApolloProvider>
       </body>
     </html>
   );

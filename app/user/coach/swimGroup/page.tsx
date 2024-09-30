@@ -1,49 +1,57 @@
+
 'use client';
 
 import { useState, useEffect } from 'react';
+import { gql, useQuery } from '@apollo/client';
 import CoachPageLayout from '../page';
 import CreateSwimGroup from './createSwimGroup/page';
 import Card2 from '@components/ui/Card2';
 import { useRouter } from 'next/navigation';
-import { createClient } from '@/utils/supabase/client';
-import { useToast } from '@components/ui/toasts/Toast';
+import { useToast } from '@components/ui/Toast';
 import Loader from '@components/ui/Loader';
 import styles from '../../../styles/SwimGroups.module.css';
 
+const GET_SWIM_GROUPS = gql`
+  query GetSwimGroups {
+    swimGroupsCollection {
+      edges {
+        node {
+          id
+          name
+          description
+          coachId
+        }
+      }
+    }
+  }
+`;
+
 const SwimGroupsPage: React.FC = () => {
   const [swimGroups, setSwimGroups] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState('');
   const router = useRouter();
   const { showToast, ToastContainer } = useToast();
-  const supabase = createClient();
+
+  const { loading, error, data } = useQuery(GET_SWIM_GROUPS);
+  console.log("Apollo Query Result:", { loading, error, data });
 
   useEffect(() => {
-    const fetchSwimGroups = async () => {
-      try {
-        setLoading(true);
-        const { data, error } = await supabase
-          .from('swim_groups')
-          .select('id, name, description, coach_id');
-   
-        if (error) {
-          console.error('Error fetching swim groups:', error);
-          setErrorMessage('Failed to fetch swim groups. Please try again.');
-          showToast('Failed to fetch swim groups', 'error');
-        } else {
-          setSwimGroups(data);
-        }
-      } catch (error) {
-        console.error('Unexpected error:', error);
-        setErrorMessage('An unexpected error occurred.');
-        showToast('Unexpected error occurred', 'error');
-      } finally {
-        setLoading(false);
+    if (data) {
+      console.log("Received data:", data);
+      if (data.swimGroupsCollection && data.swimGroupsCollection.edges) {
+        setSwimGroups(data.swimGroupsCollection.edges.map((edge: { node: any }) => edge.node));
+      } else {
+        console.error("Unexpected data structure:", data);
+        setErrorMessage('Received unexpected data structure.');
+        showToast('Error in data structure', 'error');
       }
-    };
-
-    fetchSwimGroups();
-  }, []);
+    }
+    if (error) {
+      console.error('Error fetching swim groups:', error);
+      setErrorMessage(`Failed to fetch swim groups. Error: ${error.message}`);
+      showToast(`Failed to fetch swim groups: ${error.message}`, 'error');
+    }
+  }, [data, error, showToast]);
 
   if (loading) {
     return (
@@ -81,7 +89,6 @@ const SwimGroupsPage: React.FC = () => {
                 description={group.description}
                 key={group.id}
                 glow={true}
-               
               >
                 <button
                   onClick={() => router.push(`/coach/swimGroup/${group.id}/addSwimmer`)}

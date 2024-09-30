@@ -34,7 +34,7 @@ schema: {
     },
   },
   hooks: {
-    afterAllFileWrite: ['npm run prettier'], // Optional: ensures the generated files are formatted
+    afterAllFileWrite: ['npm run prettier'],
   },
 };
 

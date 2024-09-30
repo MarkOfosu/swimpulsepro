@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@/utils/supabase/client';
-import { useToast } from '@components/ui/toasts/Toast';
+import { useToast } from '@components/ui/Toast';
 import styles from '../../../../styles/CreateSwimGroup.module.css';
 
 const CreateSwimGroup: React.FC = () => {

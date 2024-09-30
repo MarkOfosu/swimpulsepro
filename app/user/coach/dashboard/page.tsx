@@ -11,6 +11,7 @@ import {
   recentActivitiesData,
   upcomingEventsData,
 } from '../../../lib/testData';
+import EagleEye from '@components/newFeatures/EagleEye';
 
 const Dashboard: React.FC = () => {
   const [user, setUser] = useState<any>(null);
@@ -104,6 +105,9 @@ const Dashboard: React.FC = () => {
           <button>Create New Swim Group</button>
         </section>
       </div>
+
+            <EagleEye />
+
     </CoachPageLayout>
   );
 };

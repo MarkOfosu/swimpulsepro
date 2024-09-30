@@ -1,0 +1,111 @@
+.dashboard {
+    background-color: #e6f3ff;
+    padding: 2rem;
+    font-family: Arial, sans-serif;
+  }
+  
+  .title {
+    font-size: 2.5rem;
+    color: #ff6b6b;
+    margin-bottom: 2rem;
+  }
+  
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .card {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 1.5rem;
+  }
+  
+  .cardTitle {
+    font-size: 1.25rem;
+    color: #ff6b6b;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+  }
+  
+  .icon {
+    margin-right: 0.5rem;
+    font-size: 1.5rem;
+  }
+  
+  .select, .button, .input {
+    width: 100%;
+    padding: 0.5rem;
+    margin-bottom: 0.5rem;
+    border: 1px solid #cce5ff;
+    border-radius: 4px;
+    font-size: 1rem;
+    background-color: #f0f8ff;
+  }
+  
+  .button {
+    background-color: #4a90e2;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .button:hover {
+    background-color: #357abd;
+  }
+  
+  .goalSetting {
+    margin-top: 1rem;
+  }
+  
+  .goalItem {
+    margin-bottom: 0.5rem;
+  }
+  
+  .tableWrapper {
+    overflow-x: auto;
+  }
+  
+  .table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .table th,
+  .table td {
+    padding: 0.75rem;
+    text-align: left;
+    border-bottom: 1px solid #cce5ff;
+  }
+  
+  .table th {
+    background-color: #f0f8ff;
+    font-weight: bold;
+    color: #4a90e2;
+  }
+  
+  .metricIcon {
+    margin-right: 0.5rem;
+  }
+  
+  .performanceGood {
+    color: #28a745;
+  }
+  
+  .performanceBad {
+    color: #dc3545;
+  }
+  
+  .highlightRow {
+    background-color: #fff0f0;
+  }
+  
+  @media (max-width: 768px) {
+    .grid {
+      grid-template-columns: 1fr;
+    }
+  }
