@@ -19,24 +19,6 @@ const CoachPageLayout: React.FC<{ children: ReactNode }> = ({ children }) => {
     { href: '/user/coach/metrics', label: 'Create Metric' },
   ];
 
-  // useEffect(() => {
-  //   const getSession = async () => {
-  //     const { data: { session }, error } = await supabase.auth.getSession();
-  //     if (error || !session) {
-  //       router.push('/login');
-  //     } else if (session?.user.user_metadata.role !== 'coach') {
-  //       router.push('/403');
-  //     } else {
-  //       setSession(session);
-  //       setLoading(false);
-  //     }
-  //   };
-
-  //   getSession();
-  // }, [router]);
-
-  // if (loading) return <div>Loading...</div>;
-
   return (
     <ContentRootLayout links={links}>
       {children}

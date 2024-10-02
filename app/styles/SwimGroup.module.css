@@ -1,0 +1,121 @@
+.swimGroupContainer {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem;
+    background-color: #1a1b26;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .header {
+    margin-bottom: 2rem;
+    text-align: center;
+  }
+  
+  .title {
+    font-size: 2.5rem;
+    color: #7aa2f7;
+    margin-bottom: 0.5rem;
+  }
+  
+  .description {
+    font-size: 1.1rem;
+    color: #a9b1d6;
+    margin-bottom: 1rem;
+  }
+  
+  .groupCode {
+    font-size: 1rem;
+    color: #9ece6a;
+  }
+  
+  .groupCode span {
+    font-weight: bold;
+    background-color: #2d3136;
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+  }
+  
+  .swimmersSection {
+    margin-bottom: 2rem;
+  }
+  
+  .sectionTitle {
+    font-size: 1.8rem;
+    color: #bb9af7;
+    margin-bottom: 1rem;
+  }
+  
+  .swimmersList {
+    list-style-type: none;
+    padding: 0;
+  }
+  
+  .swimmerItem {
+    background-color: #24283b;
+    padding: 1rem;
+    margin-bottom: 0.5rem;
+    border-radius: 6px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .swimmerId {
+    color: #7dcfff;
+    font-weight: bold;
+  }
+  
+  .swimmerDob {
+    color: #f7768e;
+  }
+  
+  .noSwimmersMessage {
+    text-align: center;
+    color: #a9b1d6;
+    font-style: italic;
+  }
+  
+  .addSwimmerButton {
+    display: block;
+    width: 100%;
+    padding: 1rem;
+    background-color: #f7768e;
+    color: #1a1b26;
+    border: none;
+    border-radius: 6px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .addSwimmerButton:hover {
+    background-color: #ff9e64;
+  }
+  
+  .error {
+    color: #f7768e;
+    text-align: center;
+    font-size: 1.2rem;
+    padding: 2rem;
+  }
+  
+  @media (max-width: 600px) {
+    .swimGroupContainer {
+      padding: 1rem;
+    }
+  
+    .title {
+      font-size: 2rem;
+    }
+  
+    .swimmerItem {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  
+    .swimmerDob {
+      margin-top: 0.5rem;
+    }
+  }

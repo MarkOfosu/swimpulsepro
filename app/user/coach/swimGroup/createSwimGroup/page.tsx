@@ -1,63 +1,75 @@
 'use client';
 
-import React, { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import React, { useState, useCallback } from 'react';
 import { createClient } from '@/utils/supabase/client';
 import { useToast } from '@components/ui/toasts/Toast';
 import styles from '../../../../styles/CreateSwimGroup.module.css';
 
-const CreateSwimGroup: React.FC = () => {
+interface CreateSwimGroupProps {
+  onGroupCreated?: () => void;
+}
+
+const CreateSwimGroup: React.FC<CreateSwimGroupProps> = ({ onGroupCreated }) => {
   const [groupName, setGroupName] = useState('');
   const [description, setDescription] = useState('');
-  const [errorMessage, setErrorMessage] = useState('');
-  const router = useRouter();
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const { showToast, ToastContainer } = useToast();
   const supabase = createClient();
 
+  const generateGroupCode = useCallback(() => {
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    return Array.from({ length: 8 }, () => characters.charAt(Math.floor(Math.random() * characters.length))).join('');
+  }, []);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (isSubmitting) return;
   
-    const { data: { user }, error: userError } = await supabase.auth.getUser();
+    try {
+      setIsSubmitting(true);
+      const { data: { user }, error: userError } = await supabase.auth.getUser();
   
-    if (userError || !user) {
-      console.error('Error fetching user:', userError);
-      setErrorMessage('Unable to fetch user information');
-      showToast('Unable to fetch user information', 'error');
-      return;
-    }
+      if (userError || !user) {
+        throw new Error('Unable to fetch user information');
+      }
   
-    const { data: coachData, error: coachError } = await supabase
-      .from('coaches')
-      .select('id')
-      .eq('id', user.id)
-      .single();
+      const { data: coachData, error: coachError } = await supabase
+        .from('coaches')
+        .select('id')
+        .eq('id', user.id)
+        .single();
   
-    if (coachError || !coachData) {
-      console.error('Error fetching coach ID:', coachError);
-      setErrorMessage('Coach not found. Please try again.');
-      showToast('Coach not found. Please try again.', 'error');
-      return;
-    }
+      if (coachError || !coachData) {
+        throw new Error('Coach not found. Please try again.');
+      }
 
-    const { data, error } = await supabase
-      .from('swim_groups')
-      .insert([
-        {
+      const groupCode = generateGroupCode();
+
+      const { data, error } = await supabase
+        .from('swim_groups')
+        .insert({
           name: groupName,
           description: description,
           coach_id: coachData.id,
-        }
-      ]);
+          group_code: groupCode,
+        })
+        .select()
+        .single();
   
-    if (error) {
-      console.error('Error creating swim group:', error);
-      setErrorMessage('Failed to create swim group. Please try again.');
-      showToast('Failed to create swim group. Please try again.', 'error');
-    } else {
-      showToast('Swim group created successfully', 'success');
-      setDescription('');
+      if (error) throw error;
+
+      showToast(`Swim group created successfully. Group Code: ${groupCode}`, 'success');
       setGroupName('');
-      setErrorMessage('');
+      setDescription('');
+      
+      if (onGroupCreated) {
+        onGroupCreated();
+      }
+    } catch (error) {
+      console.error('Error creating swim group:', error);
+      showToast('Failed to create swim group. Please try again.', 'error');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -83,8 +95,9 @@ const CreateSwimGroup: React.FC = () => {
             className={styles.textarea}
           />
         </div>
-        <button type="submit" className={styles.submitButton}>Create Group</button>
-        {errorMessage && <p className={styles.errorMessage}>{errorMessage}</p>}
+        <button type="submit" className={styles.submitButton} disabled={isSubmitting}>
+          {isSubmitting ? 'Creating...' : 'Create Group'}
+        </button>
       </form>
       <ToastContainer />
     </div>

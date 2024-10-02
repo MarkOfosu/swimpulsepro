@@ -7,10 +7,19 @@ interface Props {
   children: ReactNode;
   size?: 'small' | 'medium' | 'large';
   color?: 'default' | 'dark' | 'light' | 'primary' | 'secondary';
-  glow?: boolean; // New optional prop to enable glow effect
+  glow?: boolean;
+  onClick?: () => void; // New optional prop for click handler
 }
 
-export default function Card({ title, description, children, size = 'medium', color = 'default', glow = false }: Props) {
+export default function Card2({ 
+  title, 
+  description, 
+  children, 
+  size = 'medium', 
+  color = 'default', 
+  glow = false,
+  onClick 
+}: Props) {
   const cardRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -36,8 +45,9 @@ export default function Card({ title, description, children, size = 'medium', co
 
   return (
     <div
-      className={`${styles.cardContainer} ${styles[size]} ${styles[color]} ${glow ? styles.glow : ''}`}
+      className={`${styles.cardContainer} ${styles[size]} ${styles[color]} ${glow ? styles.glow : ''} ${onClick ? styles.clickable : ''}`}
       ref={cardRef}
+      onClick={onClick}
     >
       <div className={styles.cardHeader}>
         <h3 className={styles.cardTitle}>{title}</h3>

@@ -11,7 +11,6 @@
     "prettier": "prettier --write src/gql"
   },
   "dependencies": {
-    "@apollo/client": "^3.11.8",
     "@fortawesome/fontawesome-free": "^6.6.0",
     "@fortawesome/free-solid-svg-icons": "^6.6.0",
     "@fortawesome/react-fontawesome": "^0.2.2",
@@ -26,7 +25,6 @@
     "@supabase/ssr": "^0.4.0",
     "@supabase/supabase-js": "^2.45.4",
     "@types/recharts": "^1.8.29",
-    "graphql": "^16.9.0",
     "langchain": "^0.2.16",
     "langsmith": "^0.1.41",
     "lucide-react": "^0.445.0",
@@ -41,7 +39,6 @@
     "supabase": "^1.192.5"
   },
   "devDependencies": {
-    "@graphql-codegen/cli": "^5.0.2",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
