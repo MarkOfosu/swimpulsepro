@@ -7,7 +7,6 @@ import CoachPageLayout from '../../page';
 import Loader from '@components/ui/Loader';
 import { useToast } from '@components/ui/toasts/Toast';
 import styles from '../../../../styles/SwimGroup.module.css'
-import { PostgrestError } from '@supabase/supabase-js';
 
 interface SwimGroup {
   id: string;
@@ -39,7 +38,6 @@ const SwimGroupPage: React.FC = () => {
   const [swimGroup, setSwimGroup] = useState<SwimGroup | null>(null);
   const [swimmers, setSwimmers] = useState<Swimmer[]>([]);
   const [invitations, setInvitations] = useState<Invitation[]>([]);
-  const [invitationsSupported, setInvitationsSupported] = useState(true);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [inviteEmail, setInviteEmail] = useState('');
@@ -49,7 +47,10 @@ const SwimGroupPage: React.FC = () => {
   const supabase = createClient();
 
   const fetchSwimGroupData = useCallback(async () => {
-    if (!params.groupName) return;
+    if (!params.groupName) {
+      console.error('No groupName in params');
+      return;
+    }
 
     try {
       setLoading(true);
@@ -74,31 +75,21 @@ const SwimGroupPage: React.FC = () => {
 
       if (swimmersResult.error) throw swimmersResult.error;
 
-      setSwimGroup(group);
-      setSwimmers(swimmersResult.data as Swimmer[]);
+      const invitationsResult = await supabase
+        .from('invitations')
+        .select('*')
+        .eq('group_id', group.id);
 
-      // Try to fetch invitations, but don't throw an error if the table doesn't exist
-      try {
-        const invitationsResult = await supabase
-          .from('invitations')
-          .select('*')
-          .eq('group_id', group.id);
-
-        if (invitationsResult.error && invitationsResult.error.code === '42P01') {
-          // Table doesn't exist, so invitations are not supported
-          setInvitationsSupported(false);
-        } else if (invitationsResult.error) {
-          throw invitationsResult.error;
-        } else {
-          setInvitations(invitationsResult.data as Invitation[]);
-        }
-      } catch (invitationError) {
-        console.warn('Invitations not supported:', invitationError);
-        setInvitationsSupported(false);
+      if (invitationsResult.error && invitationsResult.error.code !== '42P01') {
+        throw invitationsResult.error;
       }
 
+      setSwimGroup(group);
+      setSwimmers(swimmersResult.data as Swimmer[]);
+      setInvitations(invitationsResult.data as Invitation[] || []);
+
     } catch (err) {
-      console.error('Error fetching swim group data:', err);
+      console.error('Error in fetchSwimGroupData:', err);
       setError('Failed to fetch swim group data. Please try again.');
       showToast('Failed to fetch swim group data', 'error');
     } finally {
@@ -112,9 +103,23 @@ const SwimGroupPage: React.FC = () => {
 
   const handleInviteSwimmer = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!swimGroup || !invitationsSupported) return;
+    if (!swimGroup) return;
 
     try {
+      const { data: existingInvitations, error: checkError } = await supabase
+        .from('invitations')
+        .select('*')
+        .eq('group_id', swimGroup.id)
+        .eq('email', inviteEmail)
+        .eq('status', 'pending');
+
+      if (checkError) throw checkError;
+
+      if (existingInvitations && existingInvitations.length > 0) {
+        showToast('An invitation for this email is already pending', 'default');
+        return;
+      }
+
       const { data, error } = await supabase
         .from('invitations')
         .insert({
@@ -165,39 +170,35 @@ const SwimGroupPage: React.FC = () => {
           )}
         </div>
 
-        {invitationsSupported && (
-          <>
-            <div className={styles.invitationsSection}>
-              <h2 className={styles.sectionTitle}>Invitations</h2>
-              {invitations.length > 0 ? (
-                <ul className={styles.invitationsList}>
-                  {invitations.map((invitation) => (
-                    <li key={invitation.id} className={styles.invitationItem}>
-                      <span className={styles.invitationEmail}>{invitation.email}</span>
-                      <span className={styles.invitationStatus}>{invitation.status}</span>
-                    </li>
-                  ))}
-                </ul>
-              ) : (
-                <p className={styles.noInvitationsMessage}>No pending invitations.</p>
-              )}
-            </div>
-            
-            <form onSubmit={handleInviteSwimmer} className={styles.inviteForm}>
-              <input
-                type="email"
-                value={inviteEmail}
-                onChange={(e) => setInviteEmail(e.target.value)}
-                placeholder="Enter swimmer's email"
-                required
-                className={styles.inviteInput}
-              />
-              <button type="submit" className={styles.inviteButton}>
-                Invite Swimmer
-              </button>
-            </form>
-          </>
-        )}
+        <div className={styles.invitationsSection}>
+          <h2 className={styles.sectionTitle}>Invitations</h2>
+          {invitations.length > 0 ? (
+            <ul className={styles.invitationsList}>
+              {invitations.map((invitation) => (
+                <li key={invitation.id} className={styles.invitationItem}>
+                  <span className={styles.invitationEmail}>{invitation.email}</span>
+                  <span className={styles.invitationStatus}>{invitation.status}</span>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className={styles.noInvitationsMessage}>No pending invitations.</p>
+          )}
+        </div>
+
+        <form onSubmit={handleInviteSwimmer} className={styles.inviteForm}>
+          <input
+            type="email"
+            value={inviteEmail}
+            onChange={(e) => setInviteEmail(e.target.value)}
+            placeholder="Enter swimmer's email"
+            required
+            className={styles.inviteInput}
+          />
+          <button type="submit" className={styles.inviteButton}>
+            Invite Swimmer
+          </button>
+        </form>
       </div>
       <ToastContainer />
     </CoachPageLayout>
