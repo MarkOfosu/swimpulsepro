@@ -5,13 +5,10 @@ import { useRouter, useParams } from 'next/navigation';
 import { createClient } from '@/utils/supabase/client';
 import CoachPageLayout from '../../../page';
 import { useToast } from '@components/ui/toasts/Toast';
-import styles from '../../../../../styles/AddSwimmer.module.css';
+import styles from '../../../../../styles/InviteSwimmer.module.css';
 
-const AddSwimmerPage: React.FC = () => {
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
+const InviteSwimmerPage: React.FC = () => {
   const [email, setEmail] = useState('');
-  const [dateOfBirth, setDateOfBirth] = useState('');
   const [group, setGroup] = useState<{ id: string; name: string } | null>(null);
   const router = useRouter();
   const params = useParams();
@@ -38,7 +35,7 @@ const AddSwimmerPage: React.FC = () => {
     };
 
     fetchGroup();
-  }, [groupName, supabase, showToast, router]);
+  }, [groupName]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -47,25 +44,37 @@ const AddSwimmerPage: React.FC = () => {
       return;
     }
     try {
+      const { data: existingInvitations, error: checkError } = await supabase
+        .from('invitations')
+        .select('*')
+        .eq('group_id', group.id)
+        .eq('email', email)
+        .eq('status', 'pending');
+
+      if (checkError) throw checkError;
+
+      if (existingInvitations && existingInvitations.length > 0) {
+        showToast('An invitation for this email is already pending', 'error');
+        return;
+      }
+
       const { data, error } = await supabase
-        .from('swimmers')
+        .from('invitations')
         .insert({
-          first_name: firstName,
-          last_name: lastName,
+          group_id: group.id,
           email: email,
-          date_of_birth: dateOfBirth,
-          group_id: group.id
+          status: 'pending'
         })
         .select()
         .single();
 
       if (error) throw error;
 
-      showToast('Swimmer added successfully', 'success');
+      showToast('Invitation sent successfully', 'success');
       router.push(`/user/coach/swimGroup/${encodeURIComponent(group.name)}`);
     } catch (error) {
-      console.error('Error adding swimmer:', error);
-      showToast('Failed to add swimmer', 'error');
+      console.error('Error inviting swimmer:', error);
+      showToast('Failed to invite swimmer', 'error');
     }
   };
 
@@ -75,41 +84,18 @@ const AddSwimmerPage: React.FC = () => {
 
   return (
     <CoachPageLayout>
-      <div className={styles.addSwimmerContainer}>
-        <h1>Add Swimmer to {group.name}</h1>
-        <form onSubmit={handleSubmit} className={styles.addSwimmerForm}>
-          <label>First Name</label>
-          <input
-            type="text"
-            value={firstName}
-            onChange={(e) => setFirstName(e.target.value)}
-            placeholder="First Name"
-            required
-          />
-          <label>Last Name</label>
-          <input
-            type="text"
-            value={lastName}
-            onChange={(e) => setLastName(e.target.value)}
-            placeholder="Last Name"
-            required
-          />
+      <div className={styles.inviteSwimmerContainer}>
+        <h1>Invite Swimmer to {group.name}</h1>
+        <form onSubmit={handleSubmit} className={styles.inviteSwimmerForm}>
           <label>Email</label>
           <input
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            placeholder="Email"
+            placeholder="Swimmer's Email"
             required
           />
-          <label>Date of Birth</label>
-          <input
-            type="date"
-            value={dateOfBirth}
-            onChange={(e) => setDateOfBirth(e.target.value)}
-            required
-          />
-          <button type="submit">Add Swimmer to {group.name}</button>
+          <button type="submit">Send Invitation</button>
         </form>
       </div>
       <ToastContainer />
@@ -117,4 +103,4 @@ const AddSwimmerPage: React.FC = () => {
   );
 };
 
-export default AddSwimmerPage;
+export default InviteSwimmerPage;

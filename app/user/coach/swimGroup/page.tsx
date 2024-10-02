@@ -54,9 +54,9 @@ const SwimGroupsPage: React.FC = () => {
     router.push(`/user/coach/swimGroup/${encodeURIComponent(groupName)}`);
   }, [router]);
 
-  const handleAddSwimmer = useCallback((e: React.MouseEvent, group: SwimGroup) => {
+  const handleInviteSwimmer = useCallback((e: React.MouseEvent, group: SwimGroup) => {
     e.stopPropagation();
-    router.push(`/user/coach/swimGroup/${encodeURIComponent(group.name)}/addSwimmer`);
+    router.push(`/user/coach/swimGroup/${encodeURIComponent(group.name)}/inviteSwimmer`);
   }, [router]);
 
   if (loading) {
@@ -102,11 +102,11 @@ const SwimGroupsPage: React.FC = () => {
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
-                    handleAddSwimmer(e, group);
+                    handleInviteSwimmer(e, group);
                   }}
-                  className={styles.addSwimmerButton}
+                  className={styles.inviteSwimmerButton}
                 >
-                  Add Swimmer
+                  Invite Swimmer
                 </button>
               </Card2>
             ))
