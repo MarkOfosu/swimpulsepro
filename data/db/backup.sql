@@ -41,6 +41,7 @@ CREATE TABLE IF NOT EXISTS swim_groups (
     created_at TIMESTAMPTZ DEFAULT NOW(),
     updated_at TIMESTAMPTZ DEFAULT NOW(),
     description TEXT
+    group_code VARCHAR(8) UNIQUE;
 );
 
 CREATE TABLE IF NOT EXISTS metrics (
@@ -49,7 +50,9 @@ CREATE TABLE IF NOT EXISTS metrics (
     name VARCHAR,
     description TEXT,
     created_at TIMESTAMPTZ DEFAULT NOW(),
-    updated_at TIMESTAMPTZ DEFAULT NOW()
+    updated_at TIMESTAMPTZ DEFAULT NOW(),
+    category  varchar,	
+    details  JSONB,
 );
 
 
