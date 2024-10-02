@@ -7,6 +7,7 @@ import CoachPageLayout from '../../page';
 import Loader from '@components/ui/Loader';
 import { useToast } from '@components/ui/toasts/Toast';
 import styles from '../../../../styles/SwimGroup.module.css'
+import { PostgrestError } from '@supabase/supabase-js';
 
 interface SwimGroup {
   id: string;
@@ -26,11 +27,22 @@ interface Swimmer {
   updated_at: string;
 }
 
+interface Invitation {
+  id: string;
+  group_id: string;
+  email: string;
+  status: 'pending' | 'accepted' | 'rejected';
+  created_at: string;
+}
+
 const SwimGroupPage: React.FC = () => {
   const [swimGroup, setSwimGroup] = useState<SwimGroup | null>(null);
   const [swimmers, setSwimmers] = useState<Swimmer[]>([]);
+  const [invitations, setInvitations] = useState<Invitation[]>([]);
+  const [invitationsSupported, setInvitationsSupported] = useState(true);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [inviteEmail, setInviteEmail] = useState('');
   const router = useRouter();
   const params = useParams();
   const { showToast, ToastContainer } = useToast();
@@ -52,17 +64,39 @@ const SwimGroupPage: React.FC = () => {
         .single();
 
       if (groupResult.error) throw groupResult.error;
-      setSwimGroup(groupResult.data);
 
-      if (groupResult.data) {
-        const swimmersResult = await supabase
-          .from('swimmers')
+      const group = groupResult.data as SwimGroup;
+
+      const swimmersResult = await supabase
+        .from('swimmers')
+        .select('*')
+        .eq('group_id', group.id);
+
+      if (swimmersResult.error) throw swimmersResult.error;
+
+      setSwimGroup(group);
+      setSwimmers(swimmersResult.data as Swimmer[]);
+
+      // Try to fetch invitations, but don't throw an error if the table doesn't exist
+      try {
+        const invitationsResult = await supabase
+          .from('invitations')
           .select('*')
-          .eq('group_id', groupResult.data.id);
+          .eq('group_id', group.id);
 
-        if (swimmersResult.error) throw swimmersResult.error;
-        setSwimmers(swimmersResult.data || []);
+        if (invitationsResult.error && invitationsResult.error.code === '42P01') {
+          // Table doesn't exist, so invitations are not supported
+          setInvitationsSupported(false);
+        } else if (invitationsResult.error) {
+          throw invitationsResult.error;
+        } else {
+          setInvitations(invitationsResult.data as Invitation[]);
+        }
+      } catch (invitationError) {
+        console.warn('Invitations not supported:', invitationError);
+        setInvitationsSupported(false);
       }
+
     } catch (err) {
       console.error('Error fetching swim group data:', err);
       setError('Failed to fetch swim group data. Please try again.');
@@ -76,11 +110,31 @@ const SwimGroupPage: React.FC = () => {
     fetchSwimGroupData();
   }, [fetchSwimGroupData]);
 
-  const handleAddSwimmer = useCallback(() => {
-    if (swimGroup) {
-      router.push(`/user/coach/swimGroup/${encodeURIComponent(swimGroup.name)}/addSwimmer`);
+  const handleInviteSwimmer = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!swimGroup || !invitationsSupported) return;
+
+    try {
+      const { data, error } = await supabase
+        .from('invitations')
+        .insert({
+          group_id: swimGroup.id,
+          email: inviteEmail,
+          status: 'pending'
+        })
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      setInvitations([...invitations, data as Invitation]);
+      setInviteEmail('');
+      showToast('Invitation sent successfully', 'success');
+    } catch (err) {
+      console.error('Error inviting swimmer:', err);
+      showToast('Failed to invite swimmer', 'error');
     }
-  }, [router, swimGroup]);
+  };
 
   if (loading) return <CoachPageLayout><Loader /></CoachPageLayout>;
   if (error) return <CoachPageLayout><div className={styles.error}>{error}</div></CoachPageLayout>;
@@ -107,16 +161,43 @@ const SwimGroupPage: React.FC = () => {
               ))}
             </ul>
           ) : (
-            <div className={styles.noSwimmersMessage}>
-              <p>There are no swimmers in this group yet.</p>
-              <p>Click the button below to add your first swimmer!</p>
-            </div>
+            <p className={styles.noSwimmersMessage}>No swimmers in this group yet.</p>
           )}
         </div>
-        
-        <button onClick={handleAddSwimmer} className={styles.addSwimmerButton}>
-          {swimmers.length > 0 ? 'Add Another Swimmer' : 'Add Your First Swimmer'}
-        </button>
+
+        {invitationsSupported && (
+          <>
+            <div className={styles.invitationsSection}>
+              <h2 className={styles.sectionTitle}>Invitations</h2>
+              {invitations.length > 0 ? (
+                <ul className={styles.invitationsList}>
+                  {invitations.map((invitation) => (
+                    <li key={invitation.id} className={styles.invitationItem}>
+                      <span className={styles.invitationEmail}>{invitation.email}</span>
+                      <span className={styles.invitationStatus}>{invitation.status}</span>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p className={styles.noInvitationsMessage}>No pending invitations.</p>
+              )}
+            </div>
+            
+            <form onSubmit={handleInviteSwimmer} className={styles.inviteForm}>
+              <input
+                type="email"
+                value={inviteEmail}
+                onChange={(e) => setInviteEmail(e.target.value)}
+                placeholder="Enter swimmer's email"
+                required
+                className={styles.inviteInput}
+              />
+              <button type="submit" className={styles.inviteButton}>
+                Invite Swimmer
+              </button>
+            </form>
+          </>
+        )}
       </div>
       <ToastContainer />
     </CoachPageLayout>
