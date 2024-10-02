@@ -6,6 +6,7 @@ import { createClient } from '@/utils/supabase/client';
 import CoachPageLayout from '../page';
 import CreateSwimGroup from './createSwimGroup/page';
 import Card2 from '@components/ui/Card2';
+import InviteSwimmerModal from '../swimGroup/[groupName]/inviteSwimmer/InviteSwimmerModal'
 import { useToast } from '@components/ui/toasts/Toast';
 import Loader from '@components/ui/Loader';
 import styles from '../../../styles/SwimGroups.module.css';
@@ -22,6 +23,8 @@ const SwimGroupsPage: React.FC = () => {
   const [swimGroups, setSwimGroups] = useState<SwimGroup[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [inviteModalOpen, setInviteModalOpen] = useState(false);
+  const [selectedGroup, setSelectedGroup] = useState<SwimGroup | null>(null);
   const router = useRouter();
   const { showToast, ToastContainer } = useToast();
   const supabase = createClient();
@@ -54,10 +57,11 @@ const SwimGroupsPage: React.FC = () => {
     router.push(`/user/coach/swimGroup/${encodeURIComponent(groupName)}`);
   }, [router]);
 
-  const handleInviteSwimmer = useCallback((e: React.MouseEvent, group: SwimGroup) => {
+  const handleInviteClick = useCallback((e: React.MouseEvent, group: SwimGroup) => {
     e.stopPropagation();
-    router.push(`/user/coach/swimGroup/${encodeURIComponent(group.name)}/inviteSwimmer`);
-  }, [router]);
+    setSelectedGroup(group);
+    setInviteModalOpen(true);
+  }, []);
 
   if (loading) {
     return (
@@ -100,11 +104,8 @@ const SwimGroupsPage: React.FC = () => {
                 <p>{group.description}</p>
                 <p>Group Code: {group.group_code}</p>
                 <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleInviteSwimmer(e, group);
-                  }}
-                  className={styles.inviteSwimmerButton}
+                  onClick={(e) => handleInviteClick(e, group)}
+                  className={styles.inviteButton}
                 >
                   Invite Swimmer
                 </button>
@@ -118,6 +119,14 @@ const SwimGroupsPage: React.FC = () => {
           <CreateSwimGroup onGroupCreated={fetchSwimGroups} />
         </div>
       </div>
+      {inviteModalOpen && selectedGroup && (
+        <InviteSwimmerModal
+          groupId={selectedGroup.id}
+          groupName={selectedGroup.name}
+          onClose={() => setInviteModalOpen(false)}
+          onInviteSuccess={fetchSwimGroups}
+        />
+      )}
       <ToastContainer />
     </CoachPageLayout>
   );
