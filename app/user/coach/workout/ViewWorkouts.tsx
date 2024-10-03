@@ -11,7 +11,7 @@ interface ViewWorkoutsProps {
   setSelectedGroup: (group: string) => void;
 }
 
-const ITEMS_PER_PAGE = 10;
+const ITEMS_PER_PAGE = 5;
 
 const ViewWorkouts: React.FC<ViewWorkoutsProps> = ({ groups, selectedGroup, setSelectedGroup }) => {
   const [filterDate, setFilterDate] = useState<string>('');
