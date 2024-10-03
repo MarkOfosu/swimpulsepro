@@ -41,7 +41,9 @@ export interface WorkoutData {
   group_id: string;
   workout_data: SwimWorkout;
   created_at?: string;
+  id: string;
 }
+
 
 // Metric types
 export enum MetricCategory {
@@ -225,6 +227,7 @@ export type Metric = TimeTrialMetric | DistanceChallengeMetric | TechniqueAssess
 export interface SwimGroup {
   id: string;
   name: string;
+  group_code: string;
 }
 
 
