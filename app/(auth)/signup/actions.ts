@@ -14,12 +14,11 @@ export async function signup(formData: FormData) {
     const confirmPassword = formData.get('confirmPassword') as string;
     const role = formData.get('role') as 'coach' | 'swimmer';
 
-    // Check if all necessary fields are filled
     if (!firstName || !lastName || !email || !password || !confirmPassword || !role) {
       return { error: 'Missing required fields' };
     }
 
-    // Check for password confirmation match
+
     if (password !== confirmPassword) {
       return { error: 'Passwords do not match' };
     }
@@ -65,7 +64,6 @@ export async function signup(formData: FormData) {
     });
 
     if (error) {
-      // Return the error message instead of redirecting
       return { error: error.message };
     }
 

@@ -1,12 +1,9 @@
 .container {
-  max-width: 800px;
+  max-width: 1100px;
   margin: 0 auto;
   padding: 20px;
   background-color: rgb(2, 2, 79);
-  
   border-radius: 8px;
-  /* box-shadow: 0 4px 15px rgba(144, 52, 107, 0.3); */
-  max-width: 1100px;
 }
 
 .title {
@@ -14,7 +11,6 @@
   font-size: 2.5em;
   margin-bottom: 20px;
   color: rgb(6, 170, 172);
-
 }
 
 .buttonGroup {
@@ -27,10 +23,7 @@
   padding: 10px 20px;
   font-size: 1.2em;
   color: white;
-  
   background-color: var(--text-light);
-  
-  
   border: none;
   border-radius: 4px;
   cursor: pointer;
@@ -39,7 +32,6 @@
 
 .optionButton:hover {
   background-color: var(--secondary-light);
-  /* box-shadow: 0 0 15px var(--accent-purple); */
 }
 
 .sectionTitle {
@@ -63,7 +55,7 @@
   padding: 15px;
   margin-bottom: 10px;
   border-radius: 4px;
-  color: white;
+  color: rgb(162, 16, 16);
 }
 
 .formGroup {
@@ -74,7 +66,7 @@
   display: block;
   margin-bottom: 5px;
   font-weight: bold;
-  color: rgb(195, 126, 133)
+  color: rgb(195, 126, 133);
 }
 
 .formSelect, .formInput, .formTextarea {
@@ -87,7 +79,7 @@
   background-color: white;
 }
 
-.generateButton, .saveButton, .searchButton {
+.generateButton, .saveButton, .searchButton, .editButton {
   display: block;
   width: 100%;
   padding: 10px;
@@ -95,14 +87,13 @@
   font-size: 1.2em;
   color: var(--text-light);
   background-color: rgb(53, 66, 118);
-  
   border: none;
   border-radius: 4px;
   cursor: pointer;
   transition: all 0.3s ease;
 }
 
-.generateButton:hover, .saveButton:hover, .searchButton:hover {
+.generateButton:hover, .saveButton:hover, .searchButton:hover, .editButton:hover {
   background-color: rgb(3, 96, 136);
 }
 
@@ -113,4 +104,214 @@
   border-radius: 4px;
   border: 1px solid var(--secondary-light);
   color: white;
+}
+
+.loadMoreButton {
+  margin-top: 20px;
+  padding: 10px 20px;
+  background-color: #4CAF50;
+  color: rgb(48, 7, 110);
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.loadMoreButton:disabled {
+  background-color: #4208a0;
+  cursor: not-allowed;
+}
+
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modalContent {
+  background-color: white;
+  padding: 20px;
+  border-radius: 5px;
+  max-width: 80%;
+  max-height: 80%;
+  overflow-y: auto;
+  position: relative;
+}
+
+.modalButtons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+.modalButtons button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.modalButtons button:first-child {
+  background-color: #f44336;
+  color: white;
+}
+
+.modalButtons button:last-child {
+  background-color: #4CAF50;
+  color: white;
+}
+
+.errorMessage {
+  color: red;
+  margin-top: 10px;
+}
+
+.successMessage {
+  color: green;
+  margin-top: 10px;
+}
+
+.workoutDetails {
+  margin-top: 20px;
+  border: 1px solid #ddd;
+  padding: 15px;
+  border-radius: 5px;
+}
+
+.workoutDetails h3 {
+  margin-top: 15px;
+  margin-bottom: 5px;
+}
+
+.workoutDetails ul {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.workoutDetails input, .workoutDetails textarea {
+  width: 100%;
+  padding: 5px;
+  margin-top: 5px;
+  border: 1px solid #ddd;
+  border-radius: 3px;
+}
+
+.workoutDetails textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+.editButton, .saveButton {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  margin-top: 10px;
+}
+
+.editButton {
+  background-color: #4CAF50;
+  color: white;
+}
+
+.saveButton {
+  background-color: #008CBA;
+  color: white;
+}
+
+.editButton:disabled, .saveButton:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .container {
+    padding: 10px;
+  }
+
+  .title {
+    font-size: 2em;
+  }
+
+  .optionButton {
+    font-size: 1em;
+    padding: 8px 16px;
+  }
+
+  .modalContent {
+    max-width: 95%;
+    max-height: 95%;
+  }
+}
+
+/* Dark mode styles */
+@media (prefers-color-scheme: dark) {
+  .container {
+    background-color: #1e1e1e;
+  }
+
+  .title {
+    color: rgb(6, 170, 172);
+  }
+
+  .workoutItem {
+    background-color: #2c2c2c;
+    color: #ffffff;
+  }
+
+  .formSelect, .formInput, .formTextarea {
+    background-color: #2c2c2c;
+    color: #ffffff;
+    border-color: #444444;
+  }
+
+  .modalContent {
+    background-color: #2c2c2c;
+    color: #ffffff;
+  }
+
+  .workoutDetails {
+    border-color: #444444;
+  }
+
+  .workoutDetails input, .workoutDetails textarea {
+    background-color: #1e1e1e;
+    color: #ffffff;
+    border-color: #444444;
+  }
+
+  .generatedWorkout {
+    background-color: #2c2c2c;
+  }
+
+  .optionButton, .generateButton, .saveButton, .searchButton, .editButton {
+    background-color: #4a4a4a;
+  }
+
+  .optionButton:hover, .generateButton:hover, .saveButton:hover, .searchButton:hover, .editButton:hover {
+    background-color: #5a5a5a;
+  }
+}
+
+.doneButton {
+  background-color: #FFA500;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  margin-top: 10px;
+}
+
+.doneButton:hover {
+  background-color: #FF8C00;
 }
