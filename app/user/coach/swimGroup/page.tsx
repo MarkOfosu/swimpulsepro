@@ -124,7 +124,7 @@ const SwimGroupsPage: React.FC = () => {
           groupId={selectedGroup.id}
           groupName={selectedGroup.name}
           onClose={() => setInviteModalOpen(false)}
-          onInviteSuccess={fetchSwimGroups}
+          onInviteSuccess={() => {}} 
         />
       )}
       <ToastContainer />

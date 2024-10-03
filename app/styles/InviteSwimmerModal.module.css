@@ -42,6 +42,7 @@
     display: flex;
     justify-content: flex-end;
     gap: 1rem;
+    margin-top: 1rem;
   }
   
   .modalActions button {
@@ -64,4 +65,27 @@
   
   .modalActions button:hover {
     opacity: 0.9;
+  }
+  
+  .notification {
+    padding: 10px;
+    margin-bottom: 15px;
+    border-radius: 4px;
+    font-weight: bold;
+    text-align: center;
+  }
+  
+  .success {
+    background-color: #4caf50;
+    color: white;
+  }
+  
+  .error {
+    background-color: #f44336;
+    color: white;
+  }
+  
+  .warning {
+    background-color: #ff9800;
+    color: white;
   }

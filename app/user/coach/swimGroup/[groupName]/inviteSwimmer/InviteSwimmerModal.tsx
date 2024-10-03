@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { createClient } from '@/utils/supabase/client';
-import { useToast } from '@components/ui/toasts/Toast';
 import styles from '../../../../../styles/InviteSwimmerModal.module.css';
 
 interface InviteSwimmerModalProps {
@@ -10,19 +9,26 @@ interface InviteSwimmerModalProps {
   onInviteSuccess: () => void;
 }
 
-const InviteSwimmerModal: React.FC<InviteSwimmerModalProps> = ({ groupId, groupName, onClose, onInviteSuccess }) => {
+type NotificationType = 'success' | 'error' | 'warning';
+
+const Notification: React.FC<{ type: NotificationType; message: string }> = ({ type, message }) => (
+  <div className={`${styles.notification} ${styles[type]}`}>
+    {message}
+  </div>
+);
+
+const InviteSwimmerModal: React.FC<InviteSwimmerModalProps> = ({ groupId, groupName, onClose,}) => {
   const [email, setEmail] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { showToast } = useToast();
+  const [notification, setNotification] = useState<{ type: NotificationType; message: string } | null>(null);
   const supabase = createClient();
-
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (isSubmitting) return;
 
     setIsSubmitting(true);
-    console.log('Submitting invitation for email:', email);
+    setNotification(null);
 
     try {
       const { data: existingInvitations, error: checkError } = await supabase
@@ -35,7 +41,7 @@ const InviteSwimmerModal: React.FC<InviteSwimmerModalProps> = ({ groupId, groupN
       if (checkError) throw checkError;
 
       if (existingInvitations && existingInvitations.length > 0) {
-        showToast('An invitation for this email is already pending', 'error');
+        setNotification({ type: 'warning', message: 'An invitation for this email is already pending' });
         return;
       }
 
@@ -49,12 +55,12 @@ const InviteSwimmerModal: React.FC<InviteSwimmerModalProps> = ({ groupId, groupN
 
       if (error) throw error;
 
-      showToast('Invitation sent successfully', 'success');
-      onInviteSuccess();
-      onClose();
+      setNotification({ type: 'success', message: 'Invitation sent successfully' });
+    //   onInviteSuccess();
+      setTimeout(onClose, 3000); 
     } catch (error) {
       console.error('Error inviting swimmer:', error);
-      showToast('Failed to invite swimmer', 'error');
+      setNotification({ type: 'error', message: 'Failed to invite swimmer' });
     } finally {
       setIsSubmitting(false);
     }
@@ -64,6 +70,7 @@ const InviteSwimmerModal: React.FC<InviteSwimmerModalProps> = ({ groupId, groupN
     <div className={styles.modalOverlay} onClick={onClose}>
       <div className={styles.modalContent} onClick={e => e.stopPropagation()}>
         <h2>Invite Swimmer to {groupName}</h2>
+        {notification && <Notification type={notification.type} message={notification.message} />}
         <form onSubmit={handleSubmit}>
           <input
             type="email"
