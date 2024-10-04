@@ -1,147 +1,225 @@
-.swimGroupContainer {
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 2rem;
-    background-color: #1a1b26;
-    border-radius: 10px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+.container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.title {
+  font-size: 2.5rem;
+  color: #7aa2f7;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.buttonGroup {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  background-color: #1a1b26;
+  padding: 1.5rem;
+  border-radius: 10px 10px 0 0;
+  box-shadow: 0 -4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.optionButton {
+  padding: 0.75rem 1rem;
+  background-color: #7aa2f7;
+  color: #1a1b26;
+  border: none;
+  border-radius: 4px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.optionButton:hover {
+  background-color: #89b4fa;
+  transform: translateY(-2px);
+}
+
+.optionButton:active {
+  transform: translateY(0);
+}
+
+.contentBox {
+  background-color: #1a1b26;
+  border-radius: 0 0 10px 10px;
+  padding: 2rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.sectionTitle {
+  font-size: 1.8rem;
+  color: #bb9af7;
+  margin-bottom: 1rem;
+}
+
+.formGroup {
+  margin-bottom: 1.5rem;
+}
+
+.formLabel {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: #a9b1d6;
+}
+
+.formSelect,
+.formInput,
+.formTextarea {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid #2d3136;
+  border-radius: 4px;
+  background-color: #24283b;
+  color: #a9b1d6;
+}
+
+.formTextarea {
+  min-height: 100px;
+}
+
+.saveButton,
+.generateButton,
+.searchButton {
+  padding: 0.75rem 1.5rem;
+  background-color: #9ece6a;
+  color: #1a1b26;
+  border: none;
+  border-radius: 4px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.saveButton:hover,
+.generateButton:hover,
+.searchButton:hover {
+  background-color: #b4f086;
+}
+
+.workoutList {
+  list-style-type: none;
+  padding: 0;
+}
+
+.workoutItem {
+  background-color: #24283b;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  border-radius: 6px;
+}
+
+.workoutItem p {
+  margin: 0.5rem 0;
+  color: #a9b1d6;
+}
+
+.workoutItem strong {
+  color: #7dcfff;
+}
+
+.generatedWorkout {
+  background-color: #24283b;
+  padding: 1.5rem;
+  border-radius: 6px;
+  margin-top: 2rem;
+}
+
+.workoutDetails {
+  color: #a9b1d6;
+}
+
+.workoutDetails ul {
+  padding-left: 1.5rem;
+}
+@media (min-width: 768px) {
+  .buttonGroup {
+    flex-direction: row;
+    flex-wrap: wrap;
   }
-  
-  .header {
-    margin-bottom: 2rem;
-    text-align: center;
+
+  .optionButton {
+    flex: 1 1 auto;
+    min-width: 150px;
   }
-  
+}
+
+.draggableItem {
+  padding: 10px;
+  margin-bottom: 5px;
+  background-color: #f0f0f0;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.draggableItem:hover {
+  background-color: #e0e0e0;
+}
+
+.draggableItem input {
+  flex-grow: 1;
+  margin-right: 10px;
+}
+
+.draggableItem button {
+  padding: 5px 10px;
+  background-color: #ff4d4d;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.draggableItem button:hover {
+  background-color: #ff3333;
+}
+
+@media (max-width: 767px) {
+  .container {
+    padding: 50rem;
+    
+  }
+
   .title {
-    font-size: 2.5rem;
-    color: #7aa2f7;
-    margin-bottom: 0.5rem;
+    font-size: 2rem;
   }
-  
-  .description {
-    font-size: 1.1rem;
-    color: #a9b1d6;
-    margin-bottom: 1rem;
-  }
-  
-  .groupCode {
-    font-size: 1rem;
-    color: #9ece6a;
-  }
-  
-  .groupCode span {
-    font-weight: bold;
-    background-color: #2d3136;
-    padding: 0.2rem 0.5rem;
-    border-radius: 4px;
-  }
-  
-  .swimmersSection, .invitationsSection {
-    margin-bottom: 2rem;
-  }
-  
-  .sectionTitle {
-    font-size: 1.8rem;
-    color: #bb9af7;
-    margin-bottom: 1rem;
-  }
-  
-  .swimmersList, .invitationsList {
-    list-style-type: none;
-    padding: 0;
-  }
-  
-  .swimmerItem, .invitationItem {
-    background-color: #24283b;
+
+  .buttonGroup {
+    gap: 1rem;
     padding: 1rem;
-    margin-bottom: 0.5rem;
-    border-radius: 6px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    
+    
   }
-  
-  .swimmerId, .invitationEmail {
-    color: #7dcfff;
-    font-weight: bold;
+
+  .optionButton {
+    width: 100%;
   }
-  
-  .swimmerDob, .invitationStatus {
-    color: #f7768e;
-    margin-left: 1rem;
-    padding: 0.2rem 0.5rem;
-    border-radius: 4px;
-    background-color: #2d3136;
+
+  .contentBox {
+    padding: 1rem;
   }
-  
-  .noSwimmersMessage, .noInvitationsMessage {
-    text-align: center;
-    color: #a9b1d6;
-    font-style: italic;
+
+  .sectionTitle {
+    font-size: 1.5rem;
   }
-  
-  .inviteForm {
-    display: flex;
-    margin-top: 1rem;
+
+  .formGroup {
+    margin-bottom: 1rem;
   }
-  
-  .inviteInput {
-    flex-grow: 1;
-    padding: 0.5rem;
-    border: 1px solid #2d3136;
-    border-radius: 4px 0 0 4px;
-    background-color: #24283b;
-    color: #a9b1d6;
+
+  .saveButton,
+  .generateButton,
+  .searchButton {
+    width: 100%;
+    margin-top: 0.5rem;
   }
-  
-  .inviteButton {
-    padding: 0.5rem 1rem;
-    background-color: #7aa2f7;
-    color: #1a1b26;
-    border: none;
-    border-radius: 0 4px 4px 0;
-    font-weight: bold;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-  }
-  
-  .inviteButton:hover {
-    background-color: #89b4fa;
-  }
-  
-  .error {
-    color: #f7768e;
-    text-align: center;
-    font-size: 1.2rem;
-    padding: 2rem;
-  }
-  
-  @media (max-width: 600px) {
-    .swimGroupContainer {
-      padding: 1rem;
-    }
-  
-    .title {
-      font-size: 2rem;
-    }
-  
-    .swimmerItem, .invitationItem {
-      flex-direction: column;
-      align-items: flex-start;
-    }
-  
-    .swimmerDob, .invitationStatus {
-      margin-top: 0.5rem;
-      margin-left: 0;
-    }
-  
-    .inviteForm {
-      flex-direction: column;
-    }
-  
-    .inviteInput, .inviteButton {
-      width: 100%;
-      border-radius: 4px;
-      margin-bottom: 0.5rem;
-    }
-  }
+}
+
