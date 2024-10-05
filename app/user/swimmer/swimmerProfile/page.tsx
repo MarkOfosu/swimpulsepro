@@ -8,7 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/Tabs";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/Avatar";
 import { Trophy, Target, Heart, Activity } from 'lucide-react';
 import styles from '../../../styles/SwimmerProfile.module.css';
-import SwimPageLayout from '../page';
+import SwimPageLayout from '../SwimPageLayout';
 
 interface Swimmer {
   id: string;

@@ -1,5 +1,5 @@
 "use client";
-import CoachPageLayout from "../page"
+import CoachPageLayout from "../CoachPageLayout"
 import CreateMetricForm from "./createMetricForm";
 import SwimmerMetricInput from "./swimmerMetricInput";
 

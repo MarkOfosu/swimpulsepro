@@ -1,6 +1,6 @@
 'use client';
 import React, { useState, useEffect } from 'react';
-import CoachPageLayout from '../page';
+import CoachPageLayout from '../CoachPageLayout';
 import styles from '../../../styles/Dashboard.module.css';
 import { getUserDetails } from '../../../lib/getUserDetails';
 import Loader from '@components/ui/Loader';

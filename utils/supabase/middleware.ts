@@ -1,5 +1,6 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
+import {getUserRole} from './getUserRole'
 
 export async function updateSession(request: NextRequest) {
   let supabaseResponse = NextResponse.next({
@@ -36,11 +37,35 @@ export async function updateSession(request: NextRequest) {
   } = await supabase.auth.getUser()
 
     // If user is not logged in and is not accessing a protected route like user, allow access
-    if (!user && request.nextUrl.pathname.startsWith('/user')) {
-       const url = request.nextUrl.clone();
-        url.pathname = '/login';
-        return NextResponse.redirect(url);
+    // if (!user && request.nextUrl.pathname.startsWith('/user')) {
+    //    const url = request.nextUrl.clone();
+    //     url.pathname = '/login';
+    //     return NextResponse.redirect(url);
+    //   }
+    
+    if (!user) {
+      // If user is not logged in and is accessing a protected route, redirect to login
+      if (request.nextUrl.pathname.startsWith('/user')) {
+        const url = request.nextUrl.clone()
+        url.pathname = '/login'
+        return NextResponse.redirect(url)
       }
+    } else {
+      // User is logged in, check their role
+      const role = await getUserRole(supabase, user.id)
+  
+      if (role === 'coach' && !request.nextUrl.pathname.startsWith('/user/coach')) {
+        // Coaches can only access /user/coach/...
+        const url = request.nextUrl.clone()
+          url.pathname = '/user/coach/dashboard'
+        return NextResponse.redirect(url)
+      } else if (role === 'swimmer' && !request.nextUrl.pathname.startsWith('/user/swimmer')) {
+        // Swimmers can only access /user/swimmer/...
+        const url = request.nextUrl.clone()
+        url.pathname = '/user/swimmer/dashboard'
+        return NextResponse.redirect(url)
+      }
+    }
 
   // IMPORTANT: You *must* return the supabaseResponse object as it is. If you're
   // creating a new response object with NextResponse.next() make sure to:

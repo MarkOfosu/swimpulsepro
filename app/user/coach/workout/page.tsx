@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { createClient } from '@utils/supabase/client';
-import CoachPageLayout from "../page";
+import CoachPageLayout from "../CoachPageLayout";
 import { WorkoutData, SwimWorkout, SwimGroup } from '@app/lib/types';
 import styles from '../../../styles/WorkoutPage.module.css';
 import ViewWorkouts from './ViewWorkouts';
