@@ -36,12 +36,10 @@ export async function updateSession(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser()
 
-    // If user is not logged in and is not accessing a protected route like user, allow access
-    // if (!user && request.nextUrl.pathname.startsWith('/user')) {
-    //    const url = request.nextUrl.clone();
-    //     url.pathname = '/login';
-    //     return NextResponse.redirect(url);
-    //   }
+    // Allow access to home and other public routes
+  if (request.nextUrl.pathname === '/' || !request.nextUrl.pathname.startsWith('/user')) {
+    return supabaseResponse
+  }
     
     if (!user) {
       // If user is not logged in and is accessing a protected route, redirect to login

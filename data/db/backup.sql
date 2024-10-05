@@ -88,3 +88,10 @@ CREATE TABLE IF NOT EXISTS invitations (
     status TEXT CHECK (status IN ('pending', 'accepted', 'rejected')) DEFAULT 'pending',
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
+
+-- Supabase database is set up to handle text search on the 'focus' field of the workout_data JSONB column. You might need to create a GIN index
+-- CREATE EXTENSION IF NOT EXISTS pg_trgm;
+
+-- CREATE EXTENSION IF NOT EXISTS pg_trgm;
+
+-- CREATE INDEX workout_data_focus_idx ON workouts USING GIN ((workout_data->>'focus') gin_trgm_ops);
