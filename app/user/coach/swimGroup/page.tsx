@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@/utils/supabase/client';
-import CoachPageLayout from '../page';
+import CoachPageLayout from '../CoachPageLayout';
 import CreateSwimGroup from './createSwimGroup/page';
 import Card2 from '@components/ui/Card2';
 import InviteSwimmerModal from '../swimGroup/[groupName]/inviteSwimmer/InviteSwimmerModal'

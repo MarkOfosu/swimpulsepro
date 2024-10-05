@@ -1,4 +1,4 @@
-import CoachPageLayout from "../page";
+import CoachPageLayout from "../CoachPageLayout";
 import Analytics from "./analytics";
 
 const AnalyticsPage: React.FC = () => {

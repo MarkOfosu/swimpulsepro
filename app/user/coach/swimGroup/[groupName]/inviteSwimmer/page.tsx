@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { createClient } from '@/utils/supabase/client';
-import CoachPageLayout from '../../../page';
+import CoachPageLayout from '../../../CoachPageLayout';
 import { useToast } from '@components/ui/toasts/Toast';
 import styles from '../../../../../styles/InviteSwimmer.module.css';
 

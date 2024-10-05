@@ -1,6 +1,6 @@
 'use client';
 import React, { useState, useEffect } from 'react';
-import SwimmerPageLayout from '../page';  // Assuming a SwimmerPageLayout component
+import SwimmerPageLayout from '../SwimPageLayout';  // Assuming a SwimmerPageLayout component
 import styles from '../../../styles/Dashboard.module.css';
 import { getUserDetails } from '../../../lib/getUserDetails';
 import Loader from '@components/ui/Loader';
@@ -21,7 +21,6 @@ const SwimmerDashboard: React.FC = () => {
     const fetchUser = async () => {
       try {
         const userData = await getUserDetails();
-        console.log("Fetched user data:", userData); // Log the full user data
         setUser(userData);
       } catch (err) {
         console.error('Error fetching user data:', err);

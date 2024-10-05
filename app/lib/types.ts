@@ -41,7 +41,7 @@ export interface WorkoutData {
   group_id: string;
   workout_data: SwimWorkout;
   created_at?: string;
-  id: string;
+  id?: string;
 }
 
 
