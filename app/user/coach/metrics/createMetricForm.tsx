@@ -72,7 +72,7 @@ const MetricCreationForm: React.FC = () => {
     if (user) {
       const { data, error } = await supabase
         .from('swim_groups')
-        .select('id, name')
+        .select('id, name, group_code') 
         .eq('coach_id', user.id);
       
       if (error) {
