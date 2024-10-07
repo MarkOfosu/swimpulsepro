@@ -11,6 +11,9 @@ import {
   recentActivitiesData,
   upcomingEventsData,
 } from '../../../lib/testData';
+import Card2 from '@components/ui/Card2';
+import { Card } from '@components/ui/Card';
+import Link from 'next/link';
 
 const SwimmerDashboard: React.FC = () => {
   const [user, setUser] = useState<any>(null);
@@ -58,6 +61,16 @@ const SwimmerDashboard: React.FC = () => {
           )}
           <p>Here is an overview of your recent performance.</p>
         </section>
+
+        {!user.group_id && (
+          <Card>
+              <p>You have not joined a swim group yet.</p>
+              <Link href="/user/swimmer/swimTeam">
+                <button>Join a Group</button>
+              </Link>
+            
+          </Card>
+        )}
 
         <section className={styles.recentActivities}>
           <h2>Your Performance Overview</h2>
