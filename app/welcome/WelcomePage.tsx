@@ -1,18 +1,19 @@
 import React from 'react';
 import DynamicFeature from './DynamicFeature'
-// import sampleData from './data'; // Assuming you have JSON or constants to hold data
 import image1 from '../../public/image/banner1.jpeg';
 
 export default function WelcomePage() {
   return (
     <div>
+      <div>
       <DynamicFeature
         title="SwimPulsePro: Elevate Your Swim Coaching"
         description="Transform your swim coaching experience with SwimPulsePro, the innovative platform designed to empower coaches and swimmers to reach new heights."
         imageSrc={image1}
         imageSide="right"
-        backgroundColor="#1e1e2f"
+        backgroundColor="#e7e7ee"
       />
+      </div>
       
       <DynamicFeature
         title="Create Your Swim Groups"

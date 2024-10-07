@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { createClient } from '@/utils/supabase/client';
 import CoachPageLayout from '../../CoachPageLayout';
@@ -41,14 +41,16 @@ const SwimGroupPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [inviteEmail, setInviteEmail] = useState('');
+  const [coachId, setCoachId] = useState<string | null>(null);
   const router = useRouter();
   const params = useParams();
   const { showToast, ToastContainer } = useToast();
   const supabase = createClient();
 
   const fetchSwimGroupData = useCallback(async () => {
-    if (!params.groupName) {
-      console.error('No groupName in params');
+    if (!params.groupName || !coachId) {
+      console.error('No groupName in params or coachId not set');
+      setError('Unable to fetch swim group data. Please try again.');
       return;
     }
 
@@ -58,48 +60,88 @@ const SwimGroupPage: React.FC = () => {
 
       const groupName = decodeURIComponent(params.groupName as string);
 
-      const groupResult = await supabase
+      // Fetch the swim group, ensuring it belongs to the authenticated coach
+      const { data: group, error: groupError } = await supabase
         .from('swim_groups')
         .select('*')
         .eq('name', groupName)
+        .eq('coach_id', coachId)
         .single();
 
-      if (groupResult.error) throw groupResult.error;
+      if (groupError) {
+        if (groupError.code === 'PGRST116') {
+          setError('Swim group not found or you do not have permission to view it.');
+          showToast('Swim group not found or access denied', 'error');
+          return;
+        }
+        throw groupError;
+      }
 
-      const group = groupResult.data as SwimGroup;
+      setSwimGroup(group);
 
-      const swimmersResult = await supabase
+      // Fetch swimmers for this group
+      const { data: swimmersData, error: swimmersError } = await supabase
         .from('swimmers')
         .select('*')
         .eq('group_id', group.id);
 
-      if (swimmersResult.error) throw swimmersResult.error;
+      if (swimmersError) throw swimmersError;
+      setSwimmers(swimmersData);
 
-      const invitationsResult = await supabase
+      // Fetch invitations for this group
+      const { data: invitationsData, error: invitationsError } = await supabase
         .from('invitations')
         .select('*')
         .eq('group_id', group.id);
 
-      if (invitationsResult.error && invitationsResult.error.code !== '42P01') {
-        throw invitationsResult.error;
+      if (invitationsError && invitationsError.code !== '42P01') {
+        throw invitationsError;
       }
-
-      setSwimGroup(group);
-      setSwimmers(swimmersResult.data as Swimmer[]);
-      setInvitations(invitationsResult.data as Invitation[] || []);
+      setInvitations(invitationsData || []);
 
     } catch (err) {
-      console.error('Error in fetchSwimGroupData:', err);
+      console.error('Error fetching swim group data:', err);
       setError('Failed to fetch swim group data. Please try again.');
       showToast('Failed to fetch swim group data', 'error');
     } finally {
       setLoading(false);
     }
-  }, [params.groupName]);
+  }, [params.groupName, coachId]);
 
   useEffect(() => {
-    fetchSwimGroupData();
-  }, [fetchSwimGroupData]);
+    const fetchCoachId = async () => {
+      try {
+        const { data: { user }, error: userError } = await supabase.auth.getUser();
+        if (userError || !user) {
+          throw new Error('Failed to authenticate user.');
+        }
+
+        const { data: coachData, error: coachError } = await supabase
+          .from('coaches')
+          .select('id')
+          .eq('id', user.id)
+          .single();
+
+        if (coachError) {
+          throw new Error('Failed to verify coach status.');
+        }
+
+        setCoachId(coachData.id);
+      } catch (err) {
+        console.error('Error in fetchCoachId:', err);
+        setError((err as Error).message);
+        showToast((err as Error).message, 'error');
+      }
+    };
+
+    fetchCoachId();
+  }, [supabase, showToast]);
+
+  useEffect(() => {
+    if (coachId) {
+      fetchSwimGroupData();
+    }
+  }, [fetchSwimGroupData, coachId]);
 
   const handleInviteSwimmer = async (e: React.FormEvent) => {
     e.preventDefault();

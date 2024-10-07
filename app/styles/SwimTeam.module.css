@@ -1,0 +1,46 @@
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem;
+  }
+  
+  .title {
+    color: #7aa2f7;
+    margin-bottom: 1rem;
+  }
+  
+  .form {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+  
+  .error {
+    color: #f7768e;
+    margin-top: 1rem;
+  }
+  
+  .groupDetails, .groupInfo {
+    margin-top: 2rem;
+    padding: 1rem;
+    background-color: #1a1b26;
+    border-radius: 8px;
+  }
+  
+  .groupDetails h2, .groupInfo h2 {
+    color: #7aa2f7;
+    margin-bottom: 0.5rem;
+  }
+  
+  .groupDetails p, .groupInfo p {
+    margin-bottom: 0.5rem;
+  }
+  
+  .announcements, .challenges, .groupChat {
+    margin-top: 2rem;
+  }
+  
+  .announcements h3, .challenges h3, .groupChat h3 {
+    color: #bb9af7;
+    margin-bottom: 1rem;
+  }
