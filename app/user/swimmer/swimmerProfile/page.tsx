@@ -9,6 +9,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/Avatar";
 import { Trophy, Target, Heart, Activity } from 'lucide-react';
 import styles from '../../../styles/SwimmerProfile.module.css';
 import SwimPageLayout from '../SwimPageLayout';
+import SwimmerGoalsContainer from '../swimmerGoal/SwimmerGoalContainer';
 
 interface Swimmer {
   id: string;
@@ -245,6 +246,7 @@ const SwimmerProfilePage: React.FC<GamifiedSwimmerInterfaceProps> = ({ swimmerId
             </Card>
           </div>
         </div>
+        <SwimmerGoalsContainer />
       </div>
     </SwimPageLayout>
   );

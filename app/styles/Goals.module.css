@@ -1,0 +1,74 @@
+.goalsContainer {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  
+  .card {
+    margin-bottom: 20px;
+  }
+  
+  .form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .goalItem {
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    padding: 15px;
+    margin-bottom: 15px;
+  }
+  
+  .goalTitle {
+    font-size: 1.2em;
+    margin-bottom: 10px;
+  }
+  
+  .progressContainer {
+    margin-bottom: 10px;
+  }
+  
+  .progressText {
+    margin-top: 5px;
+    font-size: 0.9em;
+    color: #666;
+  }
+  
+  .targetText {
+    margin-bottom: 10px;
+  }
+  
+  .updateContainer {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+  
+  .achievementItem {
+    border-left: 3px solid #4caf50;
+    padding-left: 15px;
+    margin-bottom: 15px;
+  }
+  
+  .achievementTitle {
+    font-size: 1.1em;
+    margin-bottom: 5px;
+  }
+  
+  .achievementDate {
+    font-size: 0.9em;
+    color: #666;
+  }
+
+  .timeInputContainer {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  
+  .timeInput {
+    width: 40px;
+    text-align: center;
+  }
