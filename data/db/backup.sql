@@ -95,3 +95,164 @@ CREATE TABLE IF NOT EXISTS invitations (
 -- CREATE EXTENSION IF NOT EXISTS pg_trgm;
 
 -- CREATE INDEX workout_data_focus_idx ON workouts USING GIN ((workout_data->>'focus') gin_trgm_ops);
+
+-- Table for different types of goals
+CREATE TABLE IF NOT EXISTS goal_types (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    name VARCHAR NOT NULL,
+    description TEXT,
+    measurement_unit VARCHAR,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Table for individual swimmer goals
+CREATE TABLE IF NOT EXISTS swimmer_goals (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    swimmer_id UUID REFERENCES swimmers(id) ON DELETE CASCADE,
+    goal_type_id UUID REFERENCES goal_types(id) ON DELETE CASCADE,
+    target_value NUMERIC,
+    initial_time INTERVAL,
+    start_date DATE,
+    end_date DATE,
+    status VARCHAR DEFAULT 'in_progress',
+    progress NUMERIC DEFAULT 0,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Table for goal progress updates
+CREATE TABLE IF NOT EXISTS goal_updates (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    goal_id UUID REFERENCES swimmer_goals(id) ON DELETE CASCADE,
+    update_value TYPE TEXT,
+    update_date DATE,
+    notes TEXT,
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Table for achievements
+CREATE TABLE IF NOT EXISTS achievements (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    swimmer_id UUID REFERENCES swimmers(id) ON DELETE CASCADE,
+    title VARCHAR NOT NULL,
+    description TEXT,
+    achieved_date DATE,
+    icon VARCHAR,
+    related_goal_id UUID REFERENCES swimmer_goals(id),
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Insert some common goal types
+INSERT INTO goal_types (name, description, measurement_unit) VALUES
+('Time Improvement', 'Improve time for a specific distance and stroke', 'seconds'),
+('Distance Goal', 'Swim a target distance without stopping', 'meters'),
+('Technique Mastery', 'Master a specific swimming technique', 'proficiency level'),
+('Competition Placement', 'Achieve a specific place in a competition', 'place'),
+('Attendance Goal', 'Attend a target number of practice sessions', 'sessions');
+
+
+
+
+-- Function to set a new goal
+
+
+-- Update set_swimmer_goal function
+CREATE OR REPLACE FUNCTION set_swimmer_goal(
+  p_swimmer_id UUID,
+  p_goal_type_id UUID,
+  p_target_value NUMERIC,
+  p_initial_time INTERVAL,
+  p_target_time INTERVAL,
+  p_event VARCHAR(50),
+  p_start_date DATE,
+  p_end_date DATE
+) RETURNS UUID AS $$
+DECLARE
+  v_goal_id UUID;
+BEGIN
+  INSERT INTO swimmer_goals (
+    swimmer_id, goal_type_id, target_value, initial_time, target_time, event, start_date, end_date, status, progress
+  ) VALUES (
+    p_swimmer_id, p_goal_type_id, p_target_value, p_initial_time, p_target_time, p_event, p_start_date, p_end_date, 'in_progress', 0
+  ) RETURNING id INTO v_goal_id;
+  
+  RETURN v_goal_id;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Update update_goal_progress function
+CREATE OR REPLACE FUNCTION update_goal_progress(
+    p_goal_id UUID,
+    p_update_value TEXT,
+    p_update_date DATE,
+    p_notes TEXT
+) RETURNS VOID AS $$
+DECLARE
+    v_goal_type_id UUID;
+    v_target_value NUMERIC;
+    v_initial_time INTERVAL;
+    v_target_time INTERVAL;
+    v_new_progress NUMERIC;
+BEGIN
+    -- Get goal type and target
+    SELECT goal_type_id, target_value, initial_time, target_time 
+    INTO v_goal_type_id, v_target_value, v_initial_time, v_target_time
+    FROM swimmer_goals 
+    WHERE id = p_goal_id;
+
+    -- Insert the update
+    INSERT INTO goal_updates (goal_id, update_value, update_date, notes)
+    VALUES (p_goal_id, p_update_value, p_update_date, p_notes);
+
+    -- Calculate new progress based on goal type
+    IF v_goal_type_id = (SELECT id FROM goal_types WHERE name = 'Time Improvement') THEN
+        v_new_progress := calculate_time_progress(v_initial_time, v_target_time, p_update_value::INTERVAL);
+    ELSE
+        -- For numeric goals, calculate progress
+        SELECT LEAST(100, (SUM(
+            CASE 
+                WHEN update_value ~ '^[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?$' 
+                THEN update_value::NUMERIC 
+                ELSE 0 
+            END
+        ) / v_target_value) * 100) INTO v_new_progress
+        FROM goal_updates WHERE goal_id = p_goal_id;
+    END IF;
+
+    -- Update the goal progress
+    UPDATE swimmer_goals
+    SET progress = v_new_progress,
+        status = CASE WHEN v_new_progress >= 100 THEN 'completed' ELSE status END
+    WHERE id = p_goal_id;
+
+    -- If goal is completed, create an achievement
+    IF v_new_progress >= 100 THEN
+        INSERT INTO achievements (swimmer_id, title, description, achieved_date, related_goal_id)
+        SELECT sg.swimmer_id,
+               gt.name || ' Achieved',
+               'Completed goal: ' || gt.description,
+               CURRENT_DATE,
+               sg.id
+        FROM swimmer_goals sg
+        JOIN goal_types gt ON sg.goal_type_id = gt.id
+        WHERE sg.id = p_goal_id;
+    END IF;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Update calculate_time_progress function
+CREATE OR REPLACE FUNCTION calculate_time_progress(
+  initial_time INTERVAL,
+  target_time INTERVAL,
+  actual_time INTERVAL
+) RETURNS NUMERIC AS $$
+DECLARE
+  total_improvement INTERVAL;
+  current_improvement INTERVAL;
+BEGIN
+  total_improvement := initial_time - target_time;
+  current_improvement := initial_time - actual_time;
+  RETURN LEAST(100, (EXTRACT(EPOCH FROM current_improvement) / EXTRACT(EPOCH FROM total_improvement)) * 100);
+END;
+$$ LANGUAGE plpgsql;
