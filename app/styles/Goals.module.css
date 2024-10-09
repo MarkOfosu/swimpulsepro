@@ -1,11 +1,82 @@
-.goalsContainer {
-    max-width: 800px;
-    margin: 0 auto;
+.goalsWrapper {
+    max-width: 1200px;
+    margin: 20px auto;
+    padding: 0 20px;
+  }
+  
+  .tabsContainer {
+    background-color: rgb(255, 255, 255);
+    border-radius: 12px 12px 0 0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+  }
+  
+  .contentContainer {
+    background-color: white;
+    border-radius: 0 0 12px 12px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     padding: 20px;
   }
   
-  .card {
+  .cardHeaderWrapper {
+    color: #be185d;
+    font-size: 24px;
+    font-weight: bold;
     margin-bottom: 20px;
+  }
+  
+  .goalItem {
+    background-color: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 15px;
+  }
+  
+  .goalTitle {
+    font-size: 18px;
+    color: #1e293b;
+    margin-bottom: 10px;
+  }
+  
+  .goalStatus, .targetText, .progressText {
+    color: #64748b;
+    font-size: 14px;
+    margin-bottom: 5px;
+  }
+  
+  .progressContainer {
+    margin: 10px 0;
+  }
+  
+  .updateContainer {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+  }
+  
+  .achievementItem {
+    background-color: #ffffffa9;
+    border-left: 4px solid #8bc34a;
+    padding: 15px;
+    margin-bottom: 15px;
+    border-radius: 8px;
+  }
+  
+  .achievementTitle {
+    font-size: 18px;
+    color: #33691e;
+    margin-bottom: 5px;
+  }
+  
+  .achievementDescription {
+    color: #1e293b;
+    margin-bottom: 5px;
+  }
+  
+  .achievementDate {
+    font-size: 14px;
+    color: #64748b;
   }
   
   .form {
@@ -14,71 +85,44 @@
     gap: 15px;
   }
   
-  .goalItem {
-    border: 1px solid #e0e0e0;
-    border-radius: 4px;
-    padding: 15px;
+  .errorMessage {
+    color: #ffffff;
+    background-color: #e74c3c;
+    padding: 12px;
+    border-radius: 6px;
     margin-bottom: 15px;
   }
   
-  .goalTitle {
-    font-size: 1.2em;
-    margin-bottom: 10px;
-  }
-  
-  .progressContainer {
-    margin-bottom: 10px;
-  }
-  
-  .progressText {
-    margin-top: 5px;
-    font-size: 0.9em;
-    color: #666;
-  }
-  
-  .targetText {
-    margin-bottom: 10px;
-  }
-  
-  .updateContainer {
-    display: flex;
-    gap: 10px;
-    align-items: center;
-  }
-  
-  .achievementItem {
-    border-left: 3px solid #4caf50;
-    padding-left: 15px;
-    margin-bottom: 15px;
-  }
-  
-  .achievementTitle {
-    font-size: 1.1em;
-    margin-bottom: 5px;
-  }
-  
-  .achievementDate {
-    font-size: 0.9em;
-    color: #666;
-  }
-
-  .timeInputContainer {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-  }
-  
-  .timeInput {
-    width: 40px;
-    text-align: center;
-  }
-
   .inactiveGoal {
-    opacity: 0.6;
+    opacity: 0.7;
     pointer-events: none;
+    background-color: #eceff1;
+  }
+
+  .emptyStateMessage {
+    font-size: 16px;
+    color: #64748b;
+    text-align: center;
+    padding: 20px;
+    background-color: #f8fafc;
+    border-radius: 8px;
+    border: 1px dashed #cbd5e1;
   }
   
-  .goalStatus {
-    font-weight: bold;
-    margin-bottom: 10px;
+  @media (max-width: 600px) {
+    .goalsWrapper {
+      padding: 0 10px;
+    }
+  
+    .contentContainer {
+      padding: 15px;
+    }
+  
+    .updateContainer {
+      flex-direction: column;
+    }
+  
+    .updateContainer > * {
+      width: 100%;
+    }
   }
