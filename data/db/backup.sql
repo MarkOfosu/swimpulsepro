@@ -146,8 +146,8 @@ CREATE TABLE IF NOT EXISTS achievements (
 -- Insert some common goal types
 INSERT INTO goal_types (name, description, measurement_unit) VALUES
 ('Time Improvement', 'Improve time for a specific distance and stroke', 'seconds'),
-('Distance Goal', 'Swim a target distance without stopping', 'meters'),
-('Technique Mastery', 'Master a specific swimming technique', 'proficiency level'),
+('Distance Goal', 'Swim a target distance for a target period', 'meters'),
+-- ('Technique Mastery', 'Master a specific swimming technique', 'proficiency level'),
 ('Competition Placement', 'Achieve a specific place in a competition', 'place'),
 ('Attendance Goal', 'Attend a target number of practice sessions', 'sessions');
 

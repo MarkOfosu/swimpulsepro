@@ -12,31 +12,14 @@ import {
   fetchGoalTypes,
   SwimmerGoal,
   Achievement,
-  GoalType
+  GoalType,
+  NewGoal
 } from '../functions/goalFunctions'
 import styles from '../../../styles/Goals.module.css'
 
 interface GoalProps {
   swimmerId: string;
 }
-
-type NewGoalBase = {
-  goalTypeId: string;
-  startDate: string;
-  endDate: string;
-};
-
-type NumericGoal = NewGoalBase & {
-  targetValue: number;
-};
-
-type TimeImprovementGoal = NewGoalBase & {
-  targetTime: string;
-  initialTime: string;
-  event: string;
-};
-
-type NewGoal = NumericGoal | TimeImprovementGoal;
 
 interface TimeInputProps {
   value: string;
@@ -63,7 +46,10 @@ const Goal: React.FC<GoalProps> = ({ swimmerId }) => {
   const [goalTypes, setGoalTypes] = useState<GoalType[]>([]);
   const [newGoal, setNewGoal] = useState<NewGoal>({
     goalTypeId: '',
-    targetValue: 0,
+    targetValue: undefined,
+    initialTime: '',
+    targetTime: '',
+    event: '',
     startDate: '',
     endDate: ''
   });
@@ -95,30 +81,17 @@ const Goal: React.FC<GoalProps> = ({ swimmerId }) => {
     return `${digits.slice(0, 2)}:${digits.slice(2, 4)}:${digits.slice(4, 6)}`;
   };
 
-  const parseTimeString = (timeString: string | undefined): number => {
-    if (!timeString) return 0;
-    const [minutes, seconds, centiseconds] = timeString.split(':').map(Number);
-    return (minutes * 60) + seconds + (centiseconds / 100);
-  };
-
-  const formatTimeString = (totalSeconds: number): string => {
-    const minutes = Math.floor(totalSeconds / 60);
-    const seconds = Math.floor(totalSeconds % 60);
-    const centiseconds = Math.round((totalSeconds % 1) * 100);
-    return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}:${centiseconds.toString().padStart(2, '0')}`;
-  };
-
   const handleSetGoal = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
     try {
-      await setSwimmerGoal(swimmerId, {
-        ...newGoal,
-        initialTime: (newGoal as TimeImprovementGoal).initialTime,
-      });
+      await setSwimmerGoal(swimmerId, newGoal);
       setNewGoal({
         goalTypeId: '',
-        targetValue: 0,
+        targetValue: undefined,
+        initialTime: '',
+        targetTime: '',
+        event: '',
         startDate: '',
         endDate: ''
       });
@@ -129,7 +102,7 @@ const Goal: React.FC<GoalProps> = ({ swimmerId }) => {
     }
   };
 
-  const handleUpdateProgress = async (goalId: string, newValue: string | number, goalTypeId: string) => {
+  const handleUpdateProgress = async (goalId: string, newValue: string | number) => {
     setError(null);
     try {
       const goal = goals.find(g => g.id === goalId);
@@ -137,59 +110,19 @@ const Goal: React.FC<GoalProps> = ({ swimmerId }) => {
         throw new Error('Goal not found');
       }
 
-      if (goal.goal_type.name.toLowerCase() === 'time improvement') {
-        if (typeof newValue !== 'string') {
-          throw new Error('Invalid time format');
-        }
-        const currentTimeSeconds = parseTimeString(newValue);
-        const targetTimeSeconds = parseTimeString(goal.target_time);
-        const initialTimeSeconds = parseTimeString(goal.initial_time);
-
-        if (currentTimeSeconds > initialTimeSeconds) {
-          throw new Error('New time cannot be slower than the initial time');
-        }
-
-        // Calculate progress
-        const totalImprovement = initialTimeSeconds - targetTimeSeconds;
-        const currentImprovement = initialTimeSeconds - currentTimeSeconds;
-        const progress = Math.min(100, (currentImprovement / totalImprovement) * 100);
-
-        await updateGoalProgress(
-          goalId,
-          newValue,
-          new Date().toISOString().split('T')[0],
-          'Progress update',
-          progress
-        );
-        //set fields to empty
-        setCurrentTimes(prev => ({ ...prev, [goalId]: '' }));
-        
-      } else {
-        if (typeof newValue !== 'number' || newValue < 0) {
-          throw new Error('Invalid numeric value');
-        }
-        const progress = Math.min(100, (newValue / goal.target_value!) * 100);
-        await updateGoalProgress(
-          goalId,
-          newValue,
-          new Date().toISOString().split('T')[0],
-          'Progress update',
-          progress
-        );
-      }
+      await updateGoalProgress(
+        goalId,
+        newValue,
+        new Date().toISOString().split('T')[0],
+        'Progress update',
+        0 // The progress is calculated on the server side now
+      );
+      
+      setCurrentTimes(prev => ({ ...prev, [goalId]: '' }));
       await loadData();
     } catch (error) {
       console.error('Error updating goal progress:', error);
       setError(error instanceof Error ? error.message : 'Failed to update progress. Please try again.');
-    }
-  };
-
-  const handleImproveTime = (goal: SwimmerGoal) => {
-    const currentTime = currentTimes[goal.id];
-    if (currentTime) {
-      handleUpdateProgress(goal.id, currentTime, goal.goal_type.id);
-    } else {
-      setError('Please enter a current time');
     }
   };
 
@@ -203,9 +136,9 @@ const Goal: React.FC<GoalProps> = ({ swimmerId }) => {
         return (
           <>
             <Select
-              value={(newGoal as TimeImprovementGoal).event || ''}
+              value={newGoal.event || ''}
               onChange={(e: React.ChangeEvent<HTMLSelectElement>) => 
-                setNewGoal({ ...newGoal, event: e.target.value } as TimeImprovementGoal)}
+                setNewGoal({ ...newGoal, event: e.target.value })}
             >
               <option value="">Select Event</option>
               <option value="50m_freestyle">50m Freestyle</option>
@@ -213,20 +146,20 @@ const Goal: React.FC<GoalProps> = ({ swimmerId }) => {
               {/* Add more events as needed */}
             </Select>
             <TimeInput
-              value={(newGoal as TimeImprovementGoal).initialTime || ''}
-              onChange={(value) => setNewGoal({ ...newGoal, initialTime: value } as TimeImprovementGoal)}
+              value={newGoal.initialTime || ''}
+              onChange={(value) => setNewGoal({ ...newGoal, initialTime: value })}
               onBlur={() => {
-                const formattedTime = formatTimeInput((newGoal as TimeImprovementGoal).initialTime || '');
-                setNewGoal({ ...newGoal, initialTime: formattedTime } as TimeImprovementGoal);
+                const formattedTime = formatTimeInput(newGoal.initialTime || '');
+                setNewGoal({ ...newGoal, initialTime: formattedTime });
               }}
               placeholder="Initial Time (MM:SS:CC)"
             />
             <TimeInput
-              value={(newGoal as TimeImprovementGoal).targetTime || ''}
-              onChange={(value) => setNewGoal({ ...newGoal, targetTime: value } as TimeImprovementGoal)}
+              value={newGoal.targetTime || ''}
+              onChange={(value) => setNewGoal({ ...newGoal, targetTime: value })}
               onBlur={() => {
-                const formattedTime = formatTimeInput((newGoal as TimeImprovementGoal).targetTime || '');
-                setNewGoal({ ...newGoal, targetTime: formattedTime } as TimeImprovementGoal);
+                const formattedTime = formatTimeInput(newGoal.targetTime || '');
+                setNewGoal({ ...newGoal, targetTime: formattedTime });
               }}
               placeholder="Target Time (MM:SS:CC)"
             />
@@ -237,26 +170,12 @@ const Goal: React.FC<GoalProps> = ({ swimmerId }) => {
           <Input
             type="number"
             placeholder={`Target ${selectedGoalType.measurement_unit}`}
-            value={(newGoal as NumericGoal).targetValue || ''}
+            value={newGoal.targetValue || ''}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => 
-              setNewGoal({ ...newGoal, targetValue: parseFloat(e.target.value) || 0 } as NumericGoal)}
+              setNewGoal({ ...newGoal, targetValue: parseFloat(e.target.value) || undefined })}
           />
         );
     }
-  };
-
-  const renderQuickUpdateButton = (goal: SwimmerGoal) => {
-    if (typeof goal.target_value === 'number' && goal.target_value > 0) {
-      const newValue = goal.target_value * 1.1;
-      return (
-        <Button 
-          onClick={() => handleUpdateProgress(goal.id, newValue, goal.goal_type.id)}
-        >
-          Quick Update (+10%)
-        </Button>
-      );
-    }
-    return null;
   };
 
   const renderGoalProgress = (goal: SwimmerGoal) => {
@@ -276,7 +195,7 @@ const Goal: React.FC<GoalProps> = ({ swimmerId }) => {
               }}
               placeholder="Current Time (MM:SS:CC)"
             />
-            <Button onClick={() => handleImproveTime(goal)}>
+            <Button onClick={() => handleUpdateProgress(goal.id, currentTimes[goal.id])}>
               Update Time
             </Button>
           </div>
@@ -292,14 +211,13 @@ const Goal: React.FC<GoalProps> = ({ swimmerId }) => {
             <Input
               type="number"
               placeholder="Update Value"
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                const value = parseFloat(e.target.value);
-                if (!isNaN(value) && value > 0) {
-                  handleUpdateProgress(goal.id, value, goal.goal_type.id);
-                }
-              }}
+              value={currentTimes[goal.id] || ''}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => 
+                setCurrentTimes(prev => ({ ...prev, [goal.id]: e.target.value }))}
             />
-            {renderQuickUpdateButton(goal)}
+            <Button onClick={() => handleUpdateProgress(goal.id, parseFloat(currentTimes[goal.id]))}>
+              Update Progress
+            </Button>
           </div>
         </>
       );
@@ -319,9 +237,9 @@ const Goal: React.FC<GoalProps> = ({ swimmerId }) => {
                 const selectedGoalType = goalTypes.find(gt => gt.id === e.target.value);
                 if (selectedGoalType) {
                   if (selectedGoalType.name.toLowerCase() === 'time improvement') {
-                    setNewGoal({ goalTypeId: e.target.value, initialTime: '', targetTime: '', event: '', startDate: '', endDate: '' } as TimeImprovementGoal);
+                    setNewGoal({ ...newGoal, goalTypeId: e.target.value, targetValue: undefined });
                   } else {
-                    setNewGoal({ goalTypeId: e.target.value, targetValue: 0, startDate: '', endDate: '' } as NumericGoal);
+                    setNewGoal({ ...newGoal, goalTypeId: e.target.value, initialTime: '', targetTime: '', event: '' });
                   }
                 }
               }}
