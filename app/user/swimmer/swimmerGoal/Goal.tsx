@@ -4,6 +4,7 @@ import { Progress } from "../../../../components/ui/Progress";
 import { Button } from '../../../../components/ui/Button';
 import { Input } from '../../../../components/ui/Input';
 import { Select } from '../../../../components/ui/Select';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../../../components/ui/Tabs';
 import { 
   setSwimmerGoal, 
   updateGoalProgress, 
@@ -238,80 +239,131 @@ const Goal: React.FC<GoalProps> = ({ swimmerId }) => {
     }
   };
 
+  const renderGoals = (status: 'in_progress' | 'completed' | 'expired') => {
+    const filteredGoals = goals.filter(goal => goal.status === status);
+    if (filteredGoals.length === 0) {
+      return <p className={styles.emptyStateMessage}>You have no {status === 'in_progress' ? 'current' : status} goals.</p>;
+    }
+    return (
+      <>
+        {filteredGoals.map(goal => (
+          <div key={goal.id} className={`${styles.goalItem} ${(goal.status === 'completed' || goal.status === 'expired') ? styles.inactiveGoal : ''}`}>
+            <h3 className={styles.goalTitle}>{goal.goal_type.name}</h3>
+            <p className={styles.goalStatus}>Status: {goal.status}</p>
+            <div className={styles.progressContainer}>
+              <Progress value={goal.progress} />
+              <p className={styles.progressText}>Progress: {goal.progress.toFixed(2)}%</p>
+            </div>
+            {renderGoalProgress(goal)}
+          </div>
+        ))}
+      </>
+    );
+  };
+
   return (
-    <div className={styles.goalsContainer}>
+    <div className={styles.goalsWrapper}>
       {error && <p className={styles.errorMessage}>{error}</p>}
-      <Card className={styles.card}>
-        <CardHeader>Set New Goal</CardHeader>
-        <CardContent>
-          <form onSubmit={handleSetGoal} className={styles.form}>
-            <Select
-              value={newGoal.goalTypeId}
-              onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
-                const selectedGoalType = goalTypes.find(gt => gt.id === e.target.value);
-                if (selectedGoalType) {
-                  if (selectedGoalType.name.toLowerCase() === 'time improvement') {
-                    setNewGoal({ ...newGoal, goalTypeId: e.target.value, targetValue: undefined });
-                  } else {
-                    setNewGoal({ ...newGoal, goalTypeId: e.target.value, initialTime: '', targetTime: '', event: '' });
-                  }
-                }
-              }}
-            >
-              <option value="">Select Goal Type</option>
-              {goalTypes.map(goalType => (
-                <option key={goalType.id} value={goalType.id}>{goalType.name}</option>
-              ))}
-            </Select>
-            {renderGoalInputs()}
-            <Input
-              type="date"
-              placeholder="Start Date"
-              value={newGoal.startDate}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => 
-                setNewGoal({ ...newGoal, startDate: e.target.value })}
-            />
-            <Input
-              type="date"
-              placeholder="End Date"
-              value={newGoal.endDate}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => 
-                setNewGoal({ ...newGoal, endDate: e.target.value })}
-            />
-            <Button type="submit">Set New Goal</Button>
-          </form>
-        </CardContent>
-      </Card>
-
-      <Card className={styles.card}>
-        <CardHeader>Current Goals</CardHeader>
-        <CardContent>
-          {goals.map(goal => (
-            <div key={goal.id} className={`${styles.goalItem} ${(goal.status === 'completed' || goal.status === 'expired') ? styles.inactiveGoal : ''}`}>
-              <h3 className={styles.goalTitle}>{goal.goal_type.name}</h3>
-              <p className={styles.goalStatus}>Status: {goal.status}</p>
-              <div className={styles.progressContainer}>
-                <Progress value={goal.progress} />
-                <p className={styles.progressText}>Progress: {goal.progress.toFixed(2)}%</p>
-              </div>
-              {renderGoalProgress(goal)}
-            </div>
-          ))}
-        </CardContent>
-      </Card>
-
-      <Card className={styles.card}>
-        <CardHeader>Achievements</CardHeader>
-        <CardContent>
-          {achievements.map(achievement => (
-            <div key={achievement.id} className={styles.achievementItem}>
-              <h3 className={styles.achievementTitle}>{achievement.title}</h3>
-              <p>{achievement.description}</p>
-              <p className={styles.achievementDate}>Achieved on: {new Date(achievement.achieved_date).toLocaleDateString()}</p>
-            </div>
-          ))}
-        </CardContent>
-      </Card>
+      <div className={styles.tabsContainer}>
+        <Tabs defaultValue="current">
+          <TabsList>
+            <TabsTrigger value="current">Current Goals</TabsTrigger>
+            <TabsTrigger value="completed">Completed Goals</TabsTrigger>
+            <TabsTrigger value="new">Create New Goal</TabsTrigger>
+            <TabsTrigger value="achievements">Achievements</TabsTrigger>
+          </TabsList>
+          <div className={styles.contentContainer}>
+            <TabsContent value="current">
+              <Card>
+                <div className={styles.cardHeaderWrapper}>
+                  <CardHeader>Current Goals</CardHeader>
+                </div>
+                <CardContent>
+                  {renderGoals('in_progress')}
+                </CardContent>
+              </Card>
+            </TabsContent>
+            <TabsContent value="completed">
+              <Card>
+                <div className={styles.cardHeaderWrapper}>
+                  <CardHeader>Completed Goals</CardHeader>
+                </div>
+                <CardContent>
+                  {renderGoals('completed')}
+                  {renderGoals('expired')}
+                </CardContent>
+              </Card>
+            </TabsContent>
+            <TabsContent value="new">
+              <Card>
+                <div className={styles.cardHeaderWrapper}>
+                  <CardHeader>Create New Goal</CardHeader>
+                </div>
+                <CardContent>
+                  <form onSubmit={handleSetGoal} className={styles.form}>
+                    <Select
+                      value={newGoal.goalTypeId}
+                      onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
+                        const selectedGoalType = goalTypes.find(gt => gt.id === e.target.value);
+                        if (selectedGoalType) {
+                          if (selectedGoalType.name.toLowerCase() === 'time improvement') {
+                            setNewGoal({ ...newGoal, goalTypeId: e.target.value, targetValue: undefined });
+                          } else {
+                            setNewGoal({ ...newGoal, goalTypeId: e.target.value, initialTime: '', targetTime: '', event: '' });
+                          }
+                        }
+                      }}
+                    >
+                      <option value="">Select Goal Type</option>
+                      {goalTypes.map(goalType => (
+                        <option key={goalType.id} value={goalType.id}>{goalType.name}</option>
+                      ))}
+                    </Select>
+                    {renderGoalInputs()}
+                    <Input
+                      type="date"
+                      placeholder="Start Date"
+                      value={newGoal.startDate}
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => 
+                        setNewGoal({ ...newGoal, startDate: e.target.value })}
+                    />
+                    <Input
+                      type="date"
+                      placeholder="End Date"
+                      value={newGoal.endDate}
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => 
+                        setNewGoal({ ...newGoal, endDate: e.target.value })}
+                    />
+                    <Button type="submit">Set New Goal</Button>
+                  </form>
+                </CardContent>
+              </Card>
+            </TabsContent>
+            <TabsContent value="achievements">
+              <Card>
+                <div className={styles.cardHeaderWrapper}>
+                  <CardHeader>Achievements</CardHeader>
+                </div>
+                <CardContent>
+                  {achievements.length === 0 ? (
+                    <p className={styles.emptyStateMessage}>You have no achievements yet.</p>
+                  ) : (
+                    achievements.map(achievement => (
+                      <div key={achievement.id} className={styles.achievementItem}>
+                        <h3 className={styles.achievementTitle}>{achievement.title}</h3>
+                        <p className={styles.achievementDescription}>{achievement.description}</p>
+                        <p className={styles.achievementDate}>
+                          Achieved on: {new Date(achievement.achieved_date).toLocaleDateString()}
+                        </p>
+                      </div>
+                    ))
+                  )}
+                </CardContent>
+              </Card>
+            </TabsContent>
+          </div>
+        </Tabs>
+      </div>
     </div>
   );
 };
