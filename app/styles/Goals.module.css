@@ -72,3 +72,13 @@
     width: 40px;
     text-align: center;
   }
+
+  .inactiveGoal {
+    opacity: 0.6;
+    pointer-events: none;
+  }
+  
+  .goalStatus {
+    font-weight: bold;
+    margin-bottom: 10px;
+  }

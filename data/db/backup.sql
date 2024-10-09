@@ -182,22 +182,24 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- Update update_goal_progress function
+
+-- Now, create the new function with the updated return type
 CREATE OR REPLACE FUNCTION update_goal_progress(
     p_goal_id UUID,
     p_update_value TEXT,
     p_update_date DATE,
     p_notes TEXT
-) RETURNS VOID AS $$
+) RETURNS JSON AS $$
 DECLARE
+    v_goal swimmer_goals;
     v_goal_type_id UUID;
     v_target_value NUMERIC;
     v_initial_time INTERVAL;
     v_target_time INTERVAL;
     v_new_progress NUMERIC;
 BEGIN
-    -- Get goal type and target
-    SELECT goal_type_id, target_value, initial_time, target_time 
-    INTO v_goal_type_id, v_target_value, v_initial_time, v_target_time
+    -- Get goal information
+    SELECT * INTO v_goal
     FROM swimmer_goals 
     WHERE id = p_goal_id;
 
@@ -206,40 +208,40 @@ BEGIN
     VALUES (p_goal_id, p_update_value, p_update_date, p_notes);
 
     -- Calculate new progress based on goal type
-    IF v_goal_type_id = (SELECT id FROM goal_types WHERE name = 'Time Improvement') THEN
-        v_new_progress := calculate_time_progress(v_initial_time, v_target_time, p_update_value::INTERVAL);
+    IF v_goal.goal_type_id = (SELECT id FROM goal_types WHERE name = 'Time Improvement') THEN
+        v_new_progress := calculate_time_progress(v_goal.initial_time, v_goal.target_time, p_update_value::INTERVAL);
     ELSE
         -- For numeric goals, calculate progress
-        SELECT LEAST(100, (SUM(
-            CASE 
-                WHEN update_value ~ '^[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?$' 
-                THEN update_value::NUMERIC 
-                ELSE 0 
-            END
-        ) / v_target_value) * 100) INTO v_new_progress
-        FROM goal_updates WHERE goal_id = p_goal_id;
+        v_new_progress := LEAST(100, (p_update_value::NUMERIC / v_goal.target_value) * 100);
     END IF;
 
     -- Update the goal progress
     UPDATE swimmer_goals
     SET progress = v_new_progress,
-        status = CASE WHEN v_new_progress >= 100 THEN 'completed' ELSE status END
-    WHERE id = p_goal_id;
+        status = CASE 
+            WHEN v_new_progress >= 100 THEN 'completed'
+            WHEN CURRENT_DATE > end_date THEN 'expired'
+            ELSE 'in_progress'
+        END
+    WHERE id = p_goal_id
+    RETURNING * INTO v_goal;
 
     -- If goal is completed, create an achievement
-    IF v_new_progress >= 100 THEN
+    IF v_goal.status = 'completed' THEN
         INSERT INTO achievements (swimmer_id, title, description, achieved_date, related_goal_id)
-        SELECT sg.swimmer_id,
+        SELECT v_goal.swimmer_id,
                gt.name || ' Achieved',
                'Completed goal: ' || gt.description,
                CURRENT_DATE,
-               sg.id
-        FROM swimmer_goals sg
-        JOIN goal_types gt ON sg.goal_type_id = gt.id
-        WHERE sg.id = p_goal_id;
+               v_goal.id
+        FROM goal_types gt
+        WHERE gt.id = v_goal.goal_type_id;
     END IF;
+
+    RETURN row_to_json(v_goal);
 END;
 $$ LANGUAGE plpgsql;
+
 
 -- Update calculate_time_progress function
 CREATE OR REPLACE FUNCTION calculate_time_progress(

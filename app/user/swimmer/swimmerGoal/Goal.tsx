@@ -26,9 +26,10 @@ interface TimeInputProps {
   onChange: (value: string) => void;
   onBlur: () => void;
   placeholder: string;
+  disabled?: boolean;
 }
 
-const TimeInput: React.FC<TimeInputProps> = ({ value, onChange, onBlur, placeholder }) => {
+const TimeInput: React.FC<TimeInputProps> = ({ value, onChange, onBlur, placeholder, disabled }) => {
   return (
     <Input
       type="text"
@@ -36,6 +37,7 @@ const TimeInput: React.FC<TimeInputProps> = ({ value, onChange, onBlur, placehol
       onChange={(e) => onChange(e.target.value)}
       onBlur={onBlur}
       placeholder={placeholder}
+      disabled={disabled}
     />
   );
 };
@@ -109,13 +111,15 @@ const Goal: React.FC<GoalProps> = ({ swimmerId }) => {
       if (!goal) {
         throw new Error('Goal not found');
       }
+      if (goal.status === 'completed' || goal.status === 'expired') {
+        throw new Error('Cannot update a completed or expired goal');
+      }
 
       await updateGoalProgress(
         goalId,
         newValue,
         new Date().toISOString().split('T')[0],
-        'Progress update',
-        0 // The progress is calculated on the server side now
+        'Progress update'
       );
       
       setCurrentTimes(prev => ({ ...prev, [goalId]: '' }));
@@ -179,6 +183,8 @@ const Goal: React.FC<GoalProps> = ({ swimmerId }) => {
   };
 
   const renderGoalProgress = (goal: SwimmerGoal) => {
+    const isInactive = goal.status === 'completed' || goal.status === 'expired';
+    
     if (goal.goal_type.name.toLowerCase() === 'time improvement') {
       return (
         <>
@@ -194,8 +200,12 @@ const Goal: React.FC<GoalProps> = ({ swimmerId }) => {
                 setCurrentTimes(prev => ({ ...prev, [goal.id]: formattedTime }));
               }}
               placeholder="Current Time (MM:SS:CC)"
+              disabled={isInactive}
             />
-            <Button onClick={() => handleUpdateProgress(goal.id, currentTimes[goal.id])}>
+            <Button 
+              onClick={() => handleUpdateProgress(goal.id, currentTimes[goal.id])}
+              disabled={isInactive}
+            >
               Update Time
             </Button>
           </div>
@@ -214,8 +224,12 @@ const Goal: React.FC<GoalProps> = ({ swimmerId }) => {
               value={currentTimes[goal.id] || ''}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => 
                 setCurrentTimes(prev => ({ ...prev, [goal.id]: e.target.value }))}
+              disabled={isInactive}
             />
-            <Button onClick={() => handleUpdateProgress(goal.id, parseFloat(currentTimes[goal.id]))}>
+            <Button 
+              onClick={() => handleUpdateProgress(goal.id, parseFloat(currentTimes[goal.id]))}
+              disabled={isInactive}
+            >
               Update Progress
             </Button>
           </div>
@@ -273,8 +287,9 @@ const Goal: React.FC<GoalProps> = ({ swimmerId }) => {
         <CardHeader>Current Goals</CardHeader>
         <CardContent>
           {goals.map(goal => (
-            <div key={goal.id} className={styles.goalItem}>
+            <div key={goal.id} className={`${styles.goalItem} ${(goal.status === 'completed' || goal.status === 'expired') ? styles.inactiveGoal : ''}`}>
               <h3 className={styles.goalTitle}>{goal.goal_type.name}</h3>
+              <p className={styles.goalStatus}>Status: {goal.status}</p>
               <div className={styles.progressContainer}>
                 <Progress value={goal.progress} />
                 <p className={styles.progressText}>Progress: {goal.progress.toFixed(2)}%</p>

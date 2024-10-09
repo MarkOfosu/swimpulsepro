@@ -10,16 +10,16 @@ export interface GoalType {
 }
 
 export interface SwimmerGoal {
-  initial_time: string | undefined;
   id: string;
   swimmer_id: string;
   goal_type_id: string;
   target_value?: number;
+  initial_time?: string;
   target_time?: string;
   event?: string;
   start_date: string;
   end_date: string;
-  status: 'in_progress' | 'completed';
+  status: 'in_progress' | 'completed' | 'expired';
   progress: number;
   goal_type: GoalType;
 }
@@ -37,7 +37,7 @@ export interface Achievement {
 export interface NewGoal {
   goalTypeId: string;
   targetValue?: number;
-  initialTime?: string;  // Add this line
+  initialTime?: string;
   targetTime?: string;
   event?: string;
   startDate: string;
@@ -49,7 +49,7 @@ export async function setSwimmerGoal(swimmerId: string, goal: NewGoal): Promise<
     p_swimmer_id: swimmerId,
     p_goal_type_id: goal.goalTypeId,
     p_target_value: goal.targetValue || null,
-    p_initial_time: goal.initialTime || null,  // Add this line
+    p_initial_time: goal.initialTime || null,
     p_target_time: goal.targetTime || null,
     p_event: goal.event || null,
     p_start_date: goal.startDate,
@@ -61,37 +61,35 @@ export async function setSwimmerGoal(swimmerId: string, goal: NewGoal): Promise<
     throw error;
   }
 
-  return data as string; // This will be the new goal ID
+  return data as string;
 }
 
+export async function updateGoalProgress(
+  goalId: string, 
+  updateValue: string | number, 
+  updateDate: string, 
+  notes: string
+): Promise<SwimmerGoal> {
+  const { data, error } = await supabase.rpc('update_goal_progress', {
+    p_goal_id: goalId,
+    p_update_value: updateValue.toString(),
+    p_update_date: updateDate,
+    p_notes: notes
+  });
 
-export const updateGoalProgress = async (
-  goalId: string, updateValue: string | number, updateDate: string, notes: string, progress: number  ) => {
-      try {
-        const response = await supabase.rpc('update_goal_progress', {
-          p_goal_id: goalId,
-          p_update_value: updateValue.toString(), // Always send as string
-          p_update_date: updateDate,
-          p_notes: notes
-        });
-    
-        if (response.error) {
-          throw new Error(response.error.message);
-        }
-    
-        return response.data;
-      } catch (error) {
-        console.error('Error updating goal progress:', error);
-        throw error;
-      }
-  };
+  if (error) {
+    console.error('Error updating goal progress:', error);
+    throw error;
+  }
+
+  return data as SwimmerGoal;
+}
 
 export async function fetchSwimmerGoals(swimmerId: string): Promise<SwimmerGoal[]> {
   const { data, error } = await supabase
     .from('swimmer_goals')
     .select(`
-      *,
-      goal_type:goal_types(*)
+      *,goal_type:goal_types(*)
     `)
     .eq('swimmer_id', swimmerId);
 
@@ -100,7 +98,16 @@ export async function fetchSwimmerGoals(swimmerId: string): Promise<SwimmerGoal[
     throw error;
   }
 
-  return data as SwimmerGoal[];
+  // Check for expired goals
+  const currentDate = new Date();
+  const updatedGoals = data.map(goal => {
+    if (new Date(goal.end_date) < currentDate && goal.status === 'in_progress') {
+      return { ...goal, status: 'expired' };
+    }
+    return goal;
+  });
+
+  return updatedGoals as SwimmerGoal[];
 }
 
 export async function fetchSwimmerAchievements(swimmerId: string): Promise<Achievement[]> {
@@ -142,9 +149,8 @@ export function formatTimeString(totalSeconds: number): string {
   return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}:${centiseconds.toString().padStart(2, '0')}`;
 }
 
-export function calculateTimeProgress(targetTime: number, currentTime: number): number {
-  //  lower time is better
-  const improvement = targetTime - currentTime;
-  const totalImprovement = targetTime - (targetTime * 0.9); // Assuming 10% improvement is 100% progress
-  return Math.min((improvement / totalImprovement) * 100, 100);
+export function calculateTimeProgress(initialTime: number, targetTime: number, currentTime: number): number {
+  const totalImprovement = initialTime - targetTime;
+  const currentImprovement = initialTime - currentTime;
+  return Math.min((currentImprovement / totalImprovement) * 100, 100);
 }
