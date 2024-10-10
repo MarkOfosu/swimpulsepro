@@ -3,6 +3,27 @@
     margin: 20px auto;
     padding: 0 20px;
   }
+  .tabHeader {
+    color: #be185d;
+    font-size: 28px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #f3f4f6;
+  }
+  
+  .cardContent {
+    padding-top: 0;
+  }
+  
+  /* Update existing styles */
+  .contentContainer {
+    background-color: white;
+    border-radius: 0 0 12px 12px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 0; /* Remove padding here */
+  }
+  
   
   .tabsContainer {
     background-color: rgb(255, 255, 255);

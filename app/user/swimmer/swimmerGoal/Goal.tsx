@@ -288,16 +288,16 @@ const Goal: React.FC<GoalProps> = ({ swimmerId }) => {
           <div className={styles.contentContainer}>
             <TabsContent value="current">
               <Card>
-                <CardHeader>Current Goals</CardHeader>
-                <CardContent>
+                <h2 className={styles.tabHeader}>Current Goals</h2>
+                <CardContent className={styles.cardContent}>
                   {renderGoals('in_progress')}
                 </CardContent>
               </Card>
             </TabsContent>
             <TabsContent value="completed">
               <Card>
-                <CardHeader>Completed Goals</CardHeader>
-                <CardContent>
+                <h2 className={styles.tabHeader}>Completed Goals</h2>
+                <CardContent className={styles.cardContent}>
                   {renderGoals('completed')}
                   {renderGoals('expired')}
                 </CardContent>
@@ -305,8 +305,8 @@ const Goal: React.FC<GoalProps> = ({ swimmerId }) => {
             </TabsContent>
             <TabsContent value="new">
               <Card>
-                <CardHeader>Create New Goal</CardHeader>
-                <CardContent>
+                <h2 className={styles.tabHeader}>Create New Goal</h2>
+                <CardContent className={styles.cardContent}>
                   <form onSubmit={handleSetGoal} className={styles.form}>
                     <Select
                       value={newGoal.goalTypeId}
@@ -348,8 +348,8 @@ const Goal: React.FC<GoalProps> = ({ swimmerId }) => {
             </TabsContent>
             <TabsContent value="achievements">
               <Card>
-                <CardHeader>Aquatic Accolades</CardHeader>
-                <CardContent>
+                <h2 className={styles.tabHeader}>Achievements</h2>
+                <CardContent className={styles.cardContent}>
                   {renderAchievements()}
                 </CardContent>
               </Card>
