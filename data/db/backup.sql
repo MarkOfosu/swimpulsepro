@@ -111,6 +111,7 @@ CREATE TABLE IF NOT EXISTS swimmer_goals (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     swimmer_id UUID REFERENCES swimmers(id) ON DELETE CASCADE,
     goal_type_id UUID REFERENCES goal_types(id) ON DELETE CASCADE,
+    goal_type_name VARCHAR,
     target_value NUMERIC,
     initial_time INTERVAL,
     start_date DATE,
@@ -136,6 +137,8 @@ CREATE TABLE IF NOT EXISTS achievements (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     swimmer_id UUID REFERENCES swimmers(id) ON DELETE CASCADE,
     title VARCHAR NOT NULL,
+    event VARCHAR(50),
+    goal_type VARCHAR(50);
     description TEXT,
     achieved_date DATE,
     icon VARCHAR,
@@ -148,7 +151,7 @@ INSERT INTO goal_types (name, description, measurement_unit) VALUES
 ('Time Improvement', 'Improve time for a specific distance and stroke', 'seconds'),
 ('Distance Goal', 'Swim a target distance for a target period', 'meters'),
 -- ('Technique Mastery', 'Master a specific swimming technique', 'proficiency level'),
-('Competition Placement', 'Achieve a specific place in a competition', 'place'),
+-- ('Competition Placement', 'Achieve a specific place in a competition', 'place'),
 ('Attendance Goal', 'Attend a target number of practice sessions', 'sessions');
 
 
@@ -181,9 +184,16 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
--- Update update_goal_progress function
+
 
 -- Now, create the new function with the updated return type
+-- Update existing rows to populate goal_type_name
+UPDATE swimmer_goals sg
+SET goal_type_name = gt.name
+FROM goal_types gt
+WHERE sg.goal_type_id = gt.id;
+
+-- Update update_goal_progress function
 CREATE OR REPLACE FUNCTION update_goal_progress(
     p_goal_id UUID,
     p_update_value TEXT,
@@ -191,28 +201,32 @@ CREATE OR REPLACE FUNCTION update_goal_progress(
     p_notes TEXT
 ) RETURNS JSON AS $$
 DECLARE
-    v_goal swimmer_goals;
-    v_goal_type_id UUID;
-    v_target_value NUMERIC;
-    v_initial_time INTERVAL;
-    v_target_time INTERVAL;
+    v_goal_data swimmer_goals%ROWTYPE;
+    v_goal_type_name TEXT;
     v_new_progress NUMERIC;
+    v_achievement_description TEXT;
+    v_formatted_event TEXT;
 BEGIN
     -- Get goal information
-    SELECT * INTO v_goal
-    FROM swimmer_goals 
+    SELECT * INTO v_goal_data
+    FROM swimmer_goals
     WHERE id = p_goal_id;
+
+    -- Get goal type name
+    SELECT name INTO v_goal_type_name
+    FROM goal_types
+    WHERE id = v_goal_data.goal_type_id;
 
     -- Insert the update
     INSERT INTO goal_updates (goal_id, update_value, update_date, notes)
     VALUES (p_goal_id, p_update_value, p_update_date, p_notes);
 
     -- Calculate new progress based on goal type
-    IF v_goal.goal_type_id = (SELECT id FROM goal_types WHERE name = 'Time Improvement') THEN
-        v_new_progress := calculate_time_progress(v_goal.initial_time, v_goal.target_time, p_update_value::INTERVAL);
+    IF v_goal_type_name = 'Time Improvement' THEN
+        v_new_progress := calculate_time_progress(v_goal_data.initial_time, v_goal_data.target_time, p_update_value::INTERVAL);
     ELSE
         -- For numeric goals, calculate progress
-        v_new_progress := LEAST(100, (p_update_value::NUMERIC / v_goal.target_value) * 100);
+        v_new_progress := LEAST(100, (p_update_value::NUMERIC / v_goal_data.target_value) * 100);
     END IF;
 
     -- Update the goal progress
@@ -224,23 +238,34 @@ BEGIN
             ELSE 'in_progress'
         END
     WHERE id = p_goal_id
-    RETURNING * INTO v_goal;
+    RETURNING * INTO v_goal_data;
 
     -- If goal is completed, create an achievement
-    IF v_goal.status = 'completed' THEN
-        INSERT INTO achievements (swimmer_id, title, description, achieved_date, related_goal_id)
-        SELECT v_goal.swimmer_id,
-               gt.name || ' Achieved',
-               'Completed goal: ' || gt.description,
-               CURRENT_DATE,
-               v_goal.id
-        FROM goal_types gt
-        WHERE gt.id = v_goal.goal_type_id;
+    IF v_goal_data.status = 'completed' THEN
+        -- Format the event name (replace underscores with spaces)
+        v_formatted_event := replace(v_goal_data.event, '_', ' ');
+        
+        -- Create achievement description
+        v_achievement_description := v_formatted_event || ' ' || v_goal_type_name;
+
+        INSERT INTO achievements (swimmer_id, title, description, achieved_date, related_goal_id, event, goal_type)
+        VALUES (
+            v_goal_data.swimmer_id,
+            v_goal_type_name || ' Achieved',
+            v_achievement_description,
+            CURRENT_DATE,
+            v_goal_data.id,
+            v_formatted_event,
+            v_goal_type_name
+        );
     END IF;
 
-    RETURN row_to_json(v_goal);
+    -- Return the updated goal data
+    RETURN row_to_json(v_goal_data);
 END;
 $$ LANGUAGE plpgsql;
+
+
 
 
 -- Update calculate_time_progress function
