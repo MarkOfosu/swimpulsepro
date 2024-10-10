@@ -55,7 +55,8 @@ const Goal: React.FC<GoalProps> = ({ swimmerId }) => {
     targetTime: '',
     event: '',
     startDate: '',
-    endDate: ''
+    endDate: '',
+    unit: 'meters'
   });
   const [currentTimes, setCurrentTimes] = useState<{ [goalId: string]: string }>({});
   const [error, setError] = useState<string | null>(null);
@@ -97,7 +98,8 @@ const Goal: React.FC<GoalProps> = ({ swimmerId }) => {
         targetTime: '',
         event: '',
         startDate: '',
-        endDate: ''
+        endDate: '',
+        unit: '',
       });
       await loadData();
     } catch (error) {
@@ -171,11 +173,31 @@ const Goal: React.FC<GoalProps> = ({ swimmerId }) => {
             />
           </>
         );
+      case 'distance goal':
+        return (
+          <>
+            <Input
+              type="number"
+              placeholder='Target Distance'
+              value={newGoal.targetValue || ''}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => 
+                setNewGoal({ ...newGoal, targetValue: parseFloat(e.target.value) || undefined })}
+            />
+            <Select
+              value={newGoal.unit || 'meters'}
+              onChange={(e: React.ChangeEvent<HTMLSelectElement>) => 
+                setNewGoal({ ...newGoal, unit: e.target.value })}
+            >
+              <option value="meters">Meters</option>
+              <option value="yards">Yards</option>
+            </Select>
+          </>
+        );
       default:
         return (
           <Input
             type="number"
-            placeholder={`Target ${selectedGoalType.measurement_unit}`}
+            placeholder='Target Distance'
             value={newGoal.targetValue || ''}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => 
               setNewGoal({ ...newGoal, targetValue: parseFloat(e.target.value) || undefined })}
@@ -217,7 +239,7 @@ const Goal: React.FC<GoalProps> = ({ swimmerId }) => {
       return (
         <>
           <p className={styles.targetText}>
-            Target: {goal.target_value ?? 'Not set'} {goal.goal_type.measurement_unit}
+            Target: {goal.target_value} {goal.unit }
           </p>
           <div className={styles.updateContainer}>
             <Input
@@ -261,6 +283,7 @@ const Goal: React.FC<GoalProps> = ({ swimmerId }) => {
       </>
     );
   };
+
   const renderAchievements = () => {
     if (achievements.length === 0) {
       return <p className={styles.emptyStateMessage}>You haven't unlocked any achievements yet. Keep swimming!</p>;
@@ -314,9 +337,11 @@ const Goal: React.FC<GoalProps> = ({ swimmerId }) => {
                         const selectedGoalType = goalTypes.find(gt => gt.id === e.target.value);
                         if (selectedGoalType) {
                           if (selectedGoalType.name.toLowerCase() === 'time improvement') {
-                            setNewGoal({ ...newGoal, goalTypeId: e.target.value, targetValue: undefined });
+                            setNewGoal({ ...newGoal, goalTypeId: e.target.value, targetValue: undefined, unit: '' });
+                          } else if (selectedGoalType.name.toLowerCase() === 'distance goal') {
+                            setNewGoal({ ...newGoal, goalTypeId: e.target.value, initialTime: '', targetTime: '', event: '', unit: 'meters' });
                           } else {
-                            setNewGoal({ ...newGoal, goalTypeId: e.target.value, initialTime: '', targetTime: '', event: '' });
+                            setNewGoal({ ...newGoal, goalTypeId: e.target.value, initialTime: '', targetTime: '', event: '', unit: '' });
                           }
                         }
                       }}

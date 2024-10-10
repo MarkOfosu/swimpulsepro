@@ -101,7 +101,6 @@ CREATE TABLE IF NOT EXISTS goal_types (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     name VARCHAR NOT NULL,
     description TEXT,
-    measurement_unit VARCHAR,
     created_at TIMESTAMPTZ DEFAULT NOW(),
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
@@ -114,6 +113,7 @@ CREATE TABLE IF NOT EXISTS swimmer_goals (
     goal_type_name VARCHAR,
     target_value NUMERIC,
     initial_time INTERVAL,
+    unit VARCHAR(10) DEFAULT 'units' NOT NULL,
     start_date DATE,
     end_date DATE,
     status VARCHAR DEFAULT 'in_progress',
@@ -141,18 +141,23 @@ CREATE TABLE IF NOT EXISTS achievements (
     goal_type VARCHAR(50);
     description TEXT,
     achieved_date DATE,
+    target_value NUMERIC,
+    target_time INTERVAL,
+    unit VARCHAR(10),
     icon VARCHAR,
     related_goal_id UUID REFERENCES swimmer_goals(id),
     created_at TIMESTAMPTZ DEFAULT NOW()
+    start_date DATE,
+    end_date DATE,
 );
 
 -- Insert some common goal types
 INSERT INTO goal_types (name, description, measurement_unit) VALUES
-('Time Improvement', 'Improve time for a specific distance and stroke', 'seconds'),
-('Distance Goal', 'Swim a target distance for a target period', 'meters'),
+('Time Improvement', 'Improve time for a specific distance and stroke'),
+('Distance Goal', 'Swim a target distance for a target period'),
 -- ('Technique Mastery', 'Master a specific swimming technique', 'proficiency level'),
 -- ('Competition Placement', 'Achieve a specific place in a competition', 'place'),
-('Attendance Goal', 'Attend a target number of practice sessions', 'sessions');
+('Attendance Goal', 'Attend a target number of practice sessions');
 
 
 
@@ -160,7 +165,9 @@ INSERT INTO goal_types (name, description, measurement_unit) VALUES
 -- Function to set a new goal
 
 
+-- Update set_swimmer_goal function to include unit
 -- Update set_swimmer_goal function
+-- Optionally, you might want to update the set_swimmer_goal function to use the default value
 CREATE OR REPLACE FUNCTION set_swimmer_goal(
   p_swimmer_id UUID,
   p_goal_type_id UUID,
@@ -169,29 +176,42 @@ CREATE OR REPLACE FUNCTION set_swimmer_goal(
   p_target_time INTERVAL,
   p_event VARCHAR(50),
   p_start_date DATE,
-  p_end_date DATE
-) RETURNS UUID AS $$
+  p_end_date DATE,
+  p_unit VARCHAR(10) DEFAULT 'units'
+) RETURNS JSON AS $$
 DECLARE
   v_goal_id UUID;
+  v_goal_type_name TEXT;
 BEGIN
+  -- Get the goal type name
+  SELECT name INTO v_goal_type_name
+  FROM goal_types
+  WHERE id = p_goal_type_id;
+
+  -- Insert the new goal
   INSERT INTO swimmer_goals (
-    swimmer_id, goal_type_id, target_value, initial_time, target_time, event, start_date, end_date, status, progress
+    swimmer_id, goal_type_id, target_value, initial_time, target_time, event, start_date, end_date, status, progress, unit
   ) VALUES (
-    p_swimmer_id, p_goal_type_id, p_target_value, p_initial_time, p_target_time, p_event, p_start_date, p_end_date, 'in_progress', 0
+    p_swimmer_id, p_goal_type_id, p_target_value, p_initial_time, p_target_time, p_event, p_start_date, p_end_date, 'in_progress', 0, p_unit
   ) RETURNING id INTO v_goal_id;
   
-  RETURN v_goal_id;
+  -- Return the goal information as JSON
+  RETURN json_build_object(
+    'id', v_goal_id,
+    'goal_type_name', v_goal_type_name,
+    'target_value', p_target_value,
+    'target_time', p_target_time,
+    'unit', p_unit
+  );
 END;
 $$ LANGUAGE plpgsql;
 
 
 
+
 -- Now, create the new function with the updated return type
 -- Update existing rows to populate goal_type_name
-UPDATE swimmer_goals sg
-SET goal_type_name = gt.name
-FROM goal_types gt
-WHERE sg.goal_type_id = gt.id;
+
 
 -- Update update_goal_progress function
 CREATE OR REPLACE FUNCTION update_goal_progress(
@@ -248,7 +268,10 @@ BEGIN
         -- Create achievement description
         v_achievement_description := v_formatted_event || ' ' || v_goal_type_name;
 
-        INSERT INTO achievements (swimmer_id, title, description, achieved_date, related_goal_id, event, goal_type)
+        INSERT INTO achievements (
+            swimmer_id, title, description, achieved_date, related_goal_id, 
+            event, goal_type, target_value, target_time, start_date, end_date, unit
+        )
         VALUES (
             v_goal_data.swimmer_id,
             v_goal_type_name || ' Achieved',
@@ -256,7 +279,12 @@ BEGIN
             CURRENT_DATE,
             v_goal_data.id,
             v_formatted_event,
-            v_goal_type_name
+            v_goal_type_name,
+            v_goal_data.target_value,
+            v_goal_data.target_time,
+            v_goal_data.start_date,
+            v_goal_data.end_date,
+            v_goal_data.unit
         );
     END IF;
 
@@ -264,9 +292,6 @@ BEGIN
     RETURN row_to_json(v_goal_data);
 END;
 $$ LANGUAGE plpgsql;
-
-
-
 
 -- Update calculate_time_progress function
 CREATE OR REPLACE FUNCTION calculate_time_progress(

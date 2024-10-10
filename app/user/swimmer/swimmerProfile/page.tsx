@@ -90,6 +90,7 @@ const SwimmerProfilePage: React.FC<GamifiedSwimmerInterfaceProps> = ({ swimmerId
           { id: 3, title: "Flipper Fury", description: "100m Butterfly Record", icon: "🐬", time: "00:54:20" },
           { id: 4, title: "Tsunami Tamer", description: "Open Water 5K Completion", icon: "🌊", time: "01:05:00" },
           { id: 5, title: "Torpedo Triumph", description: "4x100m Relay Victory", icon: "💨", time: "03:45:15" },
+          
         ],
         goals: [
           { id: 1, name: "Break the Sound Barrier (in water)", progress: 75 },
