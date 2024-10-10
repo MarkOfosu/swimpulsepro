@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader } from "@/components/ui/Card";
+import React, { useState, useEffect, useRef } from 'react';
+import { Card, CardContent } from "@/components/ui/Card";
 import { Progress } from "@/components/ui/Progress";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
@@ -16,33 +16,30 @@ import {
   GoalType,
   NewGoal
 } from '../functions/goalFunctions';
-import AchievementCard from './AchievvementCard'
+import AchievementCard from './AchievementCard';
 import styles from '../../../styles/Goals.module.css';
 
 interface GoalProps {
   swimmerId: string;
 }
 
-interface TimeInputProps {
-  value: string;
+interface TimeInputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'onChange'> {
   onChange: (value: string) => void;
-  onBlur: () => void;
-  placeholder: string;
-  disabled?: boolean;
 }
 
-const TimeInput: React.FC<TimeInputProps> = ({ value, onChange, onBlur, placeholder, disabled }) => {
-  return (
-    <Input
-      type="text"
-      value={value}
-      onChange={(e) => onChange(e.target.value)}
-      onBlur={onBlur}
-      placeholder={placeholder}
-      disabled={disabled}
-    />
-  );
-};
+const TimeInput = React.forwardRef<HTMLInputElement, TimeInputProps>(
+  ({ onChange, ...props }, ref) => {
+    return (
+      <Input
+        {...props}
+        onChange={(e: React.ChangeEvent<HTMLInputElement>) => onChange(e.target.value)}
+        ref={ref}
+      />
+    );
+  }
+);
+
+TimeInput.displayName = 'TimeInput';
 
 const Goal: React.FC<GoalProps> = ({ swimmerId }) => {
   const [goals, setGoals] = useState<SwimmerGoal[]>([]);
@@ -60,6 +57,15 @@ const Goal: React.FC<GoalProps> = ({ swimmerId }) => {
   });
   const [currentTimes, setCurrentTimes] = useState<{ [goalId: string]: string }>({});
   const [error, setError] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState("current");
+
+  const goalTypeRef = useRef<HTMLSelectElement>(null);
+  const eventRef = useRef<HTMLSelectElement>(null);
+  const initialTimeRef = useRef<HTMLInputElement>(null);
+  const targetTimeRef = useRef<HTMLInputElement>(null);
+  const targetValueRef = useRef<HTMLInputElement>(null);
+  const startDateRef = useRef<HTMLInputElement>(null);
+  const endDateRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     loadData();
@@ -86,9 +92,104 @@ const Goal: React.FC<GoalProps> = ({ swimmerId }) => {
     return `${digits.slice(0, 2)}:${digits.slice(2, 4)}:${digits.slice(4, 6)}`;
   };
 
+  // const isValidTimeFormat = (time: string): boolean => {
+  //   const regex = /^([0-5][0-9]):([0-5][0-9]):([0-9][0-9])$/;
+  //   return regex.test(time);
+  // };
+  const isValidTimeFormat = (time: string): boolean => {
+    const regex = /^([0-5][0-9]):([0-5][0-9]):([0-9][0-9])$/;
+    if (!regex.test(time)) return false;
+  
+    // Split the time string into minutes, seconds, and centiseconds
+    const [minutes, seconds, centiseconds] = time.split(':').map(Number);
+  
+    // Check if all are zero
+    if (minutes === 0 && seconds === 0 && centiseconds === 0) return false;
+  
+    return true;
+  };
+  
+  
+
+  const validateForm = (): boolean => {
+    setError(null);
+    if (!newGoal.goalTypeId) {
+      setError('Please select a goal type');
+      goalTypeRef.current?.focus();
+      return false;
+    }
+
+    const selectedGoalType = goalTypes.find(gt => gt.id === newGoal.goalTypeId);
+    if (!selectedGoalType) {
+      setError('Invalid goal type selected');
+      goalTypeRef.current?.focus();
+      return false;
+    }
+
+    if (selectedGoalType.name.toLowerCase() === 'time improvement') {
+      if (!newGoal.event) {
+        setError('Please select an event');
+        eventRef.current?.focus();
+        return false;
+      }
+      if (!newGoal.initialTime) {
+        setError('Please enter an initial time');
+        initialTimeRef.current?.focus();
+        return false;
+      }
+      if (!isValidTimeFormat(newGoal.initialTime)) {
+        setError('Initial time is in incorrect format and cannot be zero. Please use MM:SS:CC');
+        initialTimeRef.current?.focus();
+        return false;
+      }
+      if (!newGoal.targetTime) {
+        setError('Please enter a target time');
+        targetTimeRef.current?.focus();
+        return false;
+      }
+      if (!isValidTimeFormat(newGoal.targetTime)) {
+        setError('Target time is in incorrect format and cannot be zero. Please use MM:SS:CC');
+        targetTimeRef.current?.focus();
+        return false;
+      }
+    } else {
+      if (!newGoal.targetValue || newGoal.targetValue <= 0) {
+        setError('Please enter a valid target value');
+        targetValueRef.current?.focus();
+        return false;
+      }
+    }
+
+    if (!newGoal.startDate) {
+      setError('Please select a start date');
+      startDateRef.current?.focus();
+      return false;
+    }
+
+    if (!newGoal.endDate) {
+      setError('Please select an end date');
+      endDateRef.current?.focus();
+      return false;
+    }
+
+    if (new Date(newGoal.startDate) >= new Date(newGoal.endDate)) {
+      setError('End date must be after start date');
+      endDateRef.current?.focus();
+      return false;
+    }
+
+    return true;
+  };
+
   const handleSetGoal = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
+
+    if (!validateForm()) {
+      setActiveTab("new");
+      return;
+    }
+
     try {
       await setSwimmerGoal(swimmerId, newGoal);
       setNewGoal({
@@ -99,9 +200,10 @@ const Goal: React.FC<GoalProps> = ({ swimmerId }) => {
         event: '',
         startDate: '',
         endDate: '',
-        unit: '',
+        unit: 'meters'
       });
       await loadData();
+      setActiveTab("current");
     } catch (error) {
       console.error('Error setting new goal:', error);
       setError('Failed to set new goal. Please try again.');
@@ -117,6 +219,11 @@ const Goal: React.FC<GoalProps> = ({ swimmerId }) => {
       }
       if (goal.status === 'completed' || goal.status === 'expired') {
         throw new Error('Cannot update a completed or expired goal');
+      }
+
+      if (goal.goal_type.name.toLowerCase() === 'time improvement' && !isValidTimeFormat(newValue.toString())) {
+        setError('Invalid time format. Please use MM:SS:CC');
+        return;
       }
 
       await updateGoalProgress(
@@ -144,6 +251,7 @@ const Goal: React.FC<GoalProps> = ({ swimmerId }) => {
         return (
           <>
             <Select
+              ref={eventRef}
               value={newGoal.event || ''}
               onChange={(e: React.ChangeEvent<HTMLSelectElement>) => 
                 setNewGoal({ ...newGoal, event: e.target.value })}
@@ -154,6 +262,7 @@ const Goal: React.FC<GoalProps> = ({ swimmerId }) => {
               {/* Add more events as needed */}
             </Select>
             <TimeInput
+              ref={initialTimeRef}
               value={newGoal.initialTime || ''}
               onChange={(value) => setNewGoal({ ...newGoal, initialTime: value })}
               onBlur={() => {
@@ -163,6 +272,7 @@ const Goal: React.FC<GoalProps> = ({ swimmerId }) => {
               placeholder="Initial Time (MM:SS:CC)"
             />
             <TimeInput
+              ref={targetTimeRef}
               value={newGoal.targetTime || ''}
               onChange={(value) => setNewGoal({ ...newGoal, targetTime: value })}
               onBlur={() => {
@@ -177,11 +287,14 @@ const Goal: React.FC<GoalProps> = ({ swimmerId }) => {
         return (
           <>
             <Input
+              ref={targetValueRef}
               type="number"
               placeholder='Target Distance'
               value={newGoal.targetValue || ''}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => 
                 setNewGoal({ ...newGoal, targetValue: parseFloat(e.target.value) || undefined })}
+              min="0"
+              step="0.01"
             />
             <Select
               value={newGoal.unit || 'meters'}
@@ -196,11 +309,14 @@ const Goal: React.FC<GoalProps> = ({ swimmerId }) => {
       default:
         return (
           <Input
+            ref={targetValueRef}
             type="number"
-            placeholder='Target Distance'
+            placeholder='Target Value'
             value={newGoal.targetValue || ''}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => 
               setNewGoal({ ...newGoal, targetValue: parseFloat(e.target.value) || undefined })}
+            min="0"
+            step="1"
           />
         );
     }
@@ -239,7 +355,7 @@ const Goal: React.FC<GoalProps> = ({ swimmerId }) => {
       return (
         <>
           <p className={styles.targetText}>
-            Target: {goal.target_value} {goal.unit }
+            Target: {goal.target_value} {goal.unit}
           </p>
           <div className={styles.updateContainer}>
             <Input
@@ -249,6 +365,8 @@ const Goal: React.FC<GoalProps> = ({ swimmerId }) => {
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => 
                 setCurrentTimes(prev => ({ ...prev, [goal.id]: e.target.value }))}
               disabled={isInactive}
+              min="0"
+              step="0.01"
             />
             <Button 
               onClick={() => handleUpdateProgress(goal.id, parseFloat(currentTimes[goal.id]))}
@@ -283,7 +401,6 @@ const Goal: React.FC<GoalProps> = ({ swimmerId }) => {
       </>
     );
   };
-
   const renderAchievements = () => {
     if (achievements.length === 0) {
       return <p className={styles.emptyStateMessage}>You haven't unlocked any achievements yet. Keep swimming!</p>;
@@ -299,9 +416,8 @@ const Goal: React.FC<GoalProps> = ({ swimmerId }) => {
 
   return (
     <div className={styles.goalsWrapper}>
-      {error && <p className={styles.errorMessage}>{error}</p>}
       <div className={styles.tabsContainer}>
-        <Tabs defaultValue="current">
+        <Tabs defaultValue="current" onValueChange={setActiveTab}>
           <TabsList>
             <TabsTrigger value="current">Current Goals</TabsTrigger>
             <TabsTrigger value="completed">Completed Goals</TabsTrigger>
@@ -330,8 +446,10 @@ const Goal: React.FC<GoalProps> = ({ swimmerId }) => {
               <Card>
                 <h2 className={styles.tabHeader}>Create New Goal</h2>
                 <CardContent className={styles.cardContent}>
+                  {error && <p className={styles.errorMessage}>{error}</p>}
                   <form onSubmit={handleSetGoal} className={styles.form}>
                     <Select
+                      ref={goalTypeRef}
                       value={newGoal.goalTypeId}
                       onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
                         const selectedGoalType = goalTypes.find(gt => gt.id === e.target.value);
@@ -341,7 +459,7 @@ const Goal: React.FC<GoalProps> = ({ swimmerId }) => {
                           } else if (selectedGoalType.name.toLowerCase() === 'distance goal') {
                             setNewGoal({ ...newGoal, goalTypeId: e.target.value, initialTime: '', targetTime: '', event: '', unit: 'meters' });
                           } else {
-                            setNewGoal({ ...newGoal, goalTypeId: e.target.value, initialTime: '', targetTime: '', event: '', unit: '' });
+                            setNewGoal({ ...newGoal, goalTypeId: e.target.value, initialTime: '', targetTime: '', event: '', unit: 'sessions' });
                           }
                         }
                       }}
@@ -353,18 +471,22 @@ const Goal: React.FC<GoalProps> = ({ swimmerId }) => {
                     </Select>
                     {renderGoalInputs()}
                     <Input
+                      ref={startDateRef}
                       type="date"
                       placeholder="Start Date"
                       value={newGoal.startDate}
                       onChange={(e: React.ChangeEvent<HTMLInputElement>) => 
                         setNewGoal({ ...newGoal, startDate: e.target.value })}
+                      min={new Date().toISOString().split('T')[0]}
                     />
                     <Input
+                      ref={endDateRef}
                       type="date"
                       placeholder="End Date"
                       value={newGoal.endDate}
                       onChange={(e: React.ChangeEvent<HTMLInputElement>) => 
                         setNewGoal({ ...newGoal, endDate: e.target.value })}
+                      min={newGoal.startDate || new Date().toISOString().split('T')[0]}
                     />
                     <Button type="submit">Set New Goal</Button>
                   </form>

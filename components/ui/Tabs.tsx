@@ -14,15 +14,29 @@ interface TabsContextType {
 
 const TabsContext = React.createContext<TabsContextType | undefined>(undefined);
 
-export const Tabs: React.FC<TabsProps> = ({ children, defaultValue }) => {
+interface TabsProps {
+  children: React.ReactNode;
+  defaultValue: string;
+  onValueChange?: (value: string) => void; // Add this optional prop
+}
+
+export const Tabs: React.FC<TabsProps> = ({ children, defaultValue, onValueChange }) => {
   const [activeTab, setActiveTab] = useState(defaultValue);
 
+  const handleTabChange = (value: string) => {
+    setActiveTab(value);
+    if (onValueChange) {
+      onValueChange(value); // Call the callback if provided
+    }
+  };
+
   return (
-    <TabsContext.Provider value={{ activeTab, setActiveTab }}>
+    <TabsContext.Provider value={{ activeTab, setActiveTab: handleTabChange }}>
       <div className={styles.tabsContainer}>{children}</div>
     </TabsContext.Provider>
   );
 };
+
 
 export const TabsList: React.FC<{ children: React.ReactNode; className?: string }> = ({ children, className }) => {
 
