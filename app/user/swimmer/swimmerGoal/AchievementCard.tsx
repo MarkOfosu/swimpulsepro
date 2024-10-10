@@ -34,12 +34,19 @@ const AchievementCard: React.FC<AchievementCardProps> = ({ achievement }) => {
   const { icon: Icon, color: iconColor } = getRandomElement(icons);
   const funnyName = getRandomElement(funnyNames);
 
+  const formatEvent = (event: string) => {
+    return event.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+  };
+
   const renderTargetInfo = () => {
     if (achievement.goal_type === 'Time Improvement' && achievement.target_time) {
       return (
-        <p className={styles.targetInfo}>
-          <span className={styles.highlightedTime}>{achievement.target_time}</span>
-        </p>
+        <>
+          <p className={styles.eventName}>{formatEvent(achievement.event || '')}</p>
+          <p className={styles.targetInfo}>
+            <span className={styles.highlightedTime}>{achievement.target_time}</span>
+          </p>
+        </>
       );
     } else if (achievement.target_value !== undefined) {
       const dateRange = achievement.start_date && achievement.end_date ?
@@ -49,10 +56,10 @@ const AchievementCard: React.FC<AchievementCardProps> = ({ achievement }) => {
         ? `${achievement.target_value} sessions`
         : `${achievement.target_value} ${achievement.unit}`;
       return (
-        <p className={styles.targetInfo}>
-          {value}
-          <p>{dateRange}</p>
-        </p>
+        <div className={styles.targetInfo}>
+          <p>{value}</p>
+          <p className={styles.dateRange}>{dateRange}</p>
+        </div>
       );
     }
     return null;
@@ -66,7 +73,6 @@ const AchievementCard: React.FC<AchievementCardProps> = ({ achievement }) => {
         </div>
         <h2 className={styles.funnyName}>{funnyName}</h2>
         <h3 className={styles.title}>{achievement.title}</h3>
-        <p className={styles.description}>{achievement.description}</p>
         {renderTargetInfo()}
         <p className={styles.date}>Achieved on: {new Date(achievement.achieved_date).toLocaleDateString()}</p>
       </CardContent>
