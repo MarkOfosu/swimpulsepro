@@ -7,7 +7,6 @@ export interface GoalType {
   id: string;
   name: string;
   description: string;
-  measurement_unit: string;
 }
 
 export interface SwimmerGoal {
@@ -23,11 +22,10 @@ export interface SwimmerGoal {
   status: 'in_progress' | 'completed' | 'expired';
   progress: number;
   goal_type: GoalType;
+  unit: string;
 }
 
 export interface Achievement {
-  type(type: any): unknown;
-  value: ReactNode;
   id: string;
   title: string;
   description: string;
@@ -35,8 +33,12 @@ export interface Achievement {
   event?: string;
   goal_type?: string;
   icon: string;
-  // Add the time property here
   time?: string;
+  target_value?: number;
+  target_time?: string;
+  start_date?: string;
+  end_date?: string;
+  unit: string;
 }
 
 export interface NewGoal {
@@ -47,9 +49,18 @@ export interface NewGoal {
   event?: string;
   startDate: string;
   endDate: string;
+  unit: string;
 }
 
-export async function setSwimmerGoal(swimmerId: string, goal: NewGoal): Promise<string> {
+export interface SetGoalResult {
+  id: string;
+  goal_type_name: string;
+  target_value?: number;
+  target_time?: string;
+  unit: string;
+}
+
+export async function setSwimmerGoal(swimmerId: string, goal: NewGoal): Promise<SetGoalResult> {
   const { data, error } = await supabase.rpc('set_swimmer_goal', {
     p_swimmer_id: swimmerId,
     p_goal_type_id: goal.goalTypeId,
@@ -58,7 +69,8 @@ export async function setSwimmerGoal(swimmerId: string, goal: NewGoal): Promise<
     p_target_time: goal.targetTime || null,
     p_event: goal.event || null,
     p_start_date: goal.startDate,
-    p_end_date: goal.endDate
+    p_end_date: goal.endDate,
+    p_unit: goal.unit
   });
 
   if (error) {
@@ -66,7 +78,7 @@ export async function setSwimmerGoal(swimmerId: string, goal: NewGoal): Promise<
     throw error;
   }
 
-  return data as string;
+  return data as SetGoalResult;
 }
 
 export async function updateGoalProgress(

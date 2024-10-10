@@ -58,6 +58,16 @@
     color: #888;
     margin-top: auto;
   }
+
+  .highlightedTime {
+    color: #09dbf6; /* Bright blue color */
+    font-weight: bold;
+  }
+  
+  .targetInfo {
+    font-size: 1.1em;
+    margin-top: 10px;
+  }
   
   @media (max-width: 480px) {
     .cardContent {
@@ -80,3 +90,4 @@
       font-size: 0.7rem;
     }
   }
+
