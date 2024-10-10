@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader } from '../../../../components/ui/Card'
-import { Progress } from "../../../../components/ui/Progress";
-import { Button } from '../../../../components/ui/Button';
-import { Input } from '../../../../components/ui/Input';
-import { Select } from '../../../../components/ui/Select';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../../../components/ui/Tabs';
+import { Card, CardContent, CardHeader } from "@/components/ui/Card";
+import { Progress } from "@/components/ui/Progress";
+import { Button } from "@/components/ui/Button";
+import { Input } from "@/components/ui/Input";
+import { Select } from "@/components/ui/Select";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/Tabs";
 import { 
   setSwimmerGoal, 
   updateGoalProgress, 
@@ -15,8 +15,9 @@ import {
   Achievement,
   GoalType,
   NewGoal
-} from '../functions/goalFunctions'
-import styles from '../../../styles/Goals.module.css'
+} from '../functions/goalFunctions';
+import AchievementCard from './AchievvementCard'
+import styles from '../../../styles/Goals.module.css';
 
 interface GoalProps {
   swimmerId: string;
@@ -260,6 +261,18 @@ const Goal: React.FC<GoalProps> = ({ swimmerId }) => {
       </>
     );
   };
+  const renderAchievements = () => {
+    if (achievements.length === 0) {
+      return <p className={styles.emptyStateMessage}>You haven't unlocked any achievements yet. Keep swimming!</p>;
+    }
+    return (
+      <div className={styles.achievementsGrid}>
+        {achievements.map(achievement => (
+          <AchievementCard key={achievement.id} achievement={achievement} />
+        ))}
+      </div>
+    );
+  };
 
   return (
     <div className={styles.goalsWrapper}>
@@ -275,9 +288,7 @@ const Goal: React.FC<GoalProps> = ({ swimmerId }) => {
           <div className={styles.contentContainer}>
             <TabsContent value="current">
               <Card>
-                <div className={styles.cardHeaderWrapper}>
-                  <CardHeader>Current Goals</CardHeader>
-                </div>
+                <CardHeader>Current Goals</CardHeader>
                 <CardContent>
                   {renderGoals('in_progress')}
                 </CardContent>
@@ -285,9 +296,7 @@ const Goal: React.FC<GoalProps> = ({ swimmerId }) => {
             </TabsContent>
             <TabsContent value="completed">
               <Card>
-                <div className={styles.cardHeaderWrapper}>
-                  <CardHeader>Completed Goals</CardHeader>
-                </div>
+                <CardHeader>Completed Goals</CardHeader>
                 <CardContent>
                   {renderGoals('completed')}
                   {renderGoals('expired')}
@@ -296,9 +305,7 @@ const Goal: React.FC<GoalProps> = ({ swimmerId }) => {
             </TabsContent>
             <TabsContent value="new">
               <Card>
-                <div className={styles.cardHeaderWrapper}>
-                  <CardHeader>Create New Goal</CardHeader>
-                </div>
+                <CardHeader>Create New Goal</CardHeader>
                 <CardContent>
                   <form onSubmit={handleSetGoal} className={styles.form}>
                     <Select
@@ -341,23 +348,9 @@ const Goal: React.FC<GoalProps> = ({ swimmerId }) => {
             </TabsContent>
             <TabsContent value="achievements">
               <Card>
-                <div className={styles.cardHeaderWrapper}>
-                  <CardHeader>Achievements</CardHeader>
-                </div>
+                <CardHeader>Aquatic Accolades</CardHeader>
                 <CardContent>
-                  {achievements.length === 0 ? (
-                    <p className={styles.emptyStateMessage}>You have no achievements yet.</p>
-                  ) : (
-                    achievements.map(achievement => (
-                      <div key={achievement.id} className={styles.achievementItem}>
-                        <h3 className={styles.achievementTitle}>{achievement.title}</h3>
-                        <p className={styles.achievementDescription}>{achievement.description}</p>
-                        <p className={styles.achievementDate}>
-                          Achieved on: {new Date(achievement.achieved_date).toLocaleDateString()}
-                        </p>
-                      </div>
-                    ))
-                  )}
+                  {renderAchievements()}
                 </CardContent>
               </Card>
             </TabsContent>

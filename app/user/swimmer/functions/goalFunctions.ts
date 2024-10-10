@@ -1,3 +1,4 @@
+import { ReactNode } from 'react';
 import { createClient } from '../../../../utils/supabase/client'
 
 const supabase = createClient();
@@ -25,13 +26,17 @@ export interface SwimmerGoal {
 }
 
 export interface Achievement {
+  type(type: any): unknown;
+  value: ReactNode;
   id: string;
-  swimmer_id: string;
   title: string;
   description: string;
   achieved_date: string;
-  icon?: string;
-  related_goal_id?: string;
+  event?: string;
+  goal_type?: string;
+  icon: string;
+  // Add the time property here
+  time?: string;
 }
 
 export interface NewGoal {

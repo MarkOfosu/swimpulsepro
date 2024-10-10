@@ -1,0 +1,82 @@
+.achievementCard {
+    background-color: #1a1a4f;
+    border: 2px solid #4a4a8f;
+    border-radius: 10px;
+    overflow: hidden;
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+    height: 100%;
+  }
+  
+  .achievementCard:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+  }
+  
+  .cardContent {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 1rem;
+    height: 100%;
+  }
+  
+  .iconWrapper {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    padding: 0.5rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .icon {
+    width: 2rem;
+    height: 2rem;
+  }
+  
+  .funnyName {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #ffffff;
+    margin-bottom: 0.25rem;
+  }
+  
+  .title {
+    font-size: 1rem;
+    font-weight: bold;
+    color: #00ffff;
+    margin-bottom: 0.25rem;
+  }
+  
+  .description {
+    font-size: 0.9rem;
+    color: #a0a0a0;
+    margin-bottom: 0.25rem;
+  }
+  
+  .date {
+    font-size: 0.8rem;
+    color: #888;
+    margin-top: auto;
+  }
+  
+  @media (max-width: 480px) {
+    .cardContent {
+      padding: 0.75rem;
+    }
+    
+    .funnyName {
+      font-size: 1.1rem;
+    }
+    
+    .title {
+      font-size: 0.9rem;
+    }
+    
+    .description {
+      font-size: 0.8rem;
+    }
+    
+    .date {
+      font-size: 0.7rem;
+    }
+  }
