@@ -403,7 +403,7 @@ const Goal: React.FC<GoalProps> = ({ swimmerId }) => {
   };
   const renderAchievements = () => {
     if (achievements.length === 0) {
-      return <p className={styles.emptyStateMessage}>You haven't unlocked any achievements yet. Keep swimming!</p>;
+      return <p className={styles.emptyStateMessage}>You have not unlocked any achievements yet. Keep swimming!</p>;
     }
     return (
       <div className={styles.achievementsGrid}>

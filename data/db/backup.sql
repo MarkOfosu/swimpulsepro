@@ -89,6 +89,39 @@ CREATE TABLE IF NOT EXISTS invitations (
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
+
+-- Create a badges table
+CREATE TABLE badges (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  name VARCHAR(255) NOT NULL,
+  description TEXT,
+  icon VARCHAR(255),
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Create a swim_group_badges table to associate badges with swim groups
+CREATE TABLE swim_group_badges (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  swim_group_id UUID REFERENCES swim_groups(id),
+  badge_id UUID REFERENCES badges(id),
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+  UNIQUE(swim_group_id, badge_id)
+);
+
+-- Create a swimmer_badges table to award badges to swimmers
+CREATE TABLE swimmer_badges (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  swimmer_id UUID REFERENCES swimmers(id),
+  badge_id UUID REFERENCES badges(id),
+  group_id UUID REFERENCES swim_groups(id),
+  awarded_by UUID REFERENCES coaches(id),
+  awarded_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Add an index to improve query performance
+CREATE INDEX idx_swimmer_badges_group_id ON swimmer_badges(group_id);
+
+
 -- Supabase database is set up to handle text search on the 'focus' field of the workout_data JSONB column. You might need to create a GIN index
 -- CREATE EXTENSION IF NOT EXISTS pg_trgm;
 
