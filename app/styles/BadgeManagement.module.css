@@ -1,0 +1,227 @@
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #fcfcfc;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .pageTitle {
+    color: #ffffff;
+    text-align: center;
+    margin-bottom: 30px;
+    font-size: 24px;
+  }
+  
+  .sectionTitle {
+    color: #f87171;
+    font-size: 20px;
+    margin-bottom: 20px;
+  }
+  
+  .createBadgeSection {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 30px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  }
+  
+  .input {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 15px;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    font-size: 16px;
+  }
+  
+  .iconSelector {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  
+  .iconButton {
+    font-size: 28px;
+    aspect-ratio: 16 / 9;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    background-color: #4285f4;
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .iconButton:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .selectedIcon {
+    border: 2px solid #333;
+    box-shadow: 0 0 0 2px white inset;
+  }
+  
+  .createButton {
+    width: 100%;
+    padding: 12px;
+    background-color: #4285f4;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .createButton:hover:not(:disabled) {
+    background-color: #3367d6;
+  }
+  
+  .createButton:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  
+  .badgePreview {
+    background-color: #f8f8f8;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    padding: 15px;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+  
+  .previewContent {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+  }
+  
+  .previewIcon {
+    font-size: 36px;
+  }
+  
+  .previewName {
+    font-size: 18px;
+    font-weight: 500;
+  }
+  
+  .existingBadgesSection {
+    margin-top: 30px;
+    padding: 20px;
+ 
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .existingBadgesSection::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(
+      to bottom right,
+      rgba(255, 255, 255, 0.3) 0%,
+      rgba(255, 255, 255, 0.1) 50%,
+      transparent 100%
+    );
+    transform: rotate(30deg);
+    pointer-events: none;
+  }
+  
+  .badgeList {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 20px;
+    position: relative;
+    z-index: 1;
+  }
+  
+  .badgeItem {
+    background-color: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .badgeItem:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  }
+  
+  .badgeIcon {
+    font-size: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    color: white;
+  }
+  
+  .badgeName {
+    font-size: 16px;
+    color: #333;
+    font-weight: 500;
+    padding: 12px;
+    text-align: center;
+    background-color: white;
+  }
+  
+  /* Icon-specific colors */
+  .iconButton[data-icon='🏅'],
+  .badgeIcon[data-icon='🏅'] { background-color: #ffd700; }
+  
+  .iconButton[data-icon='🎖️'],
+  .badgeIcon[data-icon='🎖️'] { background-color: #c0c0c0; }
+  
+  .iconButton[data-icon='🥇'],
+  .badgeIcon[data-icon='🥇'] { background-color: #ffd700; }
+  
+  .iconButton[data-icon='🥈'],
+  .badgeIcon[data-icon='🥈'] { background-color: #c0c0c0; }
+  
+  .iconButton[data-icon='🥉'],
+  .badgeIcon[data-icon='🥉'] { background-color: #cd7f32; }
+  
+  .iconButton[data-icon='🏆'],
+  .badgeIcon[data-icon='🏆'] { background-color: #ffd700; }
+  
+  .iconButton[data-icon='🌟'],
+  .badgeIcon[data-icon='🌟'] { background-color: #ffdf00; }
+  
+  .iconButton[data-icon='💪'],
+  .badgeIcon[data-icon='💪'] { background-color: #ff6b6b; }
+  
+  .iconButton[data-icon='🏊‍♂️'],
+  .badgeIcon[data-icon='🏊‍♂️'] { background-color: #4a90e2; }
+  
+  .iconButton[data-icon='🏊‍♀️'],
+  .badgeIcon[data-icon='🏊‍♀️'] { background-color: #4a90e2; }
+  
+  @media (max-width: 600px) {
+    .container {
+      padding: 15px;
+    }
+  
+    .iconSelector {
+      grid-template-columns: repeat(5, 1fr);
+    }
+  
+    .badgeList {
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    }
+  }
