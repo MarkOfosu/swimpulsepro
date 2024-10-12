@@ -119,7 +119,6 @@ const SwimmerProfilePage: React.FC = () => {
           icon: badge.badges.icon || '🏅', 
           description: badge.badges.description || '',
         })));
-        console.log('Swimmer badges:', badgesData);  // Add this line for debugging
 
         // Fetch performance data (replace with actual query)
         const performanceMetrics: PerformanceData[] = [
@@ -210,7 +209,7 @@ const SwimmerProfilePage: React.FC = () => {
             </Tabs>
           </div>
         </div>
-        
+
         <SwimmerGoalsContainer />
 
         <div className={styles.badgesSection}>
