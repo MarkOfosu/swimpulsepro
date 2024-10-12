@@ -1,6 +1,6 @@
 .pageWrapper {
     min-height: 100vh;
-    background: rgb(8, 1, 80)  ;
+    background: rgb(20, 13, 100)  ;
     color: #ffffff;
     padding: 2rem 0;
   }
@@ -146,8 +146,9 @@
   .sectionTitle {
     font-size: 1.5rem;
     font-weight: 600;
-    color: #920a57;
+    color: #b00a68;
     margin-bottom: 1rem;
+    margin-left: 2rem;
   }
   
   .goalCard {
@@ -344,4 +345,61 @@
     .achievementsGrid {
       grid-template-columns: 1fr;
     }
-  }
+  } 
+
+/* 
+
+.badgesSection {
+  margin-bottom: 20px;
+}
+
+.badgesContainer {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.badge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+  border-radius: 8px;
+  width: 120px;
+  height: 100px;
+  transition: transform 0.3s ease;
+}
+
+.badge:hover {
+  transform: translateY(-5px);
+}
+
+.badgeIcon {
+  font-size: 32px;
+  margin-bottom: 5px;
+}
+
+.badgeName {
+  font-size: 14px;
+  text-align: center;
+  font-weight: 500;
+}
+
+.yellow { background-color: #ffd700; }
+.green { background-color: #4caf50; }
+.red { background-color: #f44336; }
+.blue { background-color: #2196f3; }  */
+
+.badgesContainer {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+  justify-content: center;
+  justify-items: center;
+}
+
+.badgesSection {
+  margin-bottom: 2rem;
+}

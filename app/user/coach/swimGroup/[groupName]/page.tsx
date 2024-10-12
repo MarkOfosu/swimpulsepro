@@ -7,7 +7,6 @@ import { createClient } from '@/utils/supabase/client';
 import CoachPageLayout from '../../CoachPageLayout';
 import Loader from '@components/ui/Loader';
 import { useToast } from '@components/ui/toasts/Toast';
-import BadgeSection from './badgeSection/BadgeSection';
 import styles from '../../../../styles/SwimGroup.module.css';
 import BadgeManagementPage from './badgeSection/BadgeManagement';
 
@@ -105,14 +104,46 @@ const SwimGroupPage: React.FC = () => {
       setSwimGroup(group);
 
       // Fetch swimmers for this group
-      const { data: swimmersData, error: swimmersError } = await supabase
-        .from('swimmers')
-        .select('*')
-        .eq('group_id', group.id);
+      // const { data: swimmersData, error: swimmersError } = await supabase
+      //   .from('swimmers')
+      //   .select('*')
+      //   .eq('group_id', group.id);
 
-      if (swimmersError) throw swimmersError;
-      setSwimmers(swimmersData);
+      // if (swimmersError) throw swimmersError;
+      // setSwimmers(swimmersData);
+      
+      const { data: fetchedData, error: swimmersError } = await supabase
+      .from('swimmers')
+      .select(`
+        id,
+        group_id,
+        date_of_birth,
+        created_at,
+        updated_at,
+        profiles (
+          first_name,
+          last_name
+        )
+      `)
+      .eq('group_id', group.id);
+    
+    if (swimmersError) throw swimmersError;
+    
+    // Process the fetched data to match the Swimmer type
+    const swimmersData: Swimmer[] = fetchedData.map(item => ({
+      id: item.id,
+      name: `${(item.profiles as unknown as { first_name: string; last_name: string }).first_name} ${(item.profiles as unknown as { first_name: string; last_name: string }).last_name}`,
+      group_id: item.group_id,
+      date_of_birth: item.date_of_birth,
+      created_at: item.created_at,
+      updated_at: item.updated_at
+    }));
+    
+    setSwimmers(swimmersData);
 
+
+
+    
       // Fetch invitations for this group
       const { data: invitationsData, error: invitationsError } = await supabase
         .from('invitations')
@@ -148,6 +179,8 @@ const SwimGroupPage: React.FC = () => {
       setLoading(false);
     }
   }, [params.groupName, coachId]);
+
+  console.log('swimmer', swimmers);
 
   useEffect(() => {
     const fetchCoachId = async () => {
@@ -231,18 +264,32 @@ const SwimGroupPage: React.FC = () => {
     }
 
     try {
+      // Find the selected badge object
+      const selectedBadgeObj = badges.find(badge => badge.id === selectedBadge);
+      if (!selectedBadgeObj) {
+        throw new Error('Selected badge not found');
+      }
+
+      console.log('Awarding badge:', selectedBadgeObj);
+
       const { data, error } = await supabase
         .from('swimmer_badges')
         .insert({
           swimmer_id: selectedSwimmer,
           badge_id: selectedBadge,
+          name: selectedBadgeObj.name, // Include the badge name
           group_id: swimGroup.id,
           awarded_by: coachId
         })
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error inserting swimmer badge:', error);
+        throw error;
+      }
+
+      console.log('Badge awarded successfully:', data);
 
       setSwimmerBadges([...swimmerBadges, data as SwimmerBadge]);
       showToast('Badge awarded successfully', 'success');
@@ -250,9 +297,10 @@ const SwimGroupPage: React.FC = () => {
       setSelectedSwimmer('');
     } catch (err) {
       console.error('Error awarding badge:', err);
-      showToast('Failed to award badge', 'error');
+      showToast(`Failed to award badge: ${err instanceof Error ? err.message : 'Unknown error'}`, 'error');
     }
   };
+  
 
   if (loading) return <CoachPageLayout><Loader /></CoachPageLayout>;
   if (error) return <CoachPageLayout><div className={styles.error}>{error}</div></CoachPageLayout>;
@@ -266,14 +314,6 @@ const SwimGroupPage: React.FC = () => {
           <p className={styles.description}>{swimGroup.description}</p>
           <p className={styles.groupCode}>Group Code: <span>{swimGroup.group_code}</span></p>
         </div>
-
-        {/* <BadgeSection
-          badges={badges}
-          swimmerBadges={swimmerBadges}
-          swimmers={swimmers}
-        /> */}
- 
-        
         <div className={styles.badgeAwardingSection}>
           <h2 className={styles.sectionTitle}>Award Badge</h2>
           <select
