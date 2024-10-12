@@ -1,15 +1,15 @@
 "use client";
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-import { Badge } from "@/components/ui/Badge";
 import { Card, CardContent, CardHeader } from "@/components/ui/Card";
 import { Progress } from "@/components/ui/Progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/Tabs";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/Avatar";
-import { Trophy, Target, Heart, Activity } from 'lucide-react';
 import styles from '../../../styles/SwimmerProfile.module.css';
 import SwimPageLayout from '../SwimPageLayout';
 import SwimmerGoalsContainer from '../swimmerGoal/SwimmerGoalContainer';
+import { createClient } from '@/utils/supabase/client';
+import BadgeAwarded from '../../../../components/ui/BadgeAwarded';
 
 interface Swimmer {
   id: string;
@@ -21,8 +21,6 @@ interface Swimmer {
   level: number;
   xp: number;
   nextLevelXp: number;
-  achievements: Achievement[];
-  goals: Goal[];
 }
 
 interface Achievement {
@@ -44,9 +42,14 @@ interface PerformanceData {
   time: number;
 }
 
-interface GamifiedSwimmerInterfaceProps {
-  swimmerId: string;
+interface SwimmerBadge {
+  id: string;
+  name: string;
+  icon: string;
+  description: string;
+  // color: string;
 }
+
 
 const formatTime = (seconds: number) => {
   const hours = Math.floor(seconds / 3600);
@@ -67,97 +70,125 @@ const CustomTooltip = ({ active, payload, label }: any) => {
   return null;
 };
 
-const SwimmerProfilePage: React.FC<GamifiedSwimmerInterfaceProps> = ({ swimmerId }) => {
-  const [swimmer, setSwimmer] = React.useState<Swimmer | null>(null);
-  const [performanceData, setPerformanceData] = React.useState<PerformanceData[]>([]);
+const SwimmerProfilePage: React.FC = () => {
+  const [swimmer, setSwimmer] = useState<Swimmer | null>(null);
+  const [performanceData, setPerformanceData] = useState<PerformanceData[]>([]);
+  const [swimmerBadges, setSwimmerBadges] = useState<SwimmerBadge[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const supabase = createClient();
 
-  React.useEffect(() => {
-    const fetchData = async () => {
-      // Simulated API call - replace with actual data fetching
-      const swimmerData: Swimmer = {
-        id: swimmerId,
-        name: "Alex Johnson",
-        age: 16,
-        email: "alex.johnson@example.com",
-        photo: "/api/placeholder/100/100",
-        swimGroup: "Advanced Juniors",
-        level: 7,
-        xp: 3500,
-        nextLevelXp: 5000,
-        achievements: [
-          { id: 1, title: "Sonic Splash", description: "50m Freestyle Personal Best", icon: "🏅", time: "00:23:45" },
-          { id: 2, title: "Aqua Lungs", description: "2000m Non-Stop Swim", icon: "🏊", time: "00:28:30" },
-          { id: 3, title: "Flipper Fury", description: "100m Butterfly Record", icon: "🐬", time: "00:54:20" },
-          { id: 4, title: "Tsunami Tamer", description: "Open Water 5K Completion", icon: "🌊", time: "01:05:00" },
-          { id: 5, title: "Torpedo Triumph", description: "4x100m Relay Victory", icon: "💨", time: "03:45:15" },
-          
-        ],
-        goals: [
-          { id: 1, name: "Break the Sound Barrier (in water)", progress: 75 },
-          { id: 2, name: "Breathe like a fish for 20 sessions", progress: 60 },
-          { id: 3, name: "Master the dolphin kick", progress: 40 },
-          { id: 4, name: "Qualify for the Aquaman Olympics", progress: 25 },
-        ],
-      };
+  useEffect(() => {
+    const fetchSwimmerData = async () => {
+      setLoading(true);
+      setError(null);
+    
+      try {
+        const { data: { user }, error: userError } = await supabase.auth.getUser();
+        if (userError) throw userError;
+        if (!user) throw new Error("No authenticated user found");
+    
+        // Fetch swimmer details
+        const { data: swimmerData, error: swimmerError } = await supabase
+          .from('swimmers')
+          .select('*')
+          .eq('id', user.id)
+          .single();
+    
+        if (swimmerError) throw swimmerError;
+        setSwimmer(swimmerData);
+    
+        // Fetch swimmer's badges
+        const { data: badgesData, error: badgesError } = await supabase
+          .from('swimmer_badges')
+          .select(`
+            id,
+            name,
+            badges (
+              icon,
+              description
+            )
+          `)
+          .eq('swimmer_id', user.id);
+    
+        if (badgesError) throw badgesError;
+    
+        setSwimmerBadges(badgesData.map((badge: any) => ({
+          id: badge.id,
+          name: badge.name,
+          icon: badge.badges.icon || '🏅', 
+          description: badge.badges.description || '',
+        })));
+        console.log('Swimmer badges:', badgesData);  // Add this line for debugging
 
-      setSwimmer(swimmerData);
+        // Fetch performance data (replace with actual query)
+        const performanceMetrics: PerformanceData[] = [
+          { date: '2024-01-01', time: 3665 },
+          { date: '2024-02-01', time: 3600 },
+          { date: '2024-03-01', time: 3540 },
+          { date: '2024-04-01', time: 3480 },
+          { date: '2024-05-01', time: 3420 },
+        ];
+        setPerformanceData(performanceMetrics);
 
-      // Simulated performance data
-      const performanceMetrics: PerformanceData[] = [
-        { date: '2024-01-01', time: 3665 }, // 1:01:05
-        { date: '2024-02-01', time: 3600 }, // 1:00:00
-        { date: '2024-03-01', time: 3540 }, // 59:00
-        { date: '2024-04-01', time: 3480 }, // 58:00
-        { date: '2024-05-01', time: 3420 }, // 57:00
-      ];
+       
 
-      setPerformanceData(performanceMetrics);
+      } catch (err) {
+        console.error('Error fetching swimmer data:', err);
+        setError('Failed to load swimmer profile. Please try again later.');
+      } finally {
+        setLoading(false);
+      }
     };
 
-    fetchData();
-  }, [swimmerId]);
+    fetchSwimmerData();
+  }, [supabase]);
+
+  if (loading) {
+    return <div className={styles.loading}>Loading...</div>;
+  }
+
+  if (error) {
+    return <div className={styles.error}>{error}</div>;
+  }
 
   if (!swimmer) {
-    return <div className={styles.loading}>Loading...</div>;
+    return <div className={styles.error}>No swimmer data found.</div>;
   }
 
   return (
     <SwimPageLayout>
       <div className={styles.pageWrapper}>
-      <div className={styles.container}>
-      <div className={styles.heading}>
-        <Avatar className={styles.avatar}>
-          <AvatarImage src={swimmer.photo} alt={swimmer.name} />
-          <AvatarFallback>{swimmer.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
-        </Avatar>
-        <div className={styles.profileInfo}>
-          <div className={styles.profileHeader}>
-            <h1 className={styles.profileName}>{swimmer.name}</h1>
-            <span className={styles.levelBadge}>Level {swimmer.level}</span>
-          </div>
-          <p className={styles.swimGroup}>{swimmer.swimGroup}</p>
-          <div className={styles.profileStats}>
-            <div className={styles.xpContainer}>
-              <div className={styles.progressBar}>
-                <div 
-                  className={styles.progressBarFill} 
-                  style={{ width: `${(swimmer.xp / swimmer.nextLevelXp) * 100}%` }}
-                ></div>
+        <div className={styles.container}>
+          <div className={styles.heading}>
+            <Avatar className={styles.avatar}>
+              <AvatarImage src={swimmer.photo} alt={swimmer.name} />
+              <AvatarFallback>{swimmer.name?.split(' ').map(n => n[0]).join('')}</AvatarFallback>
+            </Avatar>
+            <div className={styles.profileInfo}>
+              <div className={styles.profileHeader}>
+                <h1 className={styles.profileName}>{swimmer.name}</h1>
+                <span className={styles.levelBadge}>Level {swimmer.level}</span>
               </div>
-              <span className={styles.xpInfo}>{swimmer.xp}/{swimmer.nextLevelXp} XP</span>
+              <p className={styles.swimGroup}>{swimmer.swimGroup}</p>
+              <div className={styles.profileStats}>
+                <div className={styles.xpContainer}>
+                  <div className={styles.progressBar}>
+                    <div 
+                      className={styles.progressBarFill} 
+                      style={{ width: `${(swimmer.xp / swimmer.nextLevelXp) * 100}%` }}
+                    ></div>
+                  </div>
+                  <span className={styles.xpInfo}>{swimmer.xp}/{swimmer.nextLevelXp} XP</span>
+                </div>
+              </div>
             </div>
           </div>
-        </div>
-      </div>
-
           <div className={styles.tabsWrapper}>
             <Tabs defaultValue="performance">
               <TabsList className={styles.tabsList}>
                 <TabsTrigger value="performance">Performance</TabsTrigger>
-                <TabsTrigger value="goals">Goals</TabsTrigger>
-                <TabsTrigger value="achievements">Achievements</TabsTrigger>
               </TabsList>
-
               <TabsContent value="performance">
                 <Card className={styles.card}>
                   <CardHeader>
@@ -176,78 +207,24 @@ const SwimmerProfilePage: React.FC<GamifiedSwimmerInterfaceProps> = ({ swimmerId
                   </CardContent>
                 </Card>
               </TabsContent>
-
-              <TabsContent value="goals">
-                <Card className={`${styles.card} ${styles.goalCard}`}>
-                  <CardHeader>
-                    <h2 className={styles.sectionTitle}>Current Goals</h2>
-                  </CardHeader>
-                  <CardContent>
-                    {swimmer.goals.map(goal => (
-                      <div key={goal.id} className={styles.goal}>
-                        <div className={styles.goalInfo}>
-                          <span>{goal.name}</span>
-                          <span>{goal.progress}%</span>
-                        </div>
-                        <Progress value={goal.progress} className={styles.goalProgress} />
-                      </div>
-                    ))}
-                  </CardContent>
-                </Card>
-              </TabsContent>
-
-              <TabsContent value="achievements">
-                  <Card className={styles.card}>
-                    <CardHeader>
-                      <h2 className={styles.sectionTitle}>Achievements</h2>
-                    </CardHeader>
-                    <CardContent>
-                      <div className={styles.achievementsGrid}>
-                        {swimmer.achievements.map(achievement => (
-                          <div key={achievement.id} className={styles.achievementCard}>
-                            <div className={styles.achievementIcon}>{achievement.icon}</div>
-                            <div className={styles.achievementInfo}>
-                              <h3 className={styles.achievementTitle}>{achievement.title}</h3>
-                              <p className={styles.achievementDescription}>{achievement.description}</p>
-                              <p className={styles.achievementTime}>{achievement.time}</p>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </CardContent>
-                  </Card>
-              </TabsContent>
             </Tabs>
           </div>
-
-          <div className={styles.statsGrid}>
-            <Card className={`${styles.card} ${styles.statCard} ${styles.statCardPerformer}`}>
-              <CardContent>
-                <Trophy className={styles.statIcon} />
-                <span className={styles.statLabel}>Top Performer</span>
-              </CardContent>
-            </Card>
-            <Card className={`${styles.card} ${styles.statCard} ${styles.statCardCrusher}`}>
-              <CardContent>
-                <Target className={styles.statIcon} />
-                <span className={styles.statLabel}>Goal Crusher</span>
-              </CardContent>
-            </Card>
-            <Card className={`${styles.card} ${styles.statCard} ${styles.statCardSpirit}`}>
-              <CardContent>
-                <Heart className={styles.statIcon} />
-                <span className={styles.statLabel}>Team Spirit</span>
-              </CardContent>
-            </Card>
-            <Card className={`${styles.card} ${styles.statCard} ${styles.statCardEffort}`}>
-              <CardContent>
-                <Activity className={styles.statIcon} />
-                <span className={styles.statLabel}>Consistent Effort</span>
-              </CardContent>
-            </Card>
-          </div>
         </div>
+        
         <SwimmerGoalsContainer />
+
+        <div className={styles.badgesSection}>
+            <h1 className={styles.sectionTitle}>Earned Badges</h1>
+            <div className={styles.badgesContainer}>
+              {swimmerBadges.map(badge => (
+                <BadgeAwarded
+                  key={badge.id}
+                  name={badge.name}
+                  icon={badge.icon}
+                />
+              ))}
+            </div>
+          </div>
       </div>
     </SwimPageLayout>
   );

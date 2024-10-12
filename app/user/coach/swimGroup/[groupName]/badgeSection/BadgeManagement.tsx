@@ -77,7 +77,8 @@ const BadgeManagementPage: React.FC = () => {
 
       await supabase.from('swim_group_badges').insert({
         swim_group_id: swimGroupId,
-        badge_id: data.id
+        badge_id: data.id,
+        name: newBadgeName
       });
 
       await fetchBadges();

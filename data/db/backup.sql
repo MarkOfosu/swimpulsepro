@@ -103,6 +103,7 @@ CREATE TABLE badges (
 CREATE TABLE swim_group_badges (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   swim_group_id UUID REFERENCES swim_groups(id),
+    name VARCHAR(255) NOT NULL,
   badge_id UUID REFERENCES badges(id),
   created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
   UNIQUE(swim_group_id, badge_id)
@@ -114,12 +115,23 @@ CREATE TABLE swimmer_badges (
   swimmer_id UUID REFERENCES swimmers(id),
   badge_id UUID REFERENCES badges(id),
   group_id UUID REFERENCES swim_groups(id),
+  name VARCHAR(255) NOT NULL,
   awarded_by UUID REFERENCES coaches(id),
   awarded_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
 -- Add an index to improve query performance
 CREATE INDEX idx_swimmer_badges_group_id ON swimmer_badges(group_id);
+
+-- Update existing records (if any) with badge names
+UPDATE swimmer_badges
+SET badge_name = badges.name
+FROM badges
+WHERE swimmer_badges.badge_id = badges.id;
+
+-- Make badge_name NOT NULL after updating existing records
+ALTER TABLE swimmer_badges
+ALTER COLUMN badge_name SET NOT NULL;
 
 
 -- Supabase database is set up to handle text search on the 'focus' field of the workout_data JSONB column. You might need to create a GIN index
