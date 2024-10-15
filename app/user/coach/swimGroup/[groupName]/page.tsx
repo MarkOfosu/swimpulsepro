@@ -9,6 +9,7 @@ import Loader from '@components/ui/Loader';
 import { useToast } from '@components/ui/toasts/Toast';
 import styles from '../../../../styles/SwimGroup.module.css';
 import BadgeManagementPage from './badgeSection/BadgeManagement';
+import AttendanceInsights from '../../attendance/AttendanceInsights';
 
 interface SwimGroup {
   id: string;
@@ -65,6 +66,7 @@ const SwimGroupPage: React.FC = () => {
   const [coachId, setCoachId] = useState<string | null>(null);
   const [selectedBadge, setSelectedBadge] = useState<string>('');
   const [selectedSwimmer, setSelectedSwimmer] = useState<string>('');
+  const [showAttendanceInsights, setShowAttendanceInsights] = useState(false);
 
   const router = useRouter();
   const params = useParams();
@@ -313,6 +315,17 @@ const SwimGroupPage: React.FC = () => {
           <h1 className={styles.title}>{swimGroup.name}</h1>
           <p className={styles.description}>{swimGroup.description}</p>
           <p className={styles.groupCode}>Group Code: <span>{swimGroup.group_code}</span></p>
+        </div>
+        {/* Add a new section for Attendance Insights */}
+        <div className={styles.attendanceInsightsSection}>
+          <h2 className={styles.sectionTitle}>Attendance Insights</h2>
+          <button 
+            onClick={() => setShowAttendanceInsights(!showAttendanceInsights)}
+            className={styles.toggleInsightsButton}
+          >
+            {showAttendanceInsights ? 'Hide Insights' : 'Show Insights'}
+          </button>
+          {showAttendanceInsights && <AttendanceInsights groupId={swimGroup.id} />}
         </div>
         <div className={styles.badgeAwardingSection}>
           <h2 className={styles.sectionTitle}>Award Badge</h2>
