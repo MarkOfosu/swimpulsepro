@@ -133,13 +133,33 @@ WHERE swimmer_badges.badge_id = badges.id;
 ALTER TABLE swimmer_badges
 ALTER COLUMN badge_name SET NOT NULL;
 
-
 -- Supabase database is set up to handle text search on the 'focus' field of the workout_data JSONB column. You might need to create a GIN index
 -- CREATE EXTENSION IF NOT EXISTS pg_trgm;
 
 -- CREATE EXTENSION IF NOT EXISTS pg_trgm;
 
 -- CREATE INDEX workout_data_focus_idx ON workouts USING GIN ((workout_data->>'focus') gin_trgm_ops);
+
+
+CREATE TABLE IF NOT EXISTS attendance (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    swim_group_id UUID REFERENCES swim_groups(id) ON DELETE CASCADE,
+    swimmer_id UUID REFERENCES swimmers(id) ON DELETE CASCADE,
+    coach_id UUID REFERENCES coaches(id) ON DELETE SET NULL,
+    date DATE NOT NULL,
+    is_present BOOLEAN NOT NULL,
+    notes TEXT,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW(),
+    UNIQUE(swim_group_id, swimmer_id, date)
+);
+
+CREATE INDEX idx_attendance_swim_group_date ON attendance(swim_group_id, date);
+CREATE INDEX idx_attendance_swimmer_date ON attendance(swimmer_id, date);
+
+
+
+
 
 -- Table for different types of goals
 CREATE TABLE IF NOT EXISTS goal_types (

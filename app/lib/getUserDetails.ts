@@ -1,6 +1,6 @@
 import { createClient } from '@/utils/supabase/client';
 
-interface ProfileData {
+export interface ProfileData {
   id: string;
   first_name: string;
   last_name: string;
@@ -18,7 +18,7 @@ interface TeamData {
   location: string;
 }
 
-interface UserData extends ProfileData {
+export interface UserData extends ProfileData {
   swimmer?: SwimmerData;
   team?: TeamData;
 }
