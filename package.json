@@ -38,6 +38,7 @@
     "react-chartjs-2": "^5.2.0",
     "react-dom": "^18",
     "react-icons": "^5.2.1",
+    "react-router-dom": "^6.27.0",
     "react-spinners": "^0.14.1",
     "recharts": "^2.12.7",
     "supabase": "^1.192.5"
@@ -46,6 +47,7 @@
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "@types/react-router-dom": "^5.3.3",
     "@types/uuid": "^10.0.0",
     "eslint": "^8",
     "eslint-config-next": "14.2.5",
