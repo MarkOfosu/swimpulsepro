@@ -6,6 +6,7 @@ import { SwimGroupSelector } from './SwimGroupSelector';
 import { AttendanceList } from './AttendanceList';
 import { getUserDetails, UserData } from '../../../lib/getUserDetails';
 import { useToast } from '../../../../components/ui/toasts/Toast';
+import  AttendanceInsights  from './AttendanceInsights';
 import styles from '../../../styles/AttendanceRecorder.module.css';
 
 interface SwimGroup {
@@ -33,6 +34,7 @@ const AttendanceRecorder: React.FC = () => {
   const [attendanceRecords, setAttendanceRecords] = useState<AttendanceRecord[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [userData, setUserData] = useState<UserData | null>(null);
+  const [activeTab, setActiveTab] = useState<'record' | 'insights'>('record');
 
   const supabase = createClient();
   const { showToast, ToastContainer } = useToast();
@@ -110,7 +112,7 @@ const AttendanceRecorder: React.FC = () => {
       console.error('Error fetching swimmers:', error);
       setError('Failed to fetch swimmers');
     } else {
-      setSwimmers((data as SwimmerResponse[] || []).map(swimmer => ({
+      setSwimmers(((data as unknown) as SwimmerResponse[] || []).map(swimmer => ({
         id: swimmer.id,
         firstName: swimmer.profiles.first_name,
         lastName: swimmer.profiles.last_name,
@@ -177,9 +179,9 @@ const AttendanceRecorder: React.FC = () => {
   };
 
   const resetFields = () => {
-    setSelectedGroupId(null);
+    // setSelectedGroupId(null);
     setCurrentDate();
-    setSwimmers([]);
+    // setSwimmers([]);
     setAttendanceRecords([]);
   };
 
@@ -193,27 +195,52 @@ const AttendanceRecorder: React.FC = () => {
 
   return (
     <div className={styles.container}>
-      <h1 className={styles.title}>Attendance Recorder</h1>
-      <p>Coach: {userData.first_name} {userData.last_name}</p>
-      {userData.team && <p>Team: {userData.team.name}, {userData.team.location}</p>}
+      <h1 className={styles.title}>Attendance Management</h1>
+      <p>Coach: {userData?.first_name} {userData?.last_name}</p>
+      {userData?.team && <p>Team: {userData.team.name}, {userData.team.location}</p>}
       <SwimGroupSelector groups={swimGroups} onSelect={handleGroupSelect} />
-      <div className={styles.dateContainer}>
-        <label htmlFor="attendanceDate" className={styles.dateLabel}>Attendance Date:</label>
-        <input
-          id="attendanceDate"
-          type="date"
-          value={attendanceDate}
-          onChange={handleDateChange}
-          className={styles.dateInput}
-        />
+      
+      <div className={styles.tabContainer}>
+        <button 
+          className={`${styles.tabButton} ${activeTab === 'record' ? styles.active : ''}`}
+          onClick={() => setActiveTab('record')}
+        >
+          Record Attendance
+        </button>
+        <button 
+          className={`${styles.tabButton} ${activeTab === 'insights' ? styles.active : ''}`}
+          onClick={() => setActiveTab('insights')}
+        >
+          Attendance Insights
+        </button>
       </div>
-      {selectedGroupId && (
-        <AttendanceList
-          swimmers={swimmers}
-          attendanceRecords={attendanceRecords}
-          onSubmit={handleAttendanceSubmit}
-        />
+
+      {activeTab === 'record' && (
+        <>
+          <div className={styles.dateContainer}>
+            <label htmlFor="attendanceDate" className={styles.dateLabel}>Attendance Date:</label>
+            <input
+              id="attendanceDate"
+              type="date"
+              value={attendanceDate}
+              onChange={handleDateChange}
+              className={styles.dateInput}
+            />
+          </div>
+          {selectedGroupId && (
+            <AttendanceList
+              swimmers={swimmers}
+              attendanceRecords={attendanceRecords}
+              onSubmit={handleAttendanceSubmit}
+            />
+          )}
+        </>
       )}
+
+      {activeTab === 'insights' && selectedGroupId && (
+        <AttendanceInsights groupId={selectedGroupId} />
+      )}
+
       <ToastContainer />
     </div>
   );
