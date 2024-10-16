@@ -1,0 +1,38 @@
+.container {
+    margin-top: 2rem;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .title {
+    font-size: 1.5rem;
+    color: #333;
+    margin-bottom: 1rem;
+  }
+  
+  .stats {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+    padding: 1rem;
+    background-color: #f0f8ff;
+    border-radius: 8px;
+  }
+  
+  .stats p {
+    font-size: 1rem;
+    color: #555;
+  }
+  
+  .chart {
+    height: 300px;
+    margin-top: 1rem;
+  }
+  
+  .error {
+    color: #f44336;
+    font-size: 1rem;
+    text-align: center;
+    margin-top: 1rem;
+  }

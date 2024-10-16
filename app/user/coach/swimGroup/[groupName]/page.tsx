@@ -182,7 +182,6 @@ const SwimGroupPage: React.FC = () => {
     }
   }, [params.groupName, coachId]);
 
-  console.log('swimmer', swimmers);
 
   useEffect(() => {
     const fetchCoachId = async () => {
@@ -271,8 +270,6 @@ const SwimGroupPage: React.FC = () => {
       if (!selectedBadgeObj) {
         throw new Error('Selected badge not found');
       }
-
-      console.log('Awarding badge:', selectedBadgeObj);
 
       const { data, error } = await supabase
         .from('swimmer_badges')

@@ -60,6 +60,7 @@ export async function getUserDetails(): Promise<UserData | null> {
       console.error('Error fetching swimmer details:', swimmerError);
     } else {
       userData.swimmer = swimmerData;
+      console.log('getdetails Initial',userData);
     }
   } else if (userData.role === 'coach') {
     const { data: coachData, error: coachError } = await supabase
