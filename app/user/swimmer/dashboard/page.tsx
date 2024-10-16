@@ -34,6 +34,8 @@ const SwimmerDashboard: React.FC = () => {
     fetchUser();
   }, []);
 
+  console.log(user);
+
   // If user data is still being fetched
   if (!user && !error) {
     return <Loader />;

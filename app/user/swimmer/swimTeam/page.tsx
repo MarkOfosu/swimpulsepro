@@ -3,31 +3,44 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@/utils/supabase/client';
-import { getUserDetails } from '../../../lib/getUserDetails';
+import { getUserDetails, UserData } from '../../../lib/getUserDetails';
 import SwimPageLayout from '../SwimPageLayout';
 import { Card, CardContent, CardHeader } from "@/components/ui/Card";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/Tabs";
 import Loader from '@components/ui/Loader';
+import { Input } from '@/components/ui/Input';
+import SwimmerAttendanceInsights from '../SwimmerAttendanceInsights';
+import { SupabaseClient } from '@supabase/supabase-js';
 import styles from '../../../styles/SwimTeam.module.css';
 
-const SwimTeamPage = () => {
-  const [user, setUser] = useState<any>(null);
-  const [groupCode, setGroupCode] = useState('');
-  const [groupDetails, setGroupDetails] = useState<any>(null);
-  const [error, setError] = useState('');
-  const [loading, setLoading] = useState(true);
+interface GroupDetails {
+  id: string;
+  name: string;
+  description: string;
+  coach_id: string;
+  group_code: string;
+  coach?: {
+    first_name: string;
+    last_name: string;
+  };
+}
+
+const SwimTeamPage: React.FC = () => {
+  const [user, setUser] = useState<UserData | null>(null);
+  const [groupCode, setGroupCode] = useState<string>('');
+  const [groupDetails, setGroupDetails] = useState<GroupDetails | null>(null);
+  const [error, setError] = useState<string>('');
+  const [loading, setLoading] = useState<boolean>(true);
+  const [activeTab, setActiveTab] = useState<'group' | 'attendance'>('group');
   const router = useRouter();
-  const supabase = createClient();
+  const supabase: SupabaseClient = createClient();
 
   useEffect(() => {
     const fetchUserAndGroup = async () => {
       try {
         setLoading(true);
         const userData = await getUserDetails();
-
-        if (!userData) {
-          throw new Error('Failed to fetch user details');
-        }
-
+        if (!userData) throw new Error('Failed to fetch user details');
         setUser(userData);
 
         if (userData.swimmer?.group_id) {
@@ -46,16 +59,9 @@ const SwimTeamPage = () => {
               .eq('id', groupData.coach_id)
               .single();
 
-
             if (coachError) throw coachError;
-
-            setGroupDetails({
-              ...groupData,
-              coach: coachData
-            });
+            setGroupDetails({ ...groupData, coach: coachData });
           }
-        } else {
- 
         }
       } catch (error) {
         console.error('Error fetching user data:', error);
@@ -68,12 +74,10 @@ const SwimTeamPage = () => {
     fetchUserAndGroup();
   }, [supabase]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError('');
     setLoading(true);
-
-    console.log('Submitting group code:', groupCode);
 
     try {
       const { data: groupData, error: groupError } = await supabase
@@ -81,9 +85,6 @@ const SwimTeamPage = () => {
         .select('id, name, description, coach_id, group_code')
         .eq('group_code', groupCode)
         .single();
-
-      console.log('Swim group query result:', JSON.stringify(groupData, null, 2));
-      console.log('Swim group query error:', groupError);
 
       if (groupError) {
         if (groupError.code === 'PGRST116') {
@@ -93,7 +94,6 @@ const SwimTeamPage = () => {
           throw groupError;
         }
       } else if (groupData) {
-
         const { data: coachData, error: coachError } = await supabase
           .from('profiles')
           .select('first_name, last_name')
@@ -101,14 +101,10 @@ const SwimTeamPage = () => {
           .single();
 
         if (coachError) throw coachError;
-
-        setGroupDetails({
-          ...groupData,
-          coach: coachData
-        });
+        setGroupDetails({ ...groupData, coach: coachData });
       }
-    } catch (error: any) {
-      setError(error.message || 'Failed to fetch group details. Please try again.');
+    } catch (error) {
+      setError((error as Error).message || 'Failed to fetch group details. Please try again.');
       setGroupDetails(null);
     } finally {
       setLoading(false);
@@ -116,27 +112,15 @@ const SwimTeamPage = () => {
   };
 
   const handleJoinGroup = async () => {
-    if (!groupDetails) {
-      setError('No group details available. Please try searching for a group again.');
-      return;
-    }
-  
-    if (!user) {
-      setError('No user data available. Please try logging in again.');
+    if (!groupDetails || !user || !user.id) {
+      setError('Unable to join group. Please try again.');
       return;
     }
 
-  
-    if (!user.id) {
-      setError('User ID is missing. Please try logging in again.');
-      return;
-    }
-  
     setLoading(true);
-  
-  
+
     try {
-      const { data: updatedSwimmer, error: updateError } = await supabase
+      const { error: updateError } = await supabase
         .from('swimmers')
         .upsert({ id: user.id, group_id: groupDetails.id })
         .select()
@@ -144,14 +128,17 @@ const SwimTeamPage = () => {
 
       if (updateError) throw updateError;
 
-      setUser({
-        ...user,
-        swimmer: { id: user.id, group_id: groupDetails.id }
+      setUser({ 
+        ...user, 
+        swimmer: { 
+          ...user.swimmer, 
+          group_id: groupDetails.id,
+          date_of_birth: user.swimmer?.date_of_birth || ''
+        } 
       });
-
       router.push('/user/swimmer/swimTeam');
-    } catch (error: any) {
-      setError(`Failed to join the group: ${error.message}`);
+    } catch (error) {
+      setError(`Failed to join the group: ${(error as Error).message}`);
     } finally {
       setLoading(false);
     }
@@ -171,18 +158,21 @@ const SwimTeamPage = () => {
         <h1 className={styles.title}>Swim Team</h1>
         
         {!user?.swimmer?.group_id ? (
-          <Card>
-            <CardHeader>Join a Swim Group</CardHeader>
+          <Card className={styles.card}>
+            <CardHeader>
+              <h2 className={styles.cardTitle}>Join a Swim Group</h2>
+            </CardHeader>
             <CardContent>
               <form onSubmit={handleSubmit} className={styles.form}>
-                <input
+                <Input
                   type="text"
                   value={groupCode}
                   onChange={(e) => setGroupCode(e.target.value)}
                   placeholder="Enter group code"
                   required
+                  className={styles.input}
                 />
-                <button type="submit" disabled={loading}>
+                <button type="submit" disabled={loading} className={styles.button}>
                   {loading ? 'Finding...' : 'Find Group'}
                 </button>
               </form>
@@ -191,10 +181,10 @@ const SwimTeamPage = () => {
 
               {groupDetails && (
                 <div className={styles.groupDetails}>
-                  <h2>{groupDetails.name}</h2>
+                  <h3 className={styles.groupName}>{groupDetails.name}</h3>
                   <p>{groupDetails.description}</p>
                   <p>Coach: {groupDetails.coach?.first_name} {groupDetails.coach?.last_name}</p>
-                  <button onClick={handleJoinGroup} disabled={loading}>
+                  <button onClick={handleJoinGroup} disabled={loading} className={styles.button}>
                     {loading ? 'Joining...' : 'Join this group'}
                   </button>
                 </div>
@@ -202,26 +192,46 @@ const SwimTeamPage = () => {
             </CardContent>
           </Card>
         ) : (
-          <div className={styles.groupInfo}>
-            <h2>{groupDetails?.name}</h2>
-            <p>{groupDetails?.description}</p>
-            <p>Coach: {groupDetails?.coach?.first_name} {groupDetails?.coach?.last_name}</p>
-            
-            <section className={styles.announcements}>
-              <h3>Announcements</h3>
-              {/* Add announcements content */}
-            </section>
+          <Tabs 
+              defaultValue={activeTab} 
+              onValueChange={(value: string) => setActiveTab(value as 'group' | 'attendance')}
+            >
+            <TabsList className={styles.tabsList}>
+              <TabsTrigger value="group">Group Info</TabsTrigger>
+              <TabsTrigger value="attendance">Your Attendance Record</TabsTrigger>
+            </TabsList>
+            <TabsContent value="group">
+            <Card className={styles.card}>
+            <CardHeader>
+                <h2 className={styles.cardTitle}>{groupDetails?.name}</h2>
+              </CardHeader>
+              <CardContent className={styles.cardContent}>
+                  <p className={styles.description}>{groupDetails?.description}</p>
+                  <p className={styles.coachInfo}>Coach: {groupDetails?.coach?.first_name} {groupDetails?.coach?.last_name}</p>
+                  
+                  <div className={styles.sections}>
+                  <section>
+                    <h3 className={styles.sectionTitle}>Announcements</h3>
+                    <p className={styles.sectionContent}>No announcements at this time.</p>
+                  </section>
 
-            <section className={styles.challenges}>
-              <h3>Challenges</h3>
-              {/* Add challenges content */}
-            </section>
+                  <section>
+                    <h3 className={styles.sectionTitle}>Challenges</h3>
+                    <p className={styles.sectionContent}>No active challenges at the moment.</p>
+                  </section>
 
-            <section className={styles.groupChat}>
-              <h3>Group Chat</h3>
-              {/* Add group chat component */}
-            </section>
-          </div>
+                  <section>
+                    <h3 className={styles.sectionTitle}>Group Chat</h3>
+                    <p className={styles.sectionContent}>Group chat functionality coming soon!</p>
+                  </section>
+                  </div>
+                </CardContent>
+              </Card>
+            </TabsContent>
+            <TabsContent value="attendance">
+              {user?.id && <SwimmerAttendanceInsights swimmerId={user.id} />}
+            </TabsContent>
+          </Tabs>
         )}
       </div>
     </SwimPageLayout>
