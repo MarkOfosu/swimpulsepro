@@ -1,26 +1,18 @@
 import { createClient } from '@/utils/supabase/client';
 
-export interface ProfileData {
+export interface UserData {
   id: string;
   first_name: string;
   last_name: string;
   email: string;
   role: 'swimmer' | 'coach';
-}
-
-interface SwimmerData {
-  date_of_birth: string;
-  group_id: string | null;
-}
-
-interface TeamData {
-  name: string;
-  location: string;
-}
-
-export interface UserData extends ProfileData {
-  swimmer?: SwimmerData;
-  team?: TeamData;
+  date_of_birth?: string;
+  group_id?: string | null;
+  group_name?: string;
+  coach_first_name?: string;
+  coach_last_name?: string;
+  team_name?: string;
+  team_location?: string;
 }
 
 export async function getUserDetails(): Promise<UserData | null> {
@@ -28,7 +20,6 @@ export async function getUserDetails(): Promise<UserData | null> {
 
   // Get the authenticated user
   const { data: { user }, error: userError } = await supabase.auth.getUser();
-
   if (userError || !user) {
     console.error('Error fetching user:', userError);
     return null;
@@ -37,7 +28,7 @@ export async function getUserDetails(): Promise<UserData | null> {
   // Fetch the user's profile
   const { data: profileData, error: profileError } = await supabase
     .from('profiles')
-    .select('id, first_name, last_name, email, role')
+    .select('*')
     .eq('id', user.id)
     .single();
 
@@ -46,7 +37,13 @@ export async function getUserDetails(): Promise<UserData | null> {
     return null;
   }
 
-  let userData: UserData = profileData;
+  let userData: UserData = {
+    id: profileData.id,
+    first_name: profileData.first_name,
+    last_name: profileData.last_name,
+    email: profileData.email,
+    role: profileData.role,
+  };
 
   // Fetch additional data based on the user's role
   if (userData.role === 'swimmer') {
@@ -56,11 +53,43 @@ export async function getUserDetails(): Promise<UserData | null> {
       .eq('id', user.id)
       .single();
 
-    if (swimmerError || !swimmerData) {
+    if (swimmerError) {
       console.error('Error fetching swimmer details:', swimmerError);
-    } else {
-      userData.swimmer = swimmerData;
-      console.log('getdetails Initial',userData);
+    } else if (swimmerData) {
+      userData.date_of_birth = swimmerData.date_of_birth;
+      userData.group_id = swimmerData.group_id;
+
+      // If group_id is assigned, fetch group and coach information
+      if (swimmerData.group_id) {
+        // Fetch group name
+        const { data: groupData, error: groupError } = await supabase
+          .from('swim_groups')
+          .select('name, coach_id')
+          .eq('id', swimmerData.group_id)
+          .single();
+
+        if (groupError) {
+          console.error('Error fetching group details:', groupError);
+        } else if (groupData) {
+          userData.group_name = groupData.name;
+
+          // Fetch coach information
+          if (groupData.coach_id) {
+            const { data: coachData, error: coachError } = await supabase
+              .from('profiles')
+              .select('first_name, last_name')
+              .eq('id', groupData.coach_id)
+              .single();
+
+            if (coachError) {
+              console.error('Error fetching coach details:', coachError);
+            } else if (coachData) {
+              userData.coach_first_name = coachData.first_name;
+              userData.coach_last_name = coachData.last_name;
+            }
+          }
+        }
+      }
     }
   } else if (userData.role === 'coach') {
     const { data: coachData, error: coachError } = await supabase
@@ -69,22 +98,22 @@ export async function getUserDetails(): Promise<UserData | null> {
       .eq('id', user.id)
       .single();
 
-    if (coachError || !coachData) {
+    if (coachError) {
       console.error('Error fetching coach details:', coachError);
-    } else {
+    } else if (coachData && coachData.team_id) {
       const { data: teamData, error: teamError } = await supabase
         .from('teams')
         .select('name, location')
         .eq('id', coachData.team_id)
         .single();
 
-      if (teamError || !teamData) {
+      if (teamError) {
         console.error('Error fetching team details:', teamError);
-      } else {
-        userData.team = teamData;
+      } else if (teamData) {
+        userData.team_name = teamData.name;
+        userData.team_location = teamData.location;
       }
     }
   }
-
   return userData;
 }
