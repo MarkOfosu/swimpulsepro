@@ -1,29 +1,26 @@
 'use client';
 import React, { useState, useEffect } from 'react';
-import SwimmerPageLayout from '../SwimPageLayout';  // Assuming a SwimmerPageLayout component
+import SwimmerPageLayout from '../SwimPageLayout';
 import styles from '../../../styles/Dashboard.module.css';
-import { getUserDetails } from '../../../lib/getUserDetails';
+import { getUserDetails, UserData } from '../../../lib/getUserDetails';
 import Loader from '@components/ui/Loader';
-
-// Import test data
 import {
   swimmersPerformanceData,
   recentActivitiesData,
   upcomingEventsData,
 } from '../../../lib/testData';
-import Card2 from '@components/ui/Card2';
 import { Card } from '@components/ui/Card';
 import Link from 'next/link';
 
 const SwimmerDashboard: React.FC = () => {
-  const [user, setUser] = useState<any>(null);
-  const [error, setError] = useState<string | null>(null); // For error handling
+  const [user, setUser] = useState<UserData | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
-  // Fetch user details when the component mounts
   useEffect(() => {
     const fetchUser = async () => {
       try {
         const userData = await getUserDetails();
+        if (!userData) throw new Error('Failed to fetch user details');
         setUser(userData);
       } catch (err) {
         console.error('Error fetching user data:', err);
@@ -34,14 +31,10 @@ const SwimmerDashboard: React.FC = () => {
     fetchUser();
   }, []);
 
-  console.log(user);
-
-  // If user data is still being fetched
   if (!user && !error) {
     return <Loader />;
   }
 
-  // Handle error state
   if (error) {
     return <div>{error}</div>;
   }
@@ -50,39 +43,34 @@ const SwimmerDashboard: React.FC = () => {
     <SwimmerPageLayout>
       <div>
         <section className={styles.welcomeSection}>
-          <h1>Welcome, {user.first_name}!</h1>
+          {user && <h1>Welcome, {user.first_name}!</h1>}
           
-          {user.team ? (
+          {user?.group_id ? (
             <p className={styles.swimTeamName}>
-              Your Swim Coach: {user.team.name}, Location: {user.team.location}
+              Your Swim Group: {user.group_name}
+              {user.coach_first_name && user.coach_last_name && (
+                <>, Coach: {user.coach_first_name} {user.coach_last_name}</>
+              )}
             </p>
           ) : (
             <p className={styles.swimTeamName}>
-              You currently don&apos;t have a coach assigned.
+              You currently don&apos;t have a swim group assigned.
             </p>
           )}
           <p>Here is an overview of your recent performance.</p>
         </section>
 
-        {!user.group_id && (
+        {!user?.group_id && (
           <Card>
-              <p>You have not joined a swim group yet.</p>
-              <Link href="/user/swimmer/swimTeam">
-                <button>Join a Group</button>
-              </Link>
-            
+            <p>You have not joined a swim group yet.</p>
+            <Link href="/user/swimmer/swimTeam">
+              <button>Join a Group</button>
+            </Link>
           </Card>
         )}
 
         <section className={styles.recentActivities}>
           <h2>Your Performance Overview</h2>
-          {/* <ul className={styles.performanceList}>
-            {swimmersPerformanceData.map((performance: { swimmer: string; date: string; metric: string; value: number; }, index) => (
-              <li key={index}>
-                <p>{`Date: ${performance.date}, Event: ${performance.metric}, Time: ${performance.value}, Outcome: ${performance.swimmer}`}</p>
-              </li>
-            ))}
-          </ul> */}
           <p>Performance data will be displayed here.</p>
         </section>
 
@@ -112,7 +100,7 @@ const SwimmerDashboard: React.FC = () => {
         <section className={styles.quickActions}>
           <h2>Quick Actions</h2>
           <button>View Detailed Performance</button>
-          <button>Connect with Coach</button>
+          {user && user.group_id && <button>Connect with Coach</button>}
         </section>
       </div>
     </SwimmerPageLayout>

@@ -2,12 +2,12 @@
 
 import React, { useState, useEffect } from 'react';
 import { createClient } from '@/utils/supabase/client';
-import { SwimGroupSelector } from '../swimGroup/attendance/SwimGroupSelector';
+import { SwimGroupSelector } from './SwimGroupSelector';
 import { AttendanceList } from './AttendanceList';
-import { getUserDetails, UserData } from '../../../lib/getUserDetails';
-import { useToast } from '../../../../components/ui/toasts/Toast';
+import { getUserDetails, UserData } from '../../../../lib/getUserDetails';
+import { useToast } from '../../../../../components/ui/toasts/Toast';
 import AttendanceInsights from './AttendanceInsights';
-import styles from '../../../styles/AttendanceRecorder.module.css';
+import styles from '../../../../styles/AttendanceRecorder.module.css';
 
 interface SwimGroup {
   id: string;

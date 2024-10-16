@@ -13,22 +13,9 @@ import SwimmerAttendanceInsights from '../SwimmerAttendanceInsights';
 import { SupabaseClient } from '@supabase/supabase-js';
 import styles from '../../../styles/SwimTeam.module.css';
 
-interface GroupDetails {
-  id: string;
-  name: string;
-  description: string;
-  coach_id: string;
-  group_code: string;
-  coach?: {
-    first_name: string;
-    last_name: string;
-  };
-}
-
 const SwimTeamPage: React.FC = () => {
   const [user, setUser] = useState<UserData | null>(null);
   const [groupCode, setGroupCode] = useState<string>('');
-  const [groupDetails, setGroupDetails] = useState<GroupDetails | null>(null);
   const [error, setError] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(true);
   const [activeTab, setActiveTab] = useState<'group' | 'attendance'>('group');
@@ -36,33 +23,12 @@ const SwimTeamPage: React.FC = () => {
   const supabase: SupabaseClient = createClient();
 
   useEffect(() => {
-    const fetchUserAndGroup = async () => {
+    const fetchUserData = async () => {
       try {
         setLoading(true);
         const userData = await getUserDetails();
         if (!userData) throw new Error('Failed to fetch user details');
         setUser(userData);
-
-        if (userData.swimmer?.group_id) {
-          const { data: groupData, error: groupError } = await supabase
-            .from('swim_groups')
-            .select('id, name, description, coach_id, group_code')
-            .eq('id', userData.swimmer.group_id)
-            .single();
-
-          if (groupError) throw groupError;
-
-          if (groupData) {
-            const { data: coachData, error: coachError } = await supabase
-              .from('profiles')
-              .select('first_name, last_name')
-              .eq('id', groupData.coach_id)
-              .single();
-
-            if (coachError) throw coachError;
-            setGroupDetails({ ...groupData, coach: coachData });
-          }
-        }
       } catch (error) {
         console.error('Error fetching user data:', error);
         setError('Failed to load user details.');
@@ -71,8 +37,8 @@ const SwimTeamPage: React.FC = () => {
       }
     };
 
-    fetchUserAndGroup();
-  }, [supabase]);
+    fetchUserData();
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -89,30 +55,22 @@ const SwimTeamPage: React.FC = () => {
       if (groupError) {
         if (groupError.code === 'PGRST116') {
           setError('No group found with this code.');
-          setGroupDetails(null);
         } else {
           throw groupError;
         }
       } else if (groupData) {
-        const { data: coachData, error: coachError } = await supabase
-          .from('profiles')
-          .select('first_name, last_name')
-          .eq('id', groupData.coach_id)
-          .single();
-
-        if (coachError) throw coachError;
-        setGroupDetails({ ...groupData, coach: coachData });
+        // We found a group, now let's join it
+        await handleJoinGroup(groupData.id);
       }
     } catch (error) {
       setError((error as Error).message || 'Failed to fetch group details. Please try again.');
-      setGroupDetails(null);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleJoinGroup = async () => {
-    if (!groupDetails || !user || !user.id) {
+  const handleJoinGroup = async (groupId: string) => {
+    if (!user || !user.id) {
       setError('Unable to join group. Please try again.');
       return;
     }
@@ -122,20 +80,17 @@ const SwimTeamPage: React.FC = () => {
     try {
       const { error: updateError } = await supabase
         .from('swimmers')
-        .upsert({ id: user.id, group_id: groupDetails.id })
+        .upsert({ id: user.id, group_id: groupId })
         .select()
         .single();
 
       if (updateError) throw updateError;
 
-      setUser({ 
-        ...user, 
-        swimmer: { 
-          ...user.swimmer, 
-          group_id: groupDetails.id,
-          date_of_birth: user.swimmer?.date_of_birth || ''
-        } 
-      });
+      // Refresh user data after joining the group
+      const updatedUserData = await getUserDetails();
+      if (!updatedUserData) throw new Error('Failed to fetch updated user details');
+      setUser(updatedUserData);
+
       router.push('/user/swimmer/swimTeam');
     } catch (error) {
       setError(`Failed to join the group: ${(error as Error).message}`);
@@ -157,7 +112,7 @@ const SwimTeamPage: React.FC = () => {
       <div className={styles.container}>
         <h1 className={styles.title}>Swim Team</h1>
         
-        {!user?.swimmer?.group_id ? (
+        {!user?.group_id ? (
           <Card className={styles.card}>
             <CardHeader>
               <h2 className={styles.cardTitle}>Join a Swim Group</h2>
@@ -178,17 +133,6 @@ const SwimTeamPage: React.FC = () => {
               </form>
 
               {error && <p className={styles.error}>{error}</p>}
-
-              {groupDetails && (
-                <div className={styles.groupDetails}>
-                  <h3 className={styles.groupName}>{groupDetails.name}</h3>
-                  <p>{groupDetails.description}</p>
-                  <p>Coach: {groupDetails.coach?.first_name} {groupDetails.coach?.last_name}</p>
-                  <button onClick={handleJoinGroup} disabled={loading} className={styles.button}>
-                    {loading ? 'Joining...' : 'Join this group'}
-                  </button>
-                </div>
-              )}
             </CardContent>
           </Card>
         ) : (
@@ -203,11 +147,10 @@ const SwimTeamPage: React.FC = () => {
             <TabsContent value="group">
             <Card className={styles.card}>
             <CardHeader>
-                <h2 className={styles.cardTitle}>{groupDetails?.name}</h2>
+                <h2 className={styles.cardTitle}>{user.group_name}</h2>
               </CardHeader>
               <CardContent className={styles.cardContent}>
-                  <p className={styles.description}>{groupDetails?.description}</p>
-                  <p className={styles.coachInfo}>Coach: {groupDetails?.coach?.first_name} {groupDetails?.coach?.last_name}</p>
+                  <p className={styles.coachInfo}>Coach: {user.coach_first_name} {user.coach_last_name}</p>
                   
                   <div className={styles.sections}>
                   <section>

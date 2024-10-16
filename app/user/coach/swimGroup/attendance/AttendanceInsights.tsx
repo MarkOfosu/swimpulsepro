@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { createClient } from '@/utils/supabase/client';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import styles from '../../../styles/AttendanceInsights.module.css';
+import styles from '../../../../styles/AttendanceInsights.module.css';
 
 interface SwimmerAttendance {
   id: string;

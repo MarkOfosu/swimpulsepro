@@ -9,7 +9,7 @@ import Loader from '@components/ui/Loader';
 import { useToast } from '@components/ui/toasts/Toast';
 import styles from '../../../../styles/SwimGroup.module.css';
 import BadgeManagementPage from './badgeSection/BadgeManagement';
-import AttendanceInsights from '../../attendance/AttendanceInsights';
+import AttendanceInsights from '../attendance/AttendanceInsights';
 
 interface SwimGroup {
   id: string;
