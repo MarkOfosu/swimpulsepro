@@ -2,7 +2,7 @@
 
 import React, { useState, useCallback } from 'react';
 import { createClient } from '@/utils/supabase/client';
-import { useToast } from '@components/ui/toasts/Toast';
+import { useToast } from '@components/elements/toasts/Toast';
 import styles from '../../../../styles/CreateSwimGroup.module.css';
 
 interface CreateSwimGroupProps {

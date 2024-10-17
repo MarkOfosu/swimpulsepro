@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { createClient } from '@/utils/supabase/client';
 import CoachPageLayout from '../../../CoachPageLayout';
-import { useToast } from '@components/ui/toasts/Toast';
+import { useToast } from '@components/elements/toasts/Toast';
 import styles from '../../../../../styles/InviteSwimmer.module.css';
 
 const InviteSwimmerPage: React.FC = () => {

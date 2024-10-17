@@ -5,10 +5,10 @@ import { useRouter } from 'next/navigation';
 import { createClient } from '@/utils/supabase/client';
 import CoachPageLayout from '../CoachPageLayout';
 import CreateSwimGroup from './createSwimGroup/page';
-import Card2 from '@components/ui/Card2';
+import Card2 from '@components/elements/Card2';
 import InviteSwimmerModal from '../swimGroup/[groupName]/inviteSwimmer/InviteSwimmerModal'
-import { useToast } from '@components/ui/toasts/Toast';
-import Loader from '@components/ui/Loader';
+import { useToast } from '@components/elements/toasts/Toast';
+import Loader from '@components/elements/Loader';
 import styles from '../../../styles/SwimGroups.module.css';
 
 interface SwimGroup {

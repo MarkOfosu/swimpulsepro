@@ -7,7 +7,7 @@ import {
   SwimGroup,
   BaseMetric
 } from '../../../lib/types';
-import { useToast } from '@components/ui/toasts/Toast';
+import { useToast } from '@components/elements/toasts/Toast';
 
 const supabase = createClient();
 

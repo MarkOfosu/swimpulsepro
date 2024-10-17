@@ -2,7 +2,7 @@
 import React, { ReactNode } from 'react';
 import Sidebar from '../components/nav/SideBar';
 import BottomNav from '@components/nav/BottomNav';
-import Footer from '../components/ui/Footer';
+import Footer from '../components/elements/Footer';
 import './globals.css';
 import WelcomePage from './welcome/page';
 

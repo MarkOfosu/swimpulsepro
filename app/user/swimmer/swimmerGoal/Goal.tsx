@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Card, CardContent } from "@/components/ui/Card";
-import { Progress } from "@/components/ui/Progress";
-import { Button } from "@/components/ui/Button";
-import { Input } from "@/components/ui/Input";
-import { Select } from "@/components/ui/Select";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/Tabs";
+import { Card, CardContent } from "@components/elements/Card";
+import { Progress } from "@components/elements/Progress";
+import { Button } from "@components/elements/Button";
+import { Input } from "@components/elements/Input";
+import { Select } from "@components/elements/Select";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@components/elements/Tabs";
 import { 
   setSwimmerGoal, 
   updateGoalProgress, 

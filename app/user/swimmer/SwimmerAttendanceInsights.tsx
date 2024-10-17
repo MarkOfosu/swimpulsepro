@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { createClient } from '@/utils/supabase/client';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import { Card, CardHeader, CardContent } from "@/components/ui/Card";
-import Loader from '@components/ui/Loader';
+import { Card, CardHeader, CardContent } from "@components/elements/Card";
+import Loader from '@components/elements/Loader';
 import styles from '../../styles/SwimmerAttendanceInsights.module.css';
 
 interface AttendanceData {

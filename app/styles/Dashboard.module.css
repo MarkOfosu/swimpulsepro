@@ -1,188 +1,99 @@
-/* General body and background */
-.dashboardContainer {
-  padding: 40px;
-  max-width: 1000px;
+/* app/user/swimmer/dashboard/Dashboard.module.css */
+
+.dashboard {
+  max-width: 1200px;
   margin: 0 auto;
-  width: 85%;
-  background: rgb(255, 255, 255);
-  border-radius: 15px;
-  /* box-shadow: 0 8px 30px rgba(144, 52, 107, 0.2); */
+  padding: 20px;
 }
 
-/* Welcome Section */
-.welcomeSection {
-  background-color: rgb(3, 4, 77);
-  
-  padding: 25px;
-  border-radius: 8px;
-  /* box-shadow: 0px 4px 15px rgba(144, 52, 107, 0.2); */
-  margin-bottom: 30px;
-  transition: all 0.3s ease;
-}
-
-.welcomeSection:hover {
-  transform: translateY(-5px);
-  box-shadow: 0px 6px 20px rgba(144, 52, 107, 0.3);
-}
-
-.welcomeSection h1 {
-  font-size: 2.5rem;
-  margin-bottom: 15px;
-  color: var(--accent-teal);
-  /* text-shadow: 0 0 10px rgba(94, 234, 212, 0.3); */
-}
-
-.welcomeSection p {
-  font-size: 1.1rem;
-  color: white;
-}
-
-/* Swim Team */
-.swimTeamName {
-  font-size: 1.1rem; 
-  color: white;
-  margin-bottom: 15px;
-  font-weight: bold;
-}
-
-/* Swim Groups */
-.swimGroups {
-  background-color: rgb(3, 4, 77);
-  padding: 25px;
-  border-radius: 8px;
-  margin-bottom: 25px;
-  box-shadow: 0px 4px 15px rgba(144, 52, 107, 0.2);
-  transition: all 0.3s ease;
-  color: white;
-}
-
-.swimGroups:hover {
-  transform: translateY(-5px);
-  box-shadow: 0px 6px 20px rgba(144, 52, 107, 0.3);
-}
-
-.swimGroups h2 {
-  color: var(--accent-teal);
-  font-size: 1.8rem;
-  margin-bottom: 15px;
-}
-
-/* Recent Activities */
-.recentActivities {
-  background-color:  rgb(3, 4, 77);
-  padding: 25px;
-  border-radius: 8px;
-  margin-bottom: 25px;
-  box-shadow: 0px 4px 15px rgba(144, 52, 107, 0.2);
-  transition: all 0.3s ease;
-  color: white;
-}
-
-.recentActivities:hover {
-  transform: translateY(-5px);
-  box-shadow: 0px 6px 20px rgba(144, 52, 107, 0.3);
-}
-
-.recentActivities h2 {
-  color: var(--accent-teal);
-  font-size: 1.8rem;
-  margin-bottom: 15px;
-}
-
-.activitiesList {
-  list-style-type: none;
-  padding-left: 0;
-}
-
-.activitiesList li {
-  font-size: 1.1rem;
-  margin-bottom: 12px;
-  color: white;
-  padding: 10px;
-  background-color:   rgb(3, 4, 77);
-  border-radius: 5px;
-  transition: all 0.3s ease;
-}
-
-.activitiesList li:hover {
-  background-color:  rgb(48, 61, 74);
-  transform: translateX(5px);
-}
-
-/* Upcoming Events */
-.upcomingEvents {
-  background-color:  rgb(3, 4, 77);
-  padding: 25px;
-  border-radius: 8px;
-  box-shadow: 0px 4px 15px rgba(144, 52, 107, 0.2);
-  margin-bottom: 30px;
-  transition: all 0.3s ease;
-  color: white;
-}
-
-.upcomingEvents:hover {
-  transform: translateY(-5px);
-  box-shadow: 0px 6px 20px rgba(144, 52, 107, 0.3);
-}
-
-.upcomingEvents h2 {
-  color: var(--accent-teal);
-  font-size: 1.8rem;
-  margin-bottom: 15px;
-}
-
-/* Quick Actions */
-.quickActions {
+.error {
+  color: red;
   text-align: center;
-  margin-top: 25px;
+  font-weight: bold;
+  margin-top: 20px;
 }
 
-.quickActions button {
-  padding: 12px 24px;
-  background-color: rgb(3, 4, 77);
+.welcomeSection {
+  background-color: #f0f8ff;
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+.swimTeamName {
+  font-size: 1.2em;
+  color: #4a4a4a;
+  margin-bottom: 10px;
+}
+
+.joinButton {
+  background-color: #007bff;
   color: white;
   border: none;
-  border-radius: 25px;
+  padding: 10px 15px;
+  border-radius: 4px;
   cursor: pointer;
-  font-size: 1rem;
-  margin: 0 12px 12px 0;
-  transition: all 0.3s ease;
+  transition: background-color 0.3s;
 }
 
-.quickActions button:hover {
-  background-color: darkblue;
-  
-  box-shadow: 0 0 15px var(--accent-teal);
-  transform: translateY(-3px);
+.joinButton:hover {
+  background-color: #0056b3;
+}
+
+.performanceOverview,
+.recentActivities,
+.personalBests,
+.addResult,
+.upcomingEvents,
+.quickActions {
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+}
+
+.calendarView {
+  min-height: 100px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #f9f9f9;
+  border-radius: 4px;
+}
+
+.actionButton {
+  background-color: #28a745;
   color: white;
+  border: none;
+  padding: 10px 15px;
+  margin-right: 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
 }
 
-/* Responsive adjustments */
+.actionButton:hover {
+  background-color: #218838;
+}
+
+/* Responsive design */
 @media (max-width: 768px) {
-  .dashboardContainer {
-    width: 95%;
-    padding: 20px;
+  .dashboard {
+    padding: 10px;
   }
 
-  .welcomeSection h1 {
-    font-size: 2rem;
+  .performanceOverview,
+  .recentActivities,
+  .personalBests,
+  .addResult,
+  .upcomingEvents,
+  .quickActions {
+    padding: 15px;
   }
 
-  .swimGroups h2,
-  .recentActivities h2,
-  .upcomingEvents h2 {
-    font-size: 1.6rem;
-  }
-
-  .quickActions button {
-    padding: 10px 20px;
-    font-size: 0.9rem;
-  }
-}
-
-@media (min-width: 1200px) {
-  .dashboardContainer {
-    width: 90%;
-    max-width: 1100px;
+  .actionButton {
+    width: 100%;
+    margin-bottom: 10px;
   }
 }

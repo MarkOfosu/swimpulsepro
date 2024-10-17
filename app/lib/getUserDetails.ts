@@ -1,3 +1,4 @@
+// lib/getUserDetails.ts
 import { createClient } from '@/utils/supabase/client';
 
 export interface UserData {
@@ -6,26 +7,26 @@ export interface UserData {
   last_name: string;
   email: string;
   role: 'swimmer' | 'coach';
-  date_of_birth?: string;
+  date_of_birth: Date | null;
   group_id?: string | null;
   group_name?: string;
   coach_first_name?: string;
   coach_last_name?: string;
   team_name?: string;
   team_location?: string;
+  age_group?: string;
+  gender?: string;
 }
 
 export async function getUserDetails(): Promise<UserData | null> {
   const supabase = createClient();
 
-  // Get the authenticated user
   const { data: { user }, error: userError } = await supabase.auth.getUser();
   if (userError || !user) {
     console.error('Error fetching user:', userError);
     return null;
   }
 
-  // Fetch the user's profile
   const { data: profileData, error: profileError } = await supabase
     .from('profiles')
     .select('*')
@@ -43,25 +44,24 @@ export async function getUserDetails(): Promise<UserData | null> {
     last_name: profileData.last_name,
     email: profileData.email,
     role: profileData.role,
+    date_of_birth: profileData.date_of_birth,
+    gender: profileData.gender,
   };
 
-  // Fetch additional data based on the user's role
   if (userData.role === 'swimmer') {
     const { data: swimmerData, error: swimmerError } = await supabase
       .from('swimmers')
-      .select('date_of_birth, group_id')
+      .select('group_id, age_group')
       .eq('id', user.id)
       .single();
 
     if (swimmerError) {
       console.error('Error fetching swimmer details:', swimmerError);
     } else if (swimmerData) {
-      userData.date_of_birth = swimmerData.date_of_birth;
       userData.group_id = swimmerData.group_id;
+      userData.age_group = swimmerData.age_group;
 
-      // If group_id is assigned, fetch group and coach information
       if (swimmerData.group_id) {
-        // Fetch group name
         const { data: groupData, error: groupError } = await supabase
           .from('swim_groups')
           .select('name, coach_id')
@@ -73,7 +73,6 @@ export async function getUserDetails(): Promise<UserData | null> {
         } else if (groupData) {
           userData.group_name = groupData.name;
 
-          // Fetch coach information
           if (groupData.coach_id) {
             const { data: coachData, error: coachError } = await supabase
               .from('profiles')
@@ -115,5 +114,6 @@ export async function getUserDetails(): Promise<UserData | null> {
       }
     }
   }
+
   return userData;
 }

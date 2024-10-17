@@ -3,9 +3,9 @@
 // app/team/team-overview/page.tsx
 import React from 'react';
 import TeamLayout from '../page';
-import Card2 from '@components/ui/Card2';
+import Card2 from '@components/elements/Card2';
 
-import { useToast } from '../../../../components/ui/toasts/Toast';
+import { useToast } from '../../../../components/elements/toasts/Toast';
 
 
 const TeamOverview: React.FC = () => {

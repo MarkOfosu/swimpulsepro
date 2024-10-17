@@ -100,47 +100,26 @@ export interface TechniqueAssessmentMetric extends BaseMetric {
 
 
 export interface EnduranceTestMetric extends BaseMetric {
-
   details: {
-
     distance: number;
-
     stroke: string;
-
     totalReps: number;
-
     interval: {
-
       hours: number;
-
       minutes: number;
-
       seconds: number;
-
     };
-
     calculationMethod: 'TARGET_TIME' | 'TOTAL_COMPLETED' | 'FASTEST_POSSIBLE_SENDOFF' | 'TIME_TO_FATIGUE';
-
     unit: string;
-
     targetTimeType?: 'MANUAL' | 'RELATIVE';
-
     targetTime?: {
-
       hours: number;
-
       minutes: number;
-
       seconds: number;
-
     };
-
-    targetIntervalType?: 'MANUAL' | 'RELATIVE'; // Added property
-
+    targetIntervalType?: 'MANUAL' | 'RELATIVE'; 
     relativeInterval?: number; // Added property for relative interval
-
   };
-
 }
 
 
@@ -230,18 +209,66 @@ export interface SwimGroup {
   group_code: string;
 }
 
+export interface User {
+  id: string;
+  first_name: string;
+  last_name: string;
+  email: string;
+  group_id?: string;
+  group_name?: string;
+  coach_first_name?: string;
+  coach_last_name?: string;
+}
 
+// interfaces/index.ts
 
-// export interface SimpleMetric {
-//   id: string;
-//   name: string;
-//   type: MetricType;
-//   description?: string;
-//   maxReps?: number;  // Optional, used for 'Test Set' with 'reps'
-//   goalTime?: string; // Optional, used for 'Goal Time'
-//   swimmerId: string;
-// }
+export interface SwimMeet {
+  id: string;
+  name: string;
+  location: string;
+  startDate: Date;
+  endDate: Date;
+  course: 'SCY' | 'SCM' | 'LCM';
+}
 
-// export interface InputResultsFormProps {
-//   metric: SimpleMetric;
-// }
+export interface SwimEvent {
+  id: string;
+  name: string;
+  course: string;
+}
+
+export interface SwimResult {
+  id: string;
+  swimmer_id: string;
+  meet_name: string;
+  event: string;
+  time: string;
+  date: Date;
+  course: string;
+  is_personal_best: boolean;
+}
+
+export interface Swimmer {
+  id: string;
+  firstName: string;
+  lastName: string;
+  dateOfBirth: Date;
+  gender: 'Male' | 'Female';
+  ageGroup: string;
+}
+
+export interface SwimStandard {
+  id: string;
+  age_group: string;
+  gender: string;
+  event: string;
+  course: string;
+  b_standard: string;  // Interval will be returned as a string
+  bb_standard: string;
+  a_standard: string;
+  aa_standard: string;
+  aaa_standard: string;
+  aaaa_standard: string;
+  created_at: string;
+  updated_at: string;
+}

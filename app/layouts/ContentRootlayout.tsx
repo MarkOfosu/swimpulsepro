@@ -6,7 +6,7 @@ import Sidebar from '@components/nav/SideBar';
 import BottomNav from '@components/nav/BottomNav';
 import CollapsibleNav from '@components/nav/CollapsibleNav';
 import { getUserDetails } from '../lib/getUserDetails';
-import Loader from '@components/ui/Loader';
+import Loader from '@components/elements/Loader';
 import styles from '../styles/ContentRootLayout.module.css';
 
 interface ContentRootLayoutProps {

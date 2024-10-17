@@ -5,7 +5,7 @@ import styles from '../../styles/LoginForm.module.css';
 import WelcomeNavbar from '@app/welcome/WelcomeNavbar';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@/utils/supabase/client';
-import Loader from '../../../components/ui/Loader'; // Assuming you have a Loader component
+import Loader from '../../../components/elements/Loader'; // Assuming you have a Loader component
 import { getUserDetails } from '@app/lib/getUserDetails'; // Assuming this fetches user details like role
 
 const LoginForm: React.FC = () => {

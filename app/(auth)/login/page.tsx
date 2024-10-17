@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { getUserDetails } from '../../lib/getUserDetails';
 import LoginForm from './LoginForm';
 import { useRouter } from 'next/navigation';
-import Loader from '../../../components/ui/Loader';
+import Loader from '../../../components/elements/Loader';
 
 const LoginPage: React.FC = () => {
   const [user, setUser] = useState<any>(null);
