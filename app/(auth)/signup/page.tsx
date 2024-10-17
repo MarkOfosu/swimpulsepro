@@ -3,7 +3,7 @@ import { signup } from './actions';
 import React, { useState } from 'react';
 import styles from '../../styles/RegisterForm.module.css';
 import WelcomeNavbar from '@app/welcome/WelcomeNavbar';
-import Loader from '../../../components/ui/Loader';
+import Loader from '../../../components/elements/Loader';
 
 const SignupForm = () => {
   const [role, setRole] = useState('coach'); // Default to coach

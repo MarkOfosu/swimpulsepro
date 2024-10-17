@@ -1,15 +1,15 @@
 "use client";
 import React, { useState, useEffect } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-import { Card, CardContent, CardHeader } from "@/components/ui/Card";
-import { Progress } from "@/components/ui/Progress";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/Tabs";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/Avatar";
+import { Card, CardContent, CardHeader } from "@components/elements/Card";
+import { Progress } from "@components/elements/Progress";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@components/elements/Tabs";
+import { Avatar, AvatarFallback, AvatarImage } from "@components/elements/Avatar";
 import styles from '../../../styles/SwimmerProfile.module.css';
 import SwimPageLayout from '../SwimPageLayout';
 import SwimmerGoalsContainer from '../swimmerGoal/SwimmerGoalContainer';
 import { createClient } from '@/utils/supabase/client';
-import BadgeAwarded from '../../../../components/ui/BadgeAwarded';
+import BadgeAwarded from '../../../../components/elements/BadgeAwarded';
 
 interface Swimmer {
   id: string;

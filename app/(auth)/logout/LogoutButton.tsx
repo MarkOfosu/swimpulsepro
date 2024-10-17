@@ -5,7 +5,7 @@ import React from 'react';
 import { FaSignOutAlt } from 'react-icons/fa';
 import { useRouter } from 'next/navigation';
 import { logout } from './actions';
-import { useToast } from '@components/ui/toasts/Toast';
+import { useToast } from '@components/elements/toasts/Toast';
 import style from '../styles/LogoutButton.module.css';
 
 export default function LogoutButton() {

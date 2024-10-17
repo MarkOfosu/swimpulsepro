@@ -5,7 +5,7 @@ import { createClient } from '@/utils/supabase/client';
 import { SwimGroupSelector } from './SwimGroupSelector';
 import { AttendanceList } from './AttendanceList';
 import { getUserDetails, UserData } from '../../../../lib/getUserDetails';
-import { useToast } from '../../../../../components/ui/toasts/Toast';
+import { useToast } from '../../../../../components/elements/toasts/Toast';
 import AttendanceInsights from './AttendanceInsights';
 import styles from '../../../../styles/AttendanceRecorder.module.css';
 

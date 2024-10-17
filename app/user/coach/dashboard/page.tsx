@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import CoachPageLayout from '../CoachPageLayout';
 import styles from '../../../styles/Dashboard.module.css';
 import { getUserDetails, UserData } from '../../../lib/getUserDetails';
-import Loader from '@components/ui/Loader';
+import Loader from '@components/elements/Loader';
 import { createClient } from '@/utils/supabase/client';
 
 import {
@@ -45,7 +45,7 @@ const Dashboard: React.FC = () => {
   if (!user && !error) {
     return (
       <CoachPageLayout>
-        <div className="page-heading">
+        <div className={styles.pageHeading}>
           <h1>Coach Overview</h1>
         </div>
         <Loader />
@@ -54,12 +54,12 @@ const Dashboard: React.FC = () => {
   }
 
   if (error) {
-    return <div>{error}</div>;
+    return <div className={styles.errorMessage}>{error}</div>;
   }
 
   return (
     <CoachPageLayout>
-      <div>
+      <div className={styles.dashboardContainer}>
         <section className={styles.welcomeSection}>
           <h1>Welcome, Coach {user?.first_name}!</h1>
           {user?.team_name ? (
@@ -102,9 +102,10 @@ const Dashboard: React.FC = () => {
           <h2>Upcoming Events</h2>
           <div className={styles.calendarView}>
             {upcomingEventsData.map((event, index) => (
-              <div key={index}>
-                <p>{`${event.eventName} on ${event.date} at ${event.location}`}</p>
-                <p>{`Participants: ${event.participants.join(', ')}`}</p>
+              <div key={index} className={styles.eventItem}>
+                <p className={styles.eventName}>{event.eventName}</p>
+                <p className={styles.eventDetails}>{`on ${event.date} at ${event.location}`}</p>
+                <p className={styles.eventParticipants}>{`Participants: ${event.participants.join(', ')}`}</p>
               </div>
             ))}
           </div>
@@ -112,8 +113,8 @@ const Dashboard: React.FC = () => {
 
         <section className={styles.quickActions}>
           <h2>Quick Actions</h2>
-          <button>Add New Performance Indicator</button>
-          <button>Create New Swim Group</button>
+          <button className={styles.actionButton}>Add New Performance Indicator</button>
+          <button className={styles.actionButton}>Create New Swim Group</button>
         </section>
       </div>
     </CoachPageLayout>
