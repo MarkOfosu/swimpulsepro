@@ -13,6 +13,8 @@ import { PersonalBestsComparison } from '@components/elements/swimResults/Person
 import { ProgressChart } from '@components/elements/swimResults/ProgressChart';
 import { SwimResult } from '@/app/lib/types';
 import { createClient } from '@/utils/supabase/client';
+import { Section } from 'lucide-react';
+import SwimmerStandardsProgress from '@components/elements/swimResults/SwimmerStandardsProgress';
 
 const SwimmerDashboard: React.FC = () => {
   const [user, setUser] = useState<UserData | null>(null);
@@ -76,7 +78,6 @@ const SwimmerDashboard: React.FC = () => {
               You currently don&apos;t have a swim group assigned.
             </p>
           )}
-          <p>Here is an overview of your recent performance.</p>
         </section>
 
         {/* Join Group Card */}
@@ -107,6 +108,12 @@ const SwimmerDashboard: React.FC = () => {
           <PersonalBestsComparison swimmerId={user?.id || ''} />
         </section>
 
+        <section className={styles.personalBests}>
+          <h2>US Age Group Standards</h2>
+          <SwimmerStandardsProgress swimmerId={user?.id || ''} />
+        </section>
+
+  
         {/* Add New Result */}
         <section className={styles.addResult}>
           <h2>Add New Result</h2>
