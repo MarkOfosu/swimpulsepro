@@ -32,17 +32,40 @@ export const ProgressChart: React.FC<ProgressChartProps> = ({ swimmerId }) => {
     fetchResults();
   }, [swimmerId]);
 
+  const parseTimeToSeconds = (time: string): number => {
+    // Assuming time is in the format "HH:MM:SS.ss" or "MM:SS.ss"
+    const parts = time.split(':');
+    if (parts.length === 3) {
+      // Format is HH:MM:SS.ss
+      const [hours, minutes, seconds] = parts.map(Number);
+      return hours * 3600 + minutes * 60 + seconds;
+    } else if (parts.length === 2) {
+      // Format is MM:SS.ss
+      const [minutes, seconds] = parts.map(Number);
+      return minutes * 60 + seconds;
+    } else {
+      // Assuming it's just seconds
+      return Number(time);
+    }
+  };
+
   const groupedResults = results.reduce((acc, result) => {
-    const key = result.event;
+    const key = `${result.event} (${result.course})`;
     if (!acc[key]) {
       acc[key] = [];
     }
     acc[key].push({
       date: new Date(result.date).toLocaleDateString(),
-      time: parseFloat(result.time)
+      time: parseTimeToSeconds(result.time)
     });
     return acc;
   }, {} as Record<string, { date: string; time: number }[]>);
+
+  const formatYAxis = (seconds: number) => {
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = (seconds % 60).toFixed(2);
+    return `${minutes}:${remainingSeconds.padStart(5, '0')}`;
+  };
 
   return (
     <div className={styles.container}>
@@ -54,10 +77,13 @@ export const ProgressChart: React.FC<ProgressChartProps> = ({ swimmerId }) => {
             <LineChart data={data}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="date" />
-              <YAxis />
-              <Tooltip />
+              <YAxis tickFormatter={formatYAxis} domain={['auto', 'auto']} reversed={true} />
+              <Tooltip 
+                formatter={(value: number) => formatYAxis(value)}
+                labelFormatter={(label) => `Date: ${label}`}
+              />
               <Legend />
-              <Line type="monotone" dataKey="time" stroke="#8884d8" />
+              <Line type="monotone" dataKey="time" stroke="#8884d8" name="Time" />
             </LineChart>
           </ResponsiveContainer>
         </div>

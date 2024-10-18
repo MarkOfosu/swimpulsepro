@@ -246,6 +246,7 @@ export interface SwimResult {
   date: Date;
   course: string;
   is_personal_best: boolean;
+  best_time?: string;
 }
 
 export interface Swimmer {
