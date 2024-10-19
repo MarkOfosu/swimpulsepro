@@ -531,22 +531,107 @@ CREATE OR REPLACE FUNCTION update_personal_best(
     p_date DATE,
     p_result_id UUID
 ) RETURNS VOID AS $$
+DECLARE
+    v_current_best INTERVAL;
+    v_current_best_id UUID;
 BEGIN
-    -- Update the is_personal_best flag for the new result
-    UPDATE swim_results
-    SET is_personal_best = TRUE
-    WHERE id = p_result_id;
-
-    -- Set is_personal_best to false for all other results of this event
-    UPDATE swim_results
-    SET is_personal_best = FALSE
+    -- Get the current personal best for this event and course
+    SELECT time, id INTO v_current_best, v_current_best_id
+    FROM swim_results
     WHERE swimmer_id = p_swimmer_id 
       AND event = p_event 
       AND course = p_course 
-      AND id != p_result_id
-      AND (is_personal_best = TRUE OR time > p_time);
+      AND is_personal_best = TRUE;
+
+    -- If there's no current best, or the new time is better, update
+    IF v_current_best IS NULL OR p_time < v_current_best THEN
+        -- Set the previous best (if any) to not be a personal best
+        IF v_current_best_id IS NOT NULL THEN
+            UPDATE swim_results
+            SET is_personal_best = FALSE
+            WHERE id = v_current_best_id;
+        END IF;
+
+        -- Set the new result as the personal best
+        UPDATE swim_results
+        SET is_personal_best = TRUE
+        WHERE id = p_result_id;
+
+        -- Notify clients of the change
+        PERFORM pg_notify('swim_results_changed', json_build_object(
+            'swimmer_id', p_swimmer_id,
+            'event', p_event,
+            'course', p_course,
+            'new_best', p_time::text,
+            'date', p_date
+        )::text);
+    END IF;
 END;
 $$ LANGUAGE plpgsql;
+
+-- Create a trigger to call this function after insert or update on swim_results
+CREATE OR REPLACE FUNCTION trigger_update_personal_best()
+RETURNS TRIGGER AS $$
+BEGIN
+    PERFORM update_personal_best(
+        NEW.swimmer_id,
+        NEW.event,
+        NEW.course,
+        NEW.time,
+        NEW.date,
+        NEW.id
+    );
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER swim_results_update_trigger
+AFTER INSERT OR UPDATE ON swim_results
+FOR EACH ROW EXECUTE FUNCTION trigger_update_personal_best();
+
+-- Add a trigger for deletions to handle potential changes in personal bests
+CREATE OR REPLACE FUNCTION handle_swim_result_deletion()
+RETURNS TRIGGER AS $$
+DECLARE
+    v_new_best RECORD;
+BEGIN
+    -- If the deleted record was a personal best, find the new best
+    IF OLD.is_personal_best THEN
+        SELECT * INTO v_new_best
+        FROM swim_results
+        WHERE swimmer_id = OLD.swimmer_id
+          AND event = OLD.event
+          AND course = OLD.course
+        ORDER BY time ASC
+        LIMIT 1;
+
+        -- If a new best is found, update it
+        IF v_new_best IS NOT NULL THEN
+            PERFORM update_personal_best(
+                v_new_best.swimmer_id,
+                v_new_best.event,
+                v_new_best.course,
+                v_new_best.time,
+                v_new_best.date,
+                v_new_best.id
+            );
+        ELSE
+            -- If no new best is found, notify of the removal
+            PERFORM pg_notify('swim_results_changed', json_build_object(
+                'swimmer_id', OLD.swimmer_id,
+                'event', OLD.event,
+                'course', OLD.course,
+                'action', 'removed'
+            )::text);
+        END IF;
+    END IF;
+    RETURN OLD;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER swim_results_delete_trigger
+AFTER DELETE ON swim_results
+FOR EACH ROW EXECUTE FUNCTION handle_swim_result_deletion();
 
 -- Trigger function to handle swim result insertion
 CREATE OR REPLACE FUNCTION handle_swim_result_insert()

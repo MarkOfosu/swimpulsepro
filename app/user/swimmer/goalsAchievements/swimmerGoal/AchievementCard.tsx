@@ -1,8 +1,8 @@
 import React from 'react';
 import { Card, CardContent } from "@components/elements/Card";
 import { Trophy, Target, Zap, Flame, Droplet, Wind, Award, Star, Medal, Crown } from 'lucide-react';
-import styles from '../../../styles/AchievementCard.module.css';
-import { Achievement } from '../functions/goalFunctions';
+import styles from '../../../../styles/AchievementCard.module.css';
+import { Achievement } from '../../functions/goalFunctions';
 
 interface AchievementCardProps {
   achievement: Achievement;

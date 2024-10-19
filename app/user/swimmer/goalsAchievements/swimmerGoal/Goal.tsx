@@ -15,9 +15,9 @@ import {
   Achievement,
   GoalType,
   NewGoal
-} from '../functions/goalFunctions';
+} from '../../functions/goalFunctions';
 import AchievementCard from './AchievementCard';
-import styles from '../../../styles/Goals.module.css';
+import styles from '../../../../styles/Goals.module.css';
 
 interface GoalProps {
   swimmerId: string;
@@ -259,6 +259,9 @@ const Goal: React.FC<GoalProps> = ({ swimmerId }) => {
               <option value="">Select Event</option>
               <option value="50m_freestyle">50m Freestyle</option>
               <option value="100m_freestyle">100m Freestyle</option>
+              <option value="200m_freestyle">200m Freestyle</option>
+              <option value="400m_freestyle">400m Freestyle</option>
+              
               {/* Add more events as needed */}
             </Select>
             <TimeInput

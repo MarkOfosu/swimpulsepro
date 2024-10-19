@@ -1,10 +1,9 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@/utils/supabase/client';
-import { getUserDetails, UserData } from '../../../lib/getUserDetails';
-import SwimPageLayout from '../SwimPageLayout';
+import SwimPageLayout from '../SwimmerPageLayout';
 import { Card, CardContent, CardHeader } from "@components/elements/Card";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@components/elements/Tabs";
 import Loader from '@components/elements/Loader';
@@ -12,33 +11,16 @@ import { Input } from '@components/elements/Input';
 import SwimmerAttendanceInsights from '../SwimmerAttendanceInsights';
 import { SupabaseClient } from '@supabase/supabase-js';
 import styles from '../../../styles/SwimTeam.module.css';
+import { useUser } from '../../../context/UserContext'; // Import the useUser hook
 
 const SwimTeamPage: React.FC = () => {
-  const [user, setUser] = useState<UserData | null>(null);
+  const { user, loading: userLoading, error: userError, refreshUser } = useUser(); // Use the useUser hook
   const [groupCode, setGroupCode] = useState<string>('');
   const [error, setError] = useState<string>('');
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState<'group' | 'attendance'>('group');
   const router = useRouter();
   const supabase: SupabaseClient = createClient();
-
-  useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        setLoading(true);
-        const userData = await getUserDetails();
-        if (!userData) throw new Error('Failed to fetch user details');
-        setUser(userData);
-      } catch (error) {
-        console.error('Error fetching user data:', error);
-        setError('Failed to load user details.');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchUserData();
-  }, []);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -87,9 +69,7 @@ const SwimTeamPage: React.FC = () => {
       if (updateError) throw updateError;
 
       // Refresh user data after joining the group
-      const updatedUserData = await getUserDetails();
-      if (!updatedUserData) throw new Error('Failed to fetch updated user details');
-      setUser(updatedUserData);
+      await refreshUser();
 
       router.push('/user/swimmer/swimTeam');
     } catch (error) {
@@ -99,10 +79,18 @@ const SwimTeamPage: React.FC = () => {
     }
   };
 
-  if (loading) {
+  if (userLoading || loading) {
     return (
       <SwimPageLayout>
         <Loader />
+      </SwimPageLayout>
+    );
+  }
+
+  if (userError) {
+    return (
+      <SwimPageLayout>
+        <div className={styles.error}>{userError}</div>
       </SwimPageLayout>
     );
   }
