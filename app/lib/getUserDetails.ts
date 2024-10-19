@@ -2,6 +2,10 @@
 import { createClient } from '@/utils/supabase/client';
 
 export interface UserData {
+  photo?: string | undefined;
+  level?: number;
+  xp?: any;
+  nextLevelXp?: any;
   id: string;
   first_name: string;
   last_name: string;

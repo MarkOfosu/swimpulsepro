@@ -5,6 +5,8 @@ import BottomNav from '@components/nav/BottomNav';
 import Footer from '../components/elements/Footer';
 import './globals.css';
 import WelcomePage from './welcome/page';
+import { User } from 'lucide-react';
+import { UserProvider } from '../app/context/UserContext';
 
 export const metadata = {
   title: 'SwimPulsePro',
@@ -26,16 +28,18 @@ function RootLayout({ children}: { readonly children: ReactNode}) {
   const signedin = true;
 
   return (
-    <html lang='en'>
-      <head>
-        <title>{metadata.title}</title>
-        <meta name='description' content={metadata.description} />
-      </head>
-      <body> 
-          <main className='content'>{children}</main>   
-         <Footer />
-      </body>
-    </html>
+    <UserProvider>
+      <html lang='en'>
+        <head>
+          <title>{metadata.title}</title>
+          <meta name='description' content={metadata.description} />
+        </head>
+        <body> 
+            <main className='content'>{children}</main>   
+          <Footer />
+        </body>
+      </html>
+    </UserProvider>
   );
 }
 

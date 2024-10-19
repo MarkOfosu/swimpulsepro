@@ -1,14 +1,42 @@
 /* ProgressChart.module.css */
-
 .container {
-    margin-top: 20px;
-  }
-  
-  .chartContainer {
-    margin-bottom: 30px;
-  }
-  
-  
-  /* h2, h3 {
-    text-align: center;
-  } */
+  margin-top: 20px;
+  padding: 20px;
+  font-family: Arial, sans-serif;
+}
+
+.title {
+  color: #333;
+  margin-bottom: 20px;
+}
+
+.subtitle {
+  color: #333;
+  margin-bottom: 15px;
+}
+
+.eventSelector {
+  width: 100%;
+  padding: 10px;
+  font-size: 16px;
+  margin-bottom: 20px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.chartContainer {
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.loading, .error {
+  text-align: center;
+  padding: 20px;
+  font-size: 18px;
+}
+
+.error {
+  color: red;
+}

@@ -2,40 +2,14 @@
 import React, { useState, useEffect } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { Card, CardContent, CardHeader } from "@components/elements/Card";
-import { Progress } from "@components/elements/Progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@components/elements/Tabs";
 import { Avatar, AvatarFallback, AvatarImage } from "@components/elements/Avatar";
 import styles from '../../../styles/SwimmerProfile.module.css';
-import SwimPageLayout from '../SwimPageLayout';
-import SwimmerGoalsContainer from '../swimmerGoal/SwimmerGoalContainer';
+import SwimPageLayout from '../SwimmerPageLayout';
+import SwimmerGoalsContainer from './swimmerGoal/SwimmerGoalContainer';
 import { createClient } from '@/utils/supabase/client';
 import BadgeAwarded from '../../../../components/elements/BadgeAwarded';
-
-interface Swimmer {
-  id: string;
-  name: string;
-  age: number;
-  email: string;
-  photo: string;
-  swimGroup: string;
-  level: number;
-  xp: number;
-  nextLevelXp: number;
-}
-
-interface Achievement {
-  id: number;
-  title: string;
-  description: string;
-  icon: string;
-  time: string;
-}
-
-interface Goal {
-  id: number;
-  name: string;
-  progress: number;
-}
+import { useUser } from '../../../context/UserContext';
 
 interface PerformanceData {
   date: string;
@@ -47,9 +21,7 @@ interface SwimmerBadge {
   name: string;
   icon: string;
   description: string;
-  // color: string;
 }
-
 
 const formatTime = (seconds: number) => {
   const hours = Math.floor(seconds / 3600);
@@ -71,7 +43,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
 };
 
 const SwimmerProfilePage: React.FC = () => {
-  const [swimmer, setSwimmer] = useState<Swimmer | null>(null);
+  const { user, loading: userLoading, error: userError } = useUser();
   const [performanceData, setPerformanceData] = useState<PerformanceData[]>([]);
   const [swimmerBadges, setSwimmerBadges] = useState<SwimmerBadge[]>([]);
   const [loading, setLoading] = useState(true);
@@ -79,25 +51,13 @@ const SwimmerProfilePage: React.FC = () => {
   const supabase = createClient();
 
   useEffect(() => {
-    const fetchSwimmerData = async () => {
+    const fetchAdditionalData = async () => {
+      if (!user) return;
+
       setLoading(true);
       setError(null);
     
       try {
-        const { data: { user }, error: userError } = await supabase.auth.getUser();
-        if (userError) throw userError;
-        if (!user) throw new Error("No authenticated user found");
-    
-        // Fetch swimmer details
-        const { data: swimmerData, error: swimmerError } = await supabase
-          .from('swimmers')
-          .select('*')
-          .eq('id', user.id)
-          .single();
-    
-        if (swimmerError) throw swimmerError;
-        setSwimmer(swimmerData);
-    
         // Fetch swimmer's badges
         const { data: badgesData, error: badgesError } = await supabase
           .from('swimmer_badges')
@@ -130,28 +90,28 @@ const SwimmerProfilePage: React.FC = () => {
         ];
         setPerformanceData(performanceMetrics);
 
-       
-
       } catch (err) {
-        console.error('Error fetching swimmer data:', err);
-        setError('Failed to load swimmer profile. Please try again later.');
+        console.error('Error fetching additional data:', err);
+        setError('Failed to load some profile data. Please try again later.');
       } finally {
         setLoading(false);
       }
     };
 
-    fetchSwimmerData();
-  }, [supabase]);
+    if (user) {
+      fetchAdditionalData();
+    }
+  }, [user, supabase]);
 
-  if (loading) {
+  if (userLoading || loading) {
     return <div className={styles.loading}>Loading...</div>;
   }
 
-  if (error) {
-    return <div className={styles.error}>{error}</div>;
+  if (userError || error) {
+    return <div className={styles.error}>{userError || error}</div>;
   }
 
-  if (!swimmer) {
+  if (!user) {
     return <div className={styles.error}>No swimmer data found.</div>;
   }
 
@@ -161,24 +121,24 @@ const SwimmerProfilePage: React.FC = () => {
         <div className={styles.container}>
           <div className={styles.heading}>
             <Avatar className={styles.avatar}>
-              <AvatarImage src={swimmer.photo} alt={swimmer.name} />
-              <AvatarFallback>{swimmer.name?.split(' ').map(n => n[0]).join('')}</AvatarFallback>
+              <AvatarImage src={user.photo} alt={user.first_name} />
+              <AvatarFallback>{`${user.first_name?.[0]}${user.last_name?.[0]}`}</AvatarFallback>
             </Avatar>
             <div className={styles.profileInfo}>
               <div className={styles.profileHeader}>
-                <h1 className={styles.profileName}>{swimmer.name}</h1>
-                <span className={styles.levelBadge}>Level {swimmer.level}</span>
+                <h1 className={styles.profileName}>{`${user.first_name} ${user.last_name}`}</h1>
+                <span className={styles.levelBadge}>Level {user.level}</span>
               </div>
-              <p className={styles.swimGroup}>{swimmer.swimGroup}</p>
+              <p className={styles.swimGroup}>{user.group_name}</p>
               <div className={styles.profileStats}>
                 <div className={styles.xpContainer}>
                   <div className={styles.progressBar}>
                     <div 
                       className={styles.progressBarFill} 
-                      style={{ width: `${(swimmer.xp / swimmer.nextLevelXp) * 100}%` }}
+                      style={{ width: `${(user.xp / user.nextLevelXp) * 100}%` }}
                     ></div>
                   </div>
-                  <span className={styles.xpInfo}>{swimmer.xp}/{swimmer.nextLevelXp} XP</span>
+                  <span className={styles.xpInfo}>{user.xp}/{user.nextLevelXp} XP</span>
                 </div>
               </div>
             </div>
@@ -213,17 +173,17 @@ const SwimmerProfilePage: React.FC = () => {
         <SwimmerGoalsContainer />
 
         <div className={styles.badgesSection}>
-            <h1 className={styles.sectionTitle}>Earned Badges</h1>
-            <div className={styles.badgesContainer}>
-              {swimmerBadges.map(badge => (
-                <BadgeAwarded
-                  key={badge.id}
-                  name={badge.name}
-                  icon={badge.icon}
-                />
-              ))}
-            </div>
+          <h1 className={styles.sectionTitle}>Earned Badges</h1>
+          <div className={styles.badgesContainer}>
+            {swimmerBadges.map(badge => (
+              <BadgeAwarded
+                key={badge.id}
+                name={badge.name}
+                icon={badge.icon}
+              />
+            ))}
           </div>
+        </div>
       </div>
     </SwimPageLayout>
   );
