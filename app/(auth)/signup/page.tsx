@@ -1,74 +1,115 @@
-"use client";
-import { signup } from './actions';
+'use client';
+
 import React, { useState } from 'react';
+import { createClient } from '@/utils/supabase/client';
 import styles from '../../styles/RegisterForm.module.css';
 import WelcomeNavbar from '@app/welcome/WelcomeNavbar';
 import Loader from '../../../components/elements/Loader';
 
 const SignupForm = () => {
-  const [role, setRole] = useState('coach'); // Default to coach
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [passwordError, setPasswordError] = useState('');
-  const [signupError, setSignupError] = useState(''); // To store the signup error from the server
-  const [loading, setLoading] = useState(false); // Loading state
+  const [role, setRole] = useState('coach');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
-  const handleRoleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setRole(e.target.value);
-    setSignupError(''); // Reset signup errors when switching roles
+  const capitalizeFirstLetter = (string: string) => {
+    return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
   };
 
-  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setPassword(e.target.value);
-    if (confirmPassword && e.target.value !== confirmPassword) {
-      setPasswordError('Passwords do not match');
-    } else {
-      setPasswordError('');
+  const calculateAgeGroup = (dateOfBirth: string): string => {
+    const today = new Date();
+    const birthDate = new Date(dateOfBirth);
+    let age = today.getFullYear() - birthDate.getFullYear();
+    const monthDiff = today.getMonth() - birthDate.getMonth();
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+      age--;
     }
-  };
-
-  const handleConfirmPasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setConfirmPassword(e.target.value);
-    if (password && e.target.value !== password) {
-      setPasswordError('Passwords do not match');
-    } else {
-      setPasswordError('');
-    }
+    if (age <= 10) return '10 & under';
+    if (age <= 12) return '11-12';
+    if (age <= 14) return '13-14';
+    if (age <= 16) return '15-16';
+    return '17-18';
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setSignupError(''); // Reset the error state
-    setLoading(true); // Show loader during the signup process
+    setError('');
+    setLoading(true);
 
     const formData = new FormData(e.target as HTMLFormElement);
+    const supabase = createClient();
 
     try {
-      const response = await signup(formData);
+      const firstName = capitalizeFirstLetter(formData.get('firstName') as string);
+      const lastName = capitalizeFirstLetter(formData.get('lastName') as string);
+      const email = (formData.get('email') as string).toLowerCase();
+      const password = formData.get('password') as string;
+      const confirmPassword = formData.get('confirmPassword') as string;
+      const gender = formData.get('gender') as string;
 
-      if (response.error) {
-        setSignupError(response.error); // Show the error on the form
-        setLoading(false); // Hide the loader
+      if (!firstName || !lastName || !email || !password || !confirmPassword || !gender) {
+        throw new Error('All fields are required');
+      }
+
+      if (password !== confirmPassword) {
+        throw new Error('Passwords do not match');
+      }
+
+      let additionalData: any = { gender };
+      if (role === 'coach') {
+        const swimTeam = capitalizeFirstLetter(formData.get('swimTeam') as string);
+        const city = capitalizeFirstLetter(formData.get('city') as string);
+        const country = capitalizeFirstLetter(formData.get('country') as string);
+        if (!swimTeam || !city || !country) {
+          throw new Error('Swim team, city, and country are required for coaches');
+        }
+        additionalData = { 
+          ...additionalData,
+          swim_team: swimTeam, 
+          swim_team_location: `${city}, ${country}`
+        };
       } else {
-        // Store tokens in localStorage if available
-        const { accessToken, refreshToken, expiresAt } = response;
-        if (accessToken && refreshToken) {
-          localStorage.setItem('accessToken', accessToken);
-          localStorage.setItem('refreshToken', refreshToken);
-          localStorage.setItem('tokenExpiry', expiresAt ? expiresAt.toString() : '');
+        const dateOfBirth = formData.get('dateOfBirth') as string;
+        if (!dateOfBirth) {
+          throw new Error('Date of birth is required for swimmers');
         }
+        const formattedDate = new Date(dateOfBirth).toISOString().split('T')[0];
+        const ageGroup = calculateAgeGroup(formattedDate);
+        additionalData = { 
+          ...additionalData,
+          date_of_birth: formattedDate,
+          age_group: ageGroup,
+          last_age_group_update: new Date().toISOString().split('T')[0]
+        };
+      }
 
-        // Redirect to the dashboard based on role
-        if (role === 'coach') {
-          window.location.href = 'user/coach/dashboard';
-        } else {
-          window.location.href = 'user/swimmer/dashboard';
-        }
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            first_name: firstName,
+            last_name: lastName,
+            role,
+            ...additionalData,
+          },
+        },
+      });
+
+      if (error) throw error;
+
+      if (data.session) {
+        localStorage.setItem('accessToken', data.session.access_token);
+        localStorage.setItem('refreshToken', data.session.refresh_token);
+        localStorage.setItem('tokenExpiry', data.session.expires_at?.toString() || '');
+
+        window.location.href = role === 'coach' ? 'user/coach/dashboard' : 'user/swimmer/dashboard';
+      } else {
+        setError('Signup successful. Please check your email to confirm your account.');
       }
     } catch (error) {
-      console.error('Error during signup:', error);
-      setSignupError('An unexpected error occurred. Please try again.');
-      setLoading(false); // Hide the loader
+      setError(error instanceof Error ? error.message : 'An unexpected error occurred');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -82,7 +123,12 @@ const SignupForm = () => {
           ) : (
             <form onSubmit={handleSubmit}>
               <div className={styles.inputBox}>
-                <select id="role" name="role" value={role} onChange={handleRoleChange}>
+                <select 
+                  id="role" 
+                  name="role" 
+                  value={role} 
+                  onChange={(e) => setRole(e.target.value)}
+                >
                   <option value="coach">Coach</option>
                   <option value="swimmer">Swimmer</option>
                 </select>
@@ -101,6 +147,15 @@ const SignupForm = () => {
                 <label>Last Name</label>
               </div>
 
+              <div className={styles.inputBox}>
+                <select id="gender" name="gender" required>
+                  <option value="">Select Gender</option>
+                  <option value="Male">Male</option>
+                  <option value="Female">Female</option>
+                </select>
+                <label>Gender</label>
+              </div>
+
               {role === 'coach' && (
                 <>
                   <div className={styles.inputBox}>
@@ -109,8 +164,13 @@ const SignupForm = () => {
                   </div>
 
                   <div className={styles.inputBox}>
-                    <input type="text" id="swimTeamLocation" name="swimTeamLocation" required />
-                    <label>Swim Team Location</label>
+                    <input type="text" id="city" name="city" required />
+                    <label>City</label>
+                  </div>
+
+                  <div className={styles.inputBox}>
+                    <input type="text" id="country" name="country" required />
+                    <label>Country</label>
                   </div>
                 </>
               )}
@@ -123,47 +183,23 @@ const SignupForm = () => {
               )}
 
               <div className={styles.inputBox}>
-                <input
-                  type="email"
-                  id="email"
-                  name="email"
-                  required
-                />
+                <input type="email" id="email" name="email" required />
                 <label>Email</label>
               </div>
 
               <div className={styles.inputBox}>
-                <input
-                  type="password"
-                  id="password"
-                  name="password"
-                  value={password}
-                  onChange={handlePasswordChange}
-                  required
-                />
+                <input type="password" id="password" name="password" required />
                 <label>Password</label>
               </div>
 
               <div className={styles.inputBox}>
-                <input
-                  type="password"
-                  id="confirmPassword"
-                  name="confirmPassword"
-                  value={confirmPassword}
-                  onChange={handleConfirmPasswordChange}
-                  required
-                />
+                <input type="password" id="confirmPassword" name="confirmPassword" required />
                 <label>Confirm Password</label>
               </div>
 
-              {passwordError && <p style={{ color: 'red' }}>{passwordError}</p>}
-              {signupError && <p style={{ color: 'red' }}>{signupError}</p>}
+              {error && <p style={{ color: 'red' }}>{error}</p>}
 
-              <button
-                type="submit"
-                className={styles.btn}
-                disabled={!!passwordError}
-              >
+              <button type="submit" className={styles.btn}>
                 Register
               </button>
             </form>
