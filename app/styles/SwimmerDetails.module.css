@@ -1,0 +1,96 @@
+.container {
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .swimmerName {
+    font-size: 24px;
+    color: #333;
+    margin-bottom: 10px;
+  }
+  
+  .swimmerInfo {
+    font-size: 16px;
+    color: #666;
+    margin-bottom: 20px;
+  }
+  
+  .sectionTitle {
+    font-size: 20px;
+    color: #444;
+    margin-top: 30px;
+    margin-bottom: 15px;
+    border-bottom: 2px solid #ddd;
+    padding-bottom: 5px;
+  }
+  
+  .standardsTable {
+    overflow-x: auto;
+  }
+  
+  .standardsTable table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+  }
+  
+  .standardsTable th,
+  .standardsTable td {
+    border: 1px solid #ddd;
+    padding: 12px;
+    text-align: left;
+  }
+  
+  .standardsTable th {
+    background-color: #f2f2f2;
+    font-weight: bold;
+    color: #333;
+  }
+  
+  .standardsTable tr:nth-child(even) {
+    background-color: #f8f8f8;
+  }
+  
+  .standardsTable tr:hover {
+    background-color: #e8e8e8;
+  }
+  
+  .loading {
+    text-align: center;
+    font-size: 18px;
+    color: #666;
+    padding: 20px;
+  }
+  
+  .error {
+    color: #d32f2f;
+    text-align: center;
+    font-size: 18px;
+    padding: 20px;
+  }
+  
+  @media (max-width: 768px) {
+    .container {
+      padding: 15px;
+    }
+  
+    .swimmerName {
+      font-size: 20px;
+    }
+  
+    .swimmerInfo {
+      font-size: 14px;
+    }
+  
+    .sectionTitle {
+      font-size: 18px;
+    }
+  
+    .standardsTable th,
+    .standardsTable td {
+      padding: 8px;
+      font-size: 14px;
+    }
+  }

@@ -4,6 +4,9 @@
   max-width: 1200px;
   margin: 0 auto;
   padding: 2rem;
+  background-color: #f5f5f5;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .header {
@@ -13,7 +16,7 @@
 
 .title {
   font-size: 2.5rem;
-  color: #333;
+  color: #1e88e5;
   margin-bottom: 0.5rem;
 }
 
@@ -30,15 +33,70 @@
 
 .groupCode span {
   font-weight: bold;
-  color: #444;
+  color: #1e88e5;
+}
+
+.section {
+  margin-bottom: 2rem;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  border: 1px solid #e0e0e0;
 }
 
 .sectionTitle {
   font-size: 1.8rem;
-  color: #333;
-  margin-bottom: 1rem;
-  border-bottom: 2px solid #eee;
-  padding-bottom: 0.5rem;
+  color: #fff;
+  padding: 1rem;
+  background-color: #1e88e5;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: background-color 0.3s;
+}
+
+.sectionTitle:hover {
+  background-color: #1565c0;
+}
+
+.content {
+  padding: 1.5rem;
+}
+
+.swimmersList {
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.swimmersList ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.swimmersList li {
+  padding: 0.75rem;
+  border-bottom: 1px solid #e0e0e0;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.swimmersList li:hover {
+  background-color: #f0f0f0;
+}
+
+.selectedSwimmer {
+  background-color: #e3f2fd;
+  font-weight: bold;
+}
+
+.swimmerDetails {
+  margin-top: 1.5rem;
+  padding: 1rem;
+  background-color: #f9f9f9;
+  border-radius: 4px;
+  border: 1px solid #e0e0e0;
 }
 
 .badgeAwardingSection {
@@ -46,6 +104,7 @@
   padding: 1.5rem;
   border-radius: 8px;
   margin-bottom: 2rem;
+  border: 1px solid #e0e0e0;
 }
 
 .select {
@@ -57,8 +116,8 @@
   font-size: 1rem;
 }
 
-.awardButton {
-  background-color: #4CAF50;
+.awardButton, .inviteButton {
+  background-color: #05857b;
   color: white;
   border: none;
   padding: 0.75rem 1.5rem;
@@ -68,25 +127,119 @@
   transition: background-color 0.3s;
 }
 
-.awardButton:hover {
-  background-color: #45a049;
+.awardButton:hover, .inviteButton:hover {
+  background-color: #388e3c;
 }
 
-.swimmersSection,
-.invitationsSection {
-  margin-bottom: 2rem;
-}
-
-.swimmersList,
 .invitationsList {
   list-style-type: none;
   padding: 0;
 }
 
-.swimmerItem,
 .invitationItem {
   background-color: #fff;
-  border: 1px solid #eee;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.invitationEmail {
+  color: #333;
+}
+
+.invitationStatus {
+  font-size: 0.9rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  text-transform: capitalize;
+}
+
+.invitationStatus[data-status="pending"] {
+  background-color: #ffa000;
+  color: #fff;
+}
+
+.invitationStatus[data-status="accepted"] {
+  background-color: #4caf50;
+  color: white;
+}
+
+.invitationStatus[data-status="rejected"] {
+  background-color: #f44336;
+  color: white;
+}
+
+.inviteForm {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.inviteInput {
+  flex-grow: 1;
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 1rem;
+}
+
+.inviteButton {
+  background-color: #05857b;
+}
+
+.inviteButton:hover {
+  background-color: #38c2ab;
+}
+
+.noSwimmersMessage,
+.noInvitationsMessage {
+  color: #666;
+  font-style: italic;
+  text-align: center;
+  padding: 1rem;
+}
+
+.error {
+  color: #f44336;
+  font-size: 1.2rem;
+  text-align: center;
+  margin-top: 2rem;
+  padding: 1rem;
+  background-color: #ffebee;
+  border-radius: 4px;
+}
+
+.attendanceInsightsSection {
+  margin-top: 2rem;
+  padding: 1rem;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  border: 1px solid #e0e0e0;
+}
+
+.toggleInsightsButton {
+  background-color: #05857b;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1rem;
+  margin-bottom: 1rem;
+  transition: background-color 0.3s ease;
+}
+
+.toggleInsightsButton:hover {
+  background-color: #15c0c0;
+}
+
+.swimmerItem {
+  background-color: #fff;
+  border: 1px solid #e0e0e0;
   border-radius: 4px;
   padding: 1rem;
   margin-bottom: 1rem;
@@ -115,97 +268,6 @@
   cursor: pointer;
 }
 
-.invitationEmail {
-  color: #333;
-}
-
-.invitationStatus {
-  font-size: 0.9rem;
-  padding: 0.25rem 0.5rem;
-  border-radius: 4px;
-  text-transform: capitalize;
-}
-
-.invitationStatus[data-status="pending"] {
-  background-color: #ffd700;
-  color: #333;
-}
-
-.invitationStatus[data-status="accepted"] {
-  background-color: #4CAF50;
-  color: white;
-}
-
-.invitationStatus[data-status="rejected"] {
-  background-color: #f44336;
-  color: white;
-}
-
-.inviteForm {
-  display: flex;
-  gap: 1rem;
-  margin-top: 1rem;
-}
-
-.inviteInput {
-  flex-grow: 1;
-  padding: 0.5rem;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  font-size: 1rem;
-}
-
-.inviteButton {
-  background-color: #2196F3;
-  color: white;
-  border: none;
-  padding: 0.5rem 1rem;
-  font-size: 1rem;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
-
-.inviteButton:hover {
-  background-color: #1e87db;
-}
-
-.noSwimmersMessage,
-.noInvitationsMessage {
-  color: #666;
-  font-style: italic;
-}
-
-.error {
-  color: #f44336;
-  font-size: 1.2rem;
-  text-align: center;
-  margin-top: 2rem;
-}
-
-.attendanceInsightsSection {
-  margin-top: 2rem;
-  padding: 1rem;
-  background-color: #f8f9fa;
-  border-radius: 8px;
-}
-
-.toggleInsightsButton {
-  background-color: #007bff;
-  color: white;
-  border: none;
-  padding: 0.5rem 1rem;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 1rem;
-  margin-bottom: 1rem;
-  transition: background-color 0.3s ease;
-}
-
-.toggleInsightsButton:hover {
-  background-color: #0056b3;
-}
-
 @media (max-width: 768px) {
   .swimGroupContainer {
     padding: 1rem;
@@ -215,6 +277,10 @@
     font-size: 2rem;
   }
 
+  .sectionTitle {
+    font-size: 1.5rem;
+  }
+
   .inviteForm {
     flex-direction: column;
   }
@@ -222,5 +288,12 @@
   .inviteButton {
     width: 100%;
   }
-}
 
+  .content {
+    flex-direction: column;
+  }
+
+  .swimmersList {
+    max-width: none;
+  }
+}

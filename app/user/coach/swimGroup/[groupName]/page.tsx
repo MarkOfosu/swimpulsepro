@@ -1,4 +1,3 @@
-// SwimGroupPage.tsx
 'use client';
 
 import React, { useState, useEffect, useCallback } from 'react';
@@ -10,6 +9,7 @@ import { useToast } from '@components/elements/toasts/Toast';
 import styles from '../../../../styles/SwimGroup.module.css';
 import BadgeManagementPage from './badgeSection/BadgeManagement';
 import AttendanceInsights from '../attendance/AttendanceInsights';
+import SwimmerDetails from './swimmerDetails/SwimmerDetails';
 
 interface SwimGroup {
   id: string;
@@ -21,13 +21,17 @@ interface SwimGroup {
   updated_at: string;
 }
 
-interface Swimmer {
+interface SwimmerWithDetails {
   id: string;
-  name: string;
   group_id: string;
   date_of_birth: string;
   created_at: string;
   updated_at: string;
+  profiles: {
+    first_name: string;
+    last_name: string;
+    gender: string;
+  };
 }
 
 interface Invitation {
@@ -56,7 +60,7 @@ interface SwimmerBadge {
 
 const SwimGroupPage: React.FC = () => {
   const [swimGroup, setSwimGroup] = useState<SwimGroup | null>(null);
-  const [swimmers, setSwimmers] = useState<Swimmer[]>([]);
+  const [swimmers, setSwimmers] = useState<SwimmerWithDetails[]>([]);
   const [invitations, setInvitations] = useState<Invitation[]>([]);
   const [badges, setBadges] = useState<Badge[]>([]);
   const [swimmerBadges, setSwimmerBadges] = useState<SwimmerBadge[]>([]);
@@ -67,6 +71,8 @@ const SwimGroupPage: React.FC = () => {
   const [selectedBadge, setSelectedBadge] = useState<string>('');
   const [selectedSwimmer, setSelectedSwimmer] = useState<string>('');
   const [showAttendanceInsights, setShowAttendanceInsights] = useState(false);
+  const [selectedSwimmerId, setSelectedSwimmerId] = useState<string | null>(null);
+  const [isSwimmerListOpen, setIsSwimmerListOpen] = useState(true);
 
   const router = useRouter();
   const params = useParams();
@@ -86,7 +92,7 @@ const SwimGroupPage: React.FC = () => {
 
       const groupName = decodeURIComponent(params.groupName as string);
 
-      // Fetch the swim group, ensuring it belongs to the authenticated coach
+      // Fetch the swim group
       const { data: group, error: groupError } = await supabase
         .from('swim_groups')
         .select('*')
@@ -105,48 +111,27 @@ const SwimGroupPage: React.FC = () => {
 
       setSwimGroup(group);
 
-      // Fetch swimmers for this group
-      // const { data: swimmersData, error: swimmersError } = await supabase
-      //   .from('swimmers')
-      //   .select('*')
-      //   .eq('group_id', group.id);
+      // Fetch swimmers
+      const { data: swimmersData, error: swimmersError } = await supabase
+        .from('swimmers')
+        .select(`
+          id,
+          group_id,
+          date_of_birth,
+          created_at,
+          updated_at,
+          profiles (
+            first_name,
+            last_name,
+            gender
+          )
+        `)
+        .eq('group_id', group.id);
 
-      // if (swimmersError) throw swimmersError;
-      // setSwimmers(swimmersData);
-      
-      const { data: fetchedData, error: swimmersError } = await supabase
-      .from('swimmers')
-      .select(`
-        id,
-        group_id,
-        date_of_birth,
-        created_at,
-        updated_at,
-        profiles (
-          first_name,
-          last_name
-        )
-      `)
-      .eq('group_id', group.id);
-    
-    if (swimmersError) throw swimmersError;
-    
-    // Process the fetched data to match the Swimmer type
-    const swimmersData: Swimmer[] = fetchedData.map(item => ({
-      id: item.id,
-      name: `${(item.profiles as unknown as { first_name: string; last_name: string }).first_name} ${(item.profiles as unknown as { first_name: string; last_name: string }).last_name}`,
-      group_id: item.group_id,
-      date_of_birth: item.date_of_birth,
-      created_at: item.created_at,
-      updated_at: item.updated_at
-    }));
-    
-    setSwimmers(swimmersData);
+      if (swimmersError) throw swimmersError;
+      setSwimmers(swimmersData as SwimmerWithDetails[]);
 
-
-
-    
-      // Fetch invitations for this group
+      // Fetch invitations
       const { data: invitationsData, error: invitationsError } = await supabase
         .from('invitations')
         .select('*')
@@ -155,7 +140,7 @@ const SwimGroupPage: React.FC = () => {
       if (invitationsError) throw invitationsError;
       setInvitations(invitationsData || []);
 
-      // Fetch badges for this group
+      // Fetch badges
       const { data: badgesData, error: badgesError } = await supabase
         .from('swim_group_badges')
         .select('badges (*)')
@@ -164,7 +149,7 @@ const SwimGroupPage: React.FC = () => {
       if (badgesError) throw badgesError;
       setBadges(badgesData.map(item => item.badges).flat());
 
-      // Fetch awarded badges for this group
+      // Fetch awarded badges
       const { data: swimmerBadgesData, error: swimmerBadgesError } = await supabase
         .from('swimmer_badges')
         .select('*')
@@ -181,7 +166,6 @@ const SwimGroupPage: React.FC = () => {
       setLoading(false);
     }
   }, [params.groupName, coachId]);
-
 
   useEffect(() => {
     const fetchCoachId = async () => {
@@ -210,7 +194,7 @@ const SwimGroupPage: React.FC = () => {
     };
 
     fetchCoachId();
-  }, []);
+  }, [supabase, showToast]);
 
   useEffect(() => {
     if (coachId) {
@@ -265,7 +249,6 @@ const SwimGroupPage: React.FC = () => {
     }
 
     try {
-      // Find the selected badge object
       const selectedBadgeObj = badges.find(badge => badge.id === selectedBadge);
       if (!selectedBadgeObj) {
         throw new Error('Selected badge not found');
@@ -276,7 +259,7 @@ const SwimGroupPage: React.FC = () => {
         .insert({
           swimmer_id: selectedSwimmer,
           badge_id: selectedBadge,
-          name: selectedBadgeObj.name, // Include the badge name
+          name: selectedBadgeObj.name,
           group_id: swimGroup.id,
           awarded_by: coachId
         })
@@ -288,8 +271,6 @@ const SwimGroupPage: React.FC = () => {
         throw error;
       }
 
-      console.log('Badge awarded successfully:', data);
-
       setSwimmerBadges([...swimmerBadges, data as SwimmerBadge]);
       showToast('Badge awarded successfully', 'success');
       setSelectedBadge('');
@@ -299,7 +280,17 @@ const SwimGroupPage: React.FC = () => {
       showToast(`Failed to award badge: ${err instanceof Error ? err.message : 'Unknown error'}`, 'error');
     }
   };
-  
+
+  const toggleSwimmerList = () => {
+    setIsSwimmerListOpen(!isSwimmerListOpen);
+    if (isSwimmerListOpen) {
+      setSelectedSwimmerId(null);
+    }
+  };
+
+  const toggleAttendanceInsights = () => {
+    setShowAttendanceInsights(!showAttendanceInsights);
+  };
 
   if (loading) return <CoachPageLayout><Loader /></CoachPageLayout>;
   if (error) return <CoachPageLayout><div className={styles.error}>{error}</div></CoachPageLayout>;
@@ -313,17 +304,44 @@ const SwimGroupPage: React.FC = () => {
           <p className={styles.description}>{swimGroup.description}</p>
           <p className={styles.groupCode}>Group Code: <span>{swimGroup.group_code}</span></p>
         </div>
-        {/* Add a new section for Attendance Insights */}
-        <div className={styles.attendanceInsightsSection}>
-          <h2 className={styles.sectionTitle}>Attendance Insights</h2>
-          <button 
-            onClick={() => setShowAttendanceInsights(!showAttendanceInsights)}
-            className={styles.toggleInsightsButton}
-          >
-            {showAttendanceInsights ? 'Hide Insights' : 'Show Insights'}
-          </button>
+
+        <div className={styles.section}>
+          <h2 className={styles.sectionTitle} onClick={toggleSwimmerList}>
+            Swimmers {isSwimmerListOpen ? '▼' : '▶'}
+          </h2>
+          {isSwimmerListOpen && (
+            <div className={styles.content}>
+              <div className={styles.swimmersList}>
+                <ul>
+                  {swimmers.map((swimmer) => (
+                    <li
+                      key={swimmer.id}
+                      onClick={() => setSelectedSwimmerId(swimmer.id === selectedSwimmerId ? null : swimmer.id)}
+                      className={selectedSwimmerId === swimmer.id ? styles.selectedSwimmer : ''}
+                    >
+                      {swimmer.profiles.last_name}, {swimmer.profiles.first_name}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div className={styles.swimmerDetails}>
+                {selectedSwimmerId ? (
+                  <SwimmerDetails swimmerId={selectedSwimmerId} />
+                ) : (
+                  <p>Select a swimmer to view details</p>
+                )}
+              </div>
+            </div>
+          )}
+        </div>
+
+        <div className={styles.section}>
+          <h2 className={styles.sectionTitle} onClick={toggleAttendanceInsights}>
+            Attendance Insights {showAttendanceInsights ? '▼' : '▶'}
+          </h2>
           {showAttendanceInsights && <AttendanceInsights groupId={swimGroup.id} />}
         </div>
+
         <div className={styles.badgeAwardingSection}>
           <h2 className={styles.sectionTitle}>Award Badge</h2>
           <select
@@ -343,38 +361,10 @@ const SwimGroupPage: React.FC = () => {
           >
             <option value="">Select a swimmer</option>
             {swimmers.map((swimmer) => (
-              <option key={swimmer.id} value={swimmer.id}>{swimmer.name}</option>
+              <option key={swimmer.id} value={swimmer.id}>{swimmer.profiles.first_name} {swimmer.profiles.last_name}</option>
             ))}
           </select>
           <button onClick={handleAwardBadge} className={styles.awardButton}>Award Badge</button>
-        </div>
-
-        <div className={styles.swimmersSection}>
-          <h2 className={styles.sectionTitle}>Swimmers</h2>
-          {swimmers.length > 0 ? (
-            <ul className={styles.swimmersList}>
-              {swimmers.map((swimmer) => (
-                <li key={swimmer.id} className={styles.swimmerItem}>
-                  <span className={styles.swimmerName}>{swimmer.name}</span>
-                  <span className={styles.swimmerDob}>Born: {new Date(swimmer.date_of_birth).toLocaleDateString()}</span>
-                  <div className={styles.swimmerBadges}>
-                    {swimmerBadges
-                      .filter(sb => sb.swimmer_id === swimmer.id)
-                      .map(sb => {
-                        const badge = badges.find(b => b.id === sb.badge_id);
-                        return badge ? (
-                          <span key={sb.id} className={styles.badge} title={badge.name}>
-                            {badge.icon}
-                          </span>
-                        ) : null;
-                      })}
-                  </div>
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <p className={styles.noSwimmersMessage}>No swimmers in this group yet.</p>
-          )}
         </div>
 
         <div className={styles.invitationsSection}>
@@ -410,7 +400,6 @@ const SwimGroupPage: React.FC = () => {
       <BadgeManagementPage />
       <ToastContainer />
     </CoachPageLayout>
-
   );
 };
 

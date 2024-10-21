@@ -8,13 +8,18 @@ CREATE TABLE IF NOT EXISTS profiles (
     gender TEXT DEFAULT NULL,
     created_at TIMESTAMPTZ DEFAULT NOW(),
     updated_at TIMESTAMPTZ DEFAULT NOW()
+    first_name TEXT,
+    last_name TEXT,
 );
 
 CREATE TABLE IF NOT EXISTS coaches (
     id UUID PRIMARY KEY REFERENCES profiles(id) ON DELETE CASCADE,  -- id referencing profiles
     team_id UUID REFERENCES teams(id) ON DELETE CASCADE,
     created_at TIMESTAMPTZ DEFAULT NOW(),
-    updated_at TIMESTAMPTZ DEFAULT NOW()
+    updated_at TIMESTAMPTZ DEFAULT NOW(),
+    first_name TEXT,
+    last_name TEXT,
+    gender TEXT,
 );
 
 CREATE TABLE IF NOT EXISTS swimmers (
@@ -23,7 +28,8 @@ CREATE TABLE IF NOT EXISTS swimmers (
     date_of_birth DATE,
     created_at TIMESTAMPTZ DEFAULT NOW(),
     updated_at TIMESTAMPTZ DEFAULT NOW(),
-    age_group VARCHAR(20),
+    age_group TEXT
+    gender TEXT
 );
 
 CREATE TABLE IF NOT EXISTS teams (
@@ -45,6 +51,77 @@ CREATE TABLE IF NOT EXISTS swim_groups (
     description TEXT
     group_code VARCHAR(8) UNIQUE;
 );
+
+
+--final handle_new_user
+CREATE OR REPLACE FUNCTION public.handle_new_user()
+RETURNS TRIGGER AS $$
+BEGIN
+    -- Insert into profiles table
+    INSERT INTO public.profiles (id, email, first_name, last_name, role, gender)
+    VALUES (
+        NEW.id,
+        NEW.email,
+        NEW.raw_user_meta_data->>'first_name',
+        NEW.raw_user_meta_data->>'last_name',
+        NEW.raw_user_meta_data->>'role',
+        NEW.raw_user_meta_data->>'gender'
+    );
+
+    -- If the user is a swimmer, insert into swimmers table
+    IF NEW.raw_user_meta_data->>'role' = 'swimmer' THEN
+        INSERT INTO public.swimmers (id, first_name, last_name, date_of_birth, age_group, gender)
+        VALUES (
+            NEW.id,
+            NEW.raw_user_meta_data->>'first_name',
+            NEW.raw_user_meta_data->>'last_name',
+            (NEW.raw_user_meta_data->>'date_of_birth')::date,
+            NEW.raw_user_meta_data->>'age_group',
+            NEW.raw_user_meta_data->>'gender'
+        );
+    -- If the user is a coach, insert into coaches table
+    ELSIF NEW.raw_user_meta_data->>'role' = 'coach' THEN
+        INSERT INTO public.coaches (id, first_name, last_name, gender, team_id)
+        VALUES (
+            NEW.id,
+            NEW.raw_user_meta_data->>'first_name',
+            NEW.raw_user_meta_data->>'last_name',
+            NEW.raw_user_meta_data->>'gender',
+            (SELECT id FROM public.teams WHERE admin_id = NEW.id)
+        );
+    END IF;
+
+    RETURN NEW;
+EXCEPTION
+    WHEN OTHERS THEN
+        RAISE EXCEPTION 'Error in handle_new_user function: %', SQLERRM;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+
+-- Create debug_log table if it doesn't exist
+CREATE TABLE IF NOT EXISTS public.debug_log (
+  id SERIAL PRIMARY KEY,
+  message TEXT,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Create error_log table if it doesn't exist
+CREATE TABLE IF NOT EXISTS public.error_log (
+  id SERIAL PRIMARY KEY,
+  error_message TEXT,
+  error_detail TEXT,
+  error_context TEXT,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+
+CREATE TRIGGER on_auth_user_created
+  AFTER INSERT ON auth.users
+  FOR EACH ROW EXECUTE PROCEDURE public.handle_new_user();
+
+
+
 
 CREATE TABLE IF NOT EXISTS metrics (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
@@ -467,6 +544,51 @@ $$ LANGUAGE plpgsql;
 
 
 
+
+You're absolutely right, and I apologize for the oversight. Let's refine this to address your requirements. We'll modify the trigger to fire after insert and update, and we'll create a function to check and update age groups daily for swimmers whose birthdays match the current date.
+
+Here's the refined version:
+
+
+Refined Age Group Management
+Click to open code
+Here's what these changes do:
+
+The calculate_age_group function remains the same, calculating the age group based on the current date and birth date.
+The update_swimmer_age_group function is simplified to just set the age group and last update date.
+The trigger is now set to fire AFTER INSERT OR UPDATE, which means it won't interfere with the initial insert process.
+The check_and_update_age_groups function is modified to only update swimmers whose birthdays match the current date. This ensures that age groups are updated annually on each swimmer's birthday.
+We've kept the cron job scheduling to run this function daily at midnight.
+This approach addresses your requirements:
+
+It doesn't interfere with the insert process since the trigger fires after the insert.
+It updates the age group after any change to the date of birth.
+It checks and updates age groups daily, but only for swimmers whose birthdays match the current date.
+To implement this:
+
+Run the SQL commands in the artifact above in your database.
+Ensure that your pg_cron extension is set up correctly to run the daily job.
+You may need to manually run the check_and_update_age_groups function once to update any existing records that might have outdated age groups.
+This solution provides a balance between efficiency and accuracy, ensuring that age groups are always up-to-date without unnecessary daily calculations for all swimmers.
+
+Copy
+Retry
+
+
+Claude can make mistakes. Please double-check responses.
+
+
+
+No file chosen
+
+
+3.5 Sonnet
+Tip:
+Long chats cause you to reach your usage limits faster.
+Start a new chat 
+
+Refined Age Group Management
+
 -- Function to calculate age group
 CREATE OR REPLACE FUNCTION calculate_age_group(birth_date DATE)
 RETURNS VARCHAR(20) AS $$
@@ -484,8 +606,6 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-
-
 -- Function to update swimmer's age group
 CREATE OR REPLACE FUNCTION update_swimmer_age_group()
 RETURNS TRIGGER AS $$
@@ -496,12 +616,22 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+-- Trigger to update age group after insert or update of date_of_birth
+CREATE TRIGGER update_swimmer_age_group_trigger
+AFTER INSERT OR UPDATE OF date_of_birth ON swimmers
+FOR EACH ROW EXECUTE FUNCTION update_swimmer_age_group();
+
 
 
 -- Trigger to update age group on insert or update of date_of_birth
+-- CREATE TRIGGER update_swimmer_age_group_trigger
+-- BEFORE INSERT OR UPDATE OF date_of_birth ON swimmers
+-- FOR EACH ROW EXECUTE FUNCTION update_swimmer_age_group();
+
+-- Create new trigger only for updates
 CREATE TRIGGER update_swimmer_age_group_trigger
-BEFORE INSERT OR UPDATE OF date_of_birth ON swimmers
-FOR EACH ROW EXECUTE FUNCTION update_swimmer_age_group();
+BEFORE UPDATE OF date_of_birth ON swimmers
+FOR EACH ROW EXECUTE FUNCTION public.update_swimmer_age_group();
 
 -- Function to check and update age groups daily
 CREATE OR REPLACE FUNCTION check_and_update_age_groups()
