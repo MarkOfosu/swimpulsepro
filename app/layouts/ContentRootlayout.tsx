@@ -1,83 +1,54 @@
 // ContentRootLayout.tsx
 'use client';
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import ContentNavBar from '@components/nav/ContentNavBar';
 import Sidebar from '@components/nav/SideBar';
 import BottomNav from '@components/nav/BottomNav';
 import CollapsibleNav from '@components/nav/CollapsibleNav';
-import { getUserDetails } from '../lib/getUserDetails';
-import Loader from '@components/elements/Loader';
+import { useUser } from '../context/UserContext';
 import styles from '../styles/ContentRootLayout.module.css';
+import ContentRootLayoutLoading from './ContentRootLayoutLoading';
 
 interface ContentRootLayoutProps {
   links: { href: string; label: string }[];
   children: React.ReactNode;
 }
 
-interface UserData {
-  id: string;
-  email: string;
-  first_name: string;
-  last_name: string;
-  role: 'coach' | 'swimmer';
-  isAdmin: boolean;
-  team?: {
-    name: string;
-    location: string;
-  };
-  swimmer?: {
-    date_of_birth: string;
-  };
-}
-
 const ContentRootLayout: React.FC<ContentRootLayoutProps> = ({ links, children }) => {
-  const [user, setUser] = useState<UserData | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  const { user, loading, error } = useUser();
 
-  useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const userData = await getUserDetails();
-        if (userData) {
-          setUser(userData as UserData);
-        } else {
-          setError('Failed to load user details.');
-        }
-      } catch (err) {
-        console.error('Error fetching user data:', err);
-        setError('Failed to load user details.');
-      }
-    };
+  if (loading) {
+    return (
+      <div className={styles.loadingContainer}>
+         <ContentRootLayoutLoading />
+      </div>
+    );
+  }
 
-    fetchUser();
-  }, []);
-
+  // Show error state without navigation elements
   if (error) {
     return <div className="error-message">{error}</div>;
   }
 
+  // Only render the layout if we have user data
   if (!user) {
-    return <Loader />;
+    return <div className="error-message">Unable to load user profile</div>;
   }
 
   return (
     <div className={styles.contentLayout}>
-      <CollapsibleNav userRole={user.role} isAdmin={user.isAdmin} userEmail={user.email} />
+      <CollapsibleNav userRole={user.role} userEmail={user.email} isAdmin={user.role==='coach'} />
       <ContentNavBar links={links} />
       <div className={styles.contentMain}>
         <Sidebar 
           userRole={user.role} 
-          isAdmin={user.isAdmin} 
+          isAdmin={user.role==='coach'}
           userEmail={user.email}
         />
         <div className={styles.contentArea}>
-          {React.Children.map(children, child =>
-            React.isValidElement(child)
-              ? React.cloneElement(child as React.ReactElement<any>, { user })
-              : child
-          )}
+          {children}
         </div>
-        <BottomNav userRole={user.role} isAdmin={user.isAdmin} />
+        <BottomNav userRole={user.role} isAdmin={user.role==='coach'} />
       </div>
     </div>
   );

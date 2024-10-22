@@ -1,0 +1,156 @@
+/* LoadingDashboard.module.css */
+.dashboardContainer {
+    padding: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    gap: 2rem;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  @keyframes flash {
+    0% {
+      background-color: #f0f0f0;
+    }
+    50% {
+      background-color: #e0e0e0;
+    }
+    100% {
+      background-color: #f0f0f0;
+    }
+  }
+  
+  /* Common Section Styles */
+  .swimGroups,
+  .recentActivities,
+  .upcomingEvents,
+  .quickActions {
+    background-color: white;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Skeleton Items */
+  .skeletonList {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .skeletonItem {
+    height: 48px;
+    background-color: #f0f0f0;
+    animation: flash 1.5s ease-in-out infinite;
+    border-radius: 4px;
+  }
+  
+  .calendarView {
+    display: grid;
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+  
+  .skeletonEvent {
+    padding: 1rem;
+    background-color: #f8f8f8;
+    border-radius: 6px;
+  }
+  
+  .skeletonText {
+    height: 20px;
+    background-color: #f0f0f0;
+    animation: flash 1.5s ease-in-out infinite;
+    border-radius: 4px;
+    margin-bottom: 0.75rem;
+  }
+  
+  .skeletonText:last-child {
+    width: 60%;
+    margin-bottom: 0;
+  }
+  
+  .skeletonButton {
+    height: 40px;
+    width: 200px;
+    background-color: #f0f0f0;
+    animation: flash 1.5s ease-in-out infinite;
+    border-radius: 4px;
+    margin-bottom: 1rem;
+  }
+  
+  .skeletonButton:last-child {
+    margin-bottom: 0;
+  }
+  
+  /* Dark Mode */
+  @media (prefers-color-scheme: dark) {
+    @keyframes flashDark {
+      0% {
+        background-color: #2a2a2a;
+      }
+      50% {
+        background-color: #333333;
+      }
+      100% {
+        background-color: #2a2a2a;
+      }
+    }
+  
+    .swimGroups,
+    .recentActivities,
+    .upcomingEvents,
+    .quickActions {
+      background-color: #1a1a1a;
+    }
+  
+    /* h2 {
+      color: #e0e0e0;
+    } */
+  
+    .skeletonEvent {
+      background-color: #222;
+    }
+  
+    .skeletonItem,
+    .skeletonText,
+    .skeletonButton {
+      background-color: #2a2a2a;
+      animation: flashDark 1.5s ease-in-out infinite;
+    }
+  }
+  
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .dashboardContainer {
+      padding: 1rem;
+    }
+  
+    .swimGroups,
+    .recentActivities,
+    .upcomingEvents,
+    .quickActions {
+      padding: 1.5rem;
+    }
+  
+    .skeletonButton {
+      width: 100%;
+    }
+  
+    .calendarView {
+      grid-template-columns: 1fr;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .swimGroups,
+    .recentActivities,
+    .upcomingEvents,
+    .quickActions {
+      padding: 1rem;
+    }
+  
+    .skeletonItem {
+      height: 40px;
+    }
+  }

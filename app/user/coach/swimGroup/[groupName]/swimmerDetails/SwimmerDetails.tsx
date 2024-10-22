@@ -6,6 +6,7 @@ import styles from '../../../../../styles/SwimmerDetails.module.css';
 
 interface SwimmerDetailsProps {
   swimmerId: string;
+
 }
 
 interface Swimmer {
