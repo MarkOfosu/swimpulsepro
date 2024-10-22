@@ -10,6 +10,8 @@ import InviteSwimmerModal from '../swimGroup/[groupName]/inviteSwimmer/InviteSwi
 import { useToast } from '@components/elements/toasts/Toast';
 import Loader from '@components/elements/Loader';
 import styles from '../../../styles/SwimGroups.module.css';
+import SwimGroupsLoading from './loading';
+
 
 interface SwimGroup {
   id: string;
@@ -49,6 +51,7 @@ const SwimGroupsPage: React.FC = () => {
     }
   }, []);
 
+
   useEffect(() => {
     fetchSwimGroups();
   }, [fetchSwimGroups]);
@@ -65,12 +68,11 @@ const SwimGroupsPage: React.FC = () => {
 
   if (loading) {
     return (
-      <CoachPageLayout>
         <div className={styles.pageContainer}>
           <h1 className={styles.pageHeading}>Swim Groups</h1>
-          <Loader />
+          <SwimGroupsLoading />
         </div>
-      </CoachPageLayout>
+
     );
   }
 

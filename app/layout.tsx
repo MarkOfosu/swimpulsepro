@@ -1,4 +1,4 @@
-//app/layout.tsx
+// app/layout.tsx
 import React, { ReactNode } from 'react';
 import Sidebar from '../components/nav/SideBar';
 import BottomNav from '@components/nav/BottomNav';
@@ -12,30 +12,25 @@ export const metadata = {
   title: 'SwimPulsePro',
   description: 'Swim Training Fit Analysis and Tracking Tool',
   icons: {
-    icon: [
-      '/favicon.ico?v=4',
-    ],
+    icon: ['/favicon.ico?v=4'],
     apple: '/apple-touch-icon.png?v=4',
-    shortcut: [
-      '/apple-touch-icon.png',
-    ],
+    shortcut: ['/apple-touch-icon.png'],
   },
   manifest: '/site.webmanifest',
 };
 
-
-function RootLayout({ children}: { readonly children: ReactNode}) {
+function RootLayout({ children }: { readonly children: ReactNode }) {
   const signedin = true;
 
   return (
     <UserProvider>
-      <html lang='en'>
+      <html lang="en" className="h-full">
         <head>
           <title>{metadata.title}</title>
-          <meta name='description' content={metadata.description} />
+          <meta name="description" content={metadata.description} />
         </head>
-        <body> 
-            <main className='content'>{children}</main>   
+        <body className="flex min-h-screen flex-col">
+          <main className="flex-grow">{children}</main>
           <Footer />
         </body>
       </html>

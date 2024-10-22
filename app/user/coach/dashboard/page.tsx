@@ -1,61 +1,82 @@
+
+// Dashboard.tsx
 'use client';
 import React, { useState, useEffect } from 'react';
 import CoachPageLayout from '../CoachPageLayout';
 import styles from '../../../styles/Dashboard.module.css';
-import { getUserDetails, UserData } from '../../../lib/getUserDetails';
-import Loader from '@components/elements/Loader';
+import { useUser } from '../../../context/UserContext';
+// import Loader from '@components/elements/Loader';
 import { createClient } from '@/utils/supabase/client';
-
 import {
   recentActivitiesData,
   upcomingEventsData,
 } from '../../../lib/testData';
+import DashboardLoading from './loading';
 
 const Dashboard: React.FC = () => {
-  const [user, setUser] = useState<UserData | null>(null);
+  const { user } = useUser();
   const [swimGroups, setSwimGroups] = useState<any[]>([]);
+  const [groupsLoading, setGroupsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const supabase = createClient();
 
-  useEffect(() => {
-    const fetchUserAndGroups = async () => {
-      try {
-        const userData = await getUserDetails();
-        if (!userData) throw new Error('Failed to fetch user details');
-        setUser(userData);
 
-        if (userData.role === 'coach') {
+
+  useEffect(() => {
+    const fetchGroups = async () => {
+      if (user?.role === 'coach') {
+        try {
           const { data: groups, error: groupsError } = await supabase
             .from('swim_groups')
             .select('id, name')
-            .eq('coach_id', userData.id);
+            .eq('coach_id', user.id);
 
           if (groupsError) throw groupsError;
           setSwimGroups(groups || []);
+        } catch (err) {
+          console.error('Error fetching groups:', err);
+          setError('Failed to load swim groups.');
+        } finally {
+          setGroupsLoading(false);
         }
-      } catch (err) {
-        console.error('Error fetching data:', err);
-        setError('Failed to load user details or swim groups.');
+      } else {
+        setGroupsLoading(false);
       }
     };
 
-    fetchUserAndGroups();
-  }, []);
+    fetchGroups();
+  }, [user]);
 
-  if (!user && !error) {
+ 
+
+  // Only show loading for swim groups, not the entire dashboard
+  const renderSwimGroups = () => {
+    if (groupsLoading) {
+      return (
+        <section className={styles.swimGroups}>
+          <h2>Your Swim Groups</h2>
+          <DashboardLoading />
+        </section>
+      );
+    }
+
     return (
-      <CoachPageLayout>
-        <div className={styles.pageHeading}>
-          <h1>Coach Overview</h1>
-        </div>
-        <Loader />
-      </CoachPageLayout>
+      <section className={styles.swimGroups}>
+        <h2>Your Swim Groups</h2>
+        {error ? (
+          <p className={styles.errorText}>{error}</p>
+        ) : swimGroups.length > 0 ? (
+          <ul className={styles.groupsList}>
+            {swimGroups.map((group) => (
+              <li key={group.id}>{group.name}</li>
+            ))}
+          </ul>
+        ) : (
+          <p>No swim groups assigned yet.</p>
+        )}
+      </section>
     );
-  }
-
-  if (error) {
-    return <div className={styles.errorMessage}>{error}</div>;
-  }
+  };
 
   return (
     <CoachPageLayout>
@@ -71,21 +92,10 @@ const Dashboard: React.FC = () => {
               No swim team assigned
             </p>
           )}
-          <p>Here is an overview of your swim team&apos;s performance.</p>
+          <p>Here is an overview of your swim team's performance.</p>
         </section>
 
-        <section className={styles.swimGroups}>
-          <h2>Your Swim Groups</h2>
-          {swimGroups.length > 0 ? (
-            <ul className={styles.groupsList}>
-              {swimGroups.map((group) => (
-                <li key={group.id}>{group.name}</li>
-              ))}
-            </ul>
-          ) : (
-            <p>No swim groups assigned yet.</p>
-          )}
-        </section>
+        {renderSwimGroups()}
 
         <section className={styles.recentActivities}>
           <h2>Recent Activities</h2>

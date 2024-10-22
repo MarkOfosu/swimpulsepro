@@ -8,6 +8,7 @@ import styles from '../../../styles/WorkoutPage.module.css';
 import ViewWorkouts from './ViewWorkouts';
 import ManualWorkout from './ManualWorkout';
 import AIWorkout from './AIWorkout';
+import WorkoutPageSkeleton from './loading';
 
 const WorkoutPage: React.FC = () => {
   const [workouts, setWorkouts] = useState<WorkoutData[]>([]);
@@ -15,6 +16,7 @@ const WorkoutPage: React.FC = () => {
   const [selectedGroup, setSelectedGroup] = useState<string>('');
   const [viewMode, setViewMode] = useState<'view' | 'manual' | 'ai'>('view');
   const [coachId, setCoachId] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   const supabase = createClient();
 
@@ -23,21 +25,29 @@ const WorkoutPage: React.FC = () => {
   }, []);
 
   const fetchInitialData = async () => {
-    const { data: sessionData } = await supabase.auth.getSession();
-    const session = sessionData?.session;
+    setIsLoading(true);
+    try {
+      const { data: sessionData } = await supabase.auth.getSession();
+      const session = sessionData?.session;
 
-    if (!session) {
-      console.error('No session found, redirecting to login...');
-      return;
+      if (!session) {
+        console.error('No session found, redirecting to login...');
+        return;
+      }
+
+      setCoachId(session.user.id);
+
+      await Promise.all([
+        fetchGroups(session.user.id),
+        fetchWorkouts(session.user.id)
+      ]);
+    } catch (error) {
+      console.error('Error fetching initial data:', error);
+    } finally {
+      setIsLoading(false);
     }
-
-    setCoachId(session.user.id);
-
-    await Promise.all([
-      fetchGroups(session.user.id),
-      fetchWorkouts(session.user.id)
-    ]);
   };
+
 
   const fetchGroups = async (coachId: string) => {
     const { data, error } = await supabase
@@ -104,6 +114,11 @@ const WorkoutPage: React.FC = () => {
 
     alert('Workout saved successfully!');
   };
+
+
+  if (isLoading) {
+    return <WorkoutPageSkeleton />;
+  }
 
   return (
     <CoachPageLayout>

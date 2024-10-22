@@ -8,6 +8,7 @@ import { getUserDetails, UserData } from '../../../lib/getUserDetails';
 import { useToast } from '../../../../components/elements/toasts/Toast';
 import AttendanceInsights from './AttendanceInsights';
 import styles from '../../../styles/AttendanceRecorder.module.css';
+import AttendanceRecorderLoading from './loading';
 
 interface SwimGroup {
   id: string;
@@ -84,6 +85,7 @@ const AttendanceRecorder: React.FC<AttendanceRecorderProps> = ({ groupId }) => {
 
   const fetchSwimGroups = async () => {
     if (!userData) return;
+
 
     const { data, error } = await supabase
       .from('swim_groups')
@@ -201,7 +203,7 @@ const AttendanceRecorder: React.FC<AttendanceRecorderProps> = ({ groupId }) => {
   }
 
   if (!userData) {
-    return <div className={styles.loading}>Loading user data...</div>;
+    return <AttendanceRecorderLoading />;
   }
 
   return (

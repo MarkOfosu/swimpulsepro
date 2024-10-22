@@ -1,0 +1,308 @@
+/* ContentRootLayoutLoading.module.css */
+
+/* Layout Containers */
+.loadingLayout {
+    display: grid;
+    grid-template-rows: auto auto 1fr;
+    min-height: 100vh;
+    background-color: #f5f5f5;
+    animation: fadeIn 0.3s ease-in;
+  }
+  
+  .contentMain {
+    display: grid;
+    grid-template-columns: 240px 1fr;
+    gap: 1rem;
+    padding: 1rem;
+    position: relative;
+  }
+  
+  /* Animations */
+  @keyframes pulse {
+    0% {
+      background-color: #f0f0f0;
+    }
+    50% {
+      background-color: #e3e3e3;
+    }
+    100% {
+      background-color: #f0f0f0;
+    }
+  }
+  
+  @keyframes pulseDark {
+    0% {
+      background-color: #2a2a2a;
+    }
+    50% {
+      background-color: #333333;
+    }
+    100% {
+      background-color: #2a2a2a;
+    }
+  }
+  
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  
+  /* Collapsible Nav */
+  .collapsibleNavSkeleton {
+    background-color: white;
+    padding: 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #e0e0e0;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  }
+  
+  .logoSkeleton {
+    width: 120px;
+    height: 40px;
+    border-radius: 6px;
+    animation: pulse 1.5s ease-in-out infinite;
+    background-color: #f0f0f0;
+  }
+  
+  .navItemsSkeleton {
+    display: flex;
+    gap: 1.5rem;
+    align-items: center;
+  }
+  
+  .navItemSkeleton {
+    width: 80px;
+    height: 24px;
+    border-radius: 4px;
+    animation: pulse 1.5s ease-in-out infinite;
+    background-color: #f0f0f0;
+  }
+  
+  .profileSkeleton {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    animation: pulse 1.5s ease-in-out infinite;
+    background-color: #f0f0f0;
+  }
+  
+  /* Content Nav Bar */
+  .contentNavSkeleton {
+    background-color: white;
+    padding: 1rem 1.5rem;
+    display: flex;
+    gap: 2rem;
+    align-items: center;
+    border-bottom: 1px solid #e0e0e0;
+  }
+  
+  .navLinkSkeleton {
+    width: 100px;
+    height: 24px;
+    border-radius: 4px;
+    animation: pulse 1.5s ease-in-out infinite;
+    background-color: #f0f0f0;
+  }
+  
+  /* Sidebar */
+  .sidebarSkeleton {
+    background-color: white;
+    padding: 1.5rem;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    height: fit-content;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  }
+  
+  .sidebarHeader {
+    height: 40px;
+    border-radius: 6px;
+    animation: pulse 1.5s ease-in-out infinite;
+    background-color: #f0f0f0;
+  }
+  
+  .sidebarItemSkeleton {
+    height: 32px;
+    border-radius: 4px;
+    animation: pulse 1.5s ease-in-out infinite;
+    background-color: #f0f0f0;
+  }
+  
+  /* Content Area */
+  .contentAreaSkeleton {
+    background-color: white;
+    border-radius: 8px;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  }
+  
+  .contentHeader {
+    height: 48px;
+    border-radius: 6px;
+    animation: pulse 1.5s ease-in-out infinite;
+    background-color: #f0f0f0;
+    max-width: 60%;
+  }
+  
+  .contentBody {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+  
+  .contentSection {
+    height: 120px;
+    border-radius: 8px;
+    animation: pulse 1.5s ease-in-out infinite;
+    background-color: #f0f0f0;
+  }
+  
+  /* Bottom Nav */
+  .bottomNavSkeleton {
+    display: none;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: white;
+    padding: 1rem 1.5rem;
+    border-top: 1px solid #e0e0e0;
+    box-shadow: 0 -1px 3px rgba(0, 0, 0, 0.1);
+  }
+  
+  .bottomNavItemSkeleton {
+    height: 32px;
+    border-radius: 4px;
+    animation: pulse 1.5s ease-in-out infinite;
+    background-color: #f0f0f0;
+  }
+  
+  /* Performance Optimizations */
+  .logoSkeleton,
+  .navItemSkeleton,
+  .profileSkeleton,
+  .navLinkSkeleton,
+  .sidebarHeader,
+  .sidebarItemSkeleton,
+  .contentHeader,
+  .contentSection,
+  .bottomNavItemSkeleton {
+    will-change: background-color;
+    transform: translateZ(0);
+    backface-visibility: hidden;
+  }
+  
+  /* Dark Mode */
+  @media (prefers-color-scheme: dark) {
+    .loadingLayout {
+      background-color: #121212;
+    }
+  
+    .collapsibleNavSkeleton,
+    .contentNavSkeleton,
+    .sidebarSkeleton,
+    .contentAreaSkeleton,
+    .bottomNavSkeleton {
+      background-color: #1a1a1a;
+      border-color: #2a2a2a;
+    }
+  
+    .logoSkeleton,
+    .navItemSkeleton,
+    .profileSkeleton,
+    .navLinkSkeleton,
+    .sidebarHeader,
+    .sidebarItemSkeleton,
+    .contentHeader,
+    .contentSection,
+    .bottomNavItemSkeleton {
+      animation: pulseDark 1.5s ease-in-out infinite;
+      background-color: #2a2a2a;
+    }
+  
+    .bottomNavSkeleton {
+      border-top-color: #2a2a2a;
+    }
+  }
+  
+  /* Responsive Design */
+  @media (max-width: 1024px) {
+    .contentMain {
+      grid-template-columns: 200px 1fr;
+    }
+  
+    .navItemsSkeleton {
+      gap: 1rem;
+    }
+  }
+  
+  @media (max-width: 768px) {
+    .loadingLayout {
+      grid-template-rows: auto auto 1fr auto;
+    }
+  
+    .contentMain {
+      grid-template-columns: 1fr;
+      padding: 1rem;
+    }
+  
+    .sidebarSkeleton {
+      display: none;
+    }
+  
+    .contentAreaSkeleton {
+      padding: 1rem;
+      margin-bottom: 80px;
+    }
+  
+    .bottomNavSkeleton {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1rem;
+      padding: 1rem;
+    }
+  
+    .collapsibleNavSkeleton {
+      padding: 1rem;
+    }
+  
+    .contentNavSkeleton {
+      padding: 0.75rem 1rem;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+  
+    .navLinkSkeleton {
+      flex-shrink: 0;
+    }
+  }
+  
+  /* Small screens */
+  @media (max-width: 480px) {
+    .logoSkeleton {
+      width: 100px;
+    }
+  
+    .navItemSkeleton {
+      width: 60px;
+    }
+  
+    .contentHeader {
+      max-width: 100%;
+    }
+  
+    .contentSection {
+      height: 100px;
+    }
+  }

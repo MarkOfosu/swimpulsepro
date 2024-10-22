@@ -1,0 +1,261 @@
+/* AttendanceRecorderLoading.module.css */
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+  
+  @keyframes pulse {
+    0% {
+      background-color: #f0f0f0;
+    }
+    50% {
+      background-color: #e3e3e3;
+    }
+    100% {
+      background-color: #f0f0f0;
+    }
+  }
+  
+  @keyframes pulseDark {
+    0% {
+      background-color: #2a2a2a;
+    }
+    50% {
+      background-color: #333333;
+    }
+    100% {
+      background-color: #2a2a2a;
+    }
+  }
+  
+  /* Header Section */
+  .headerSkeleton {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .titleSkeleton {
+    height: 40px;
+    width: 300px;
+    border-radius: 6px;
+    animation: pulse 1.5s ease-in-out infinite;
+    background-color: #f0f0f0;
+  }
+  
+  .coachInfoSkeleton,
+  .teamInfoSkeleton {
+    height: 24px;
+    width: 200px;
+    border-radius: 4px;
+    animation: pulse 1.5s ease-in-out infinite;
+    background-color: #f0f0f0;
+  }
+  
+  /* Group Selector */
+  .groupSelectorSkeleton {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin: 1rem 0;
+  }
+  
+  .selectorLabelSkeleton {
+    height: 20px;
+    width: 120px;
+    border-radius: 4px;
+    animation: pulse 1.5s ease-in-out infinite;
+    background-color: #f0f0f0;
+  }
+  
+  .dropdownSkeleton {
+    height: 40px;
+    width: 100%;
+    max-width: 300px;
+    border-radius: 6px;
+    animation: pulse 1.5s ease-in-out infinite;
+    background-color: #f0f0f0;
+  }
+  
+  /* Tabs */
+  .tabsSkeleton {
+    display: flex;
+    gap: 1rem;
+    margin: 1rem 0;
+  }
+  
+  .tabButtonSkeleton {
+    height: 40px;
+    width: 150px;
+    border-radius: 6px;
+    animation: pulse 1.5s ease-in-out infinite;
+    background-color: #f0f0f0;
+  }
+  
+  /* Date Selector */
+  .dateSelectorSkeleton {
+    margin: 1rem 0;
+  }
+  
+  .dateInputSkeleton {
+    height: 40px;
+    width: 200px;
+    border-radius: 6px;
+    animation: pulse 1.5s ease-in-out infinite;
+    background-color: #f0f0f0;
+  }
+  
+  /* Attendance List */
+  .attendanceListSkeleton {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin: 1.5rem 0;
+    background-color: white;
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  }
+  
+  .listHeaderSkeleton {
+    display: grid;
+    grid-template-columns: 2fr 1fr 2fr;
+    gap: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #e0e0e0;
+  }
+  
+  .nameColumnSkeleton,
+  .statusColumnSkeleton,
+  .notesColumnSkeleton {
+    height: 24px;
+    border-radius: 4px;
+    animation: pulse 1.5s ease-in-out infinite;
+    background-color: #f0f0f0;
+  }
+  
+  .attendeeRowSkeleton {
+    display: grid;
+    grid-template-columns: 2fr 1fr 2fr;
+    gap: 1rem;
+    padding: 1rem 0;
+    border-bottom: 1px solid #f0f0f0;
+  }
+  
+  .attendeeNameSkeleton {
+    height: 24px;
+    width: 80%;
+    border-radius: 4px;
+    animation: pulse 1.5s ease-in-out infinite;
+    background-color: #f0f0f0;
+  }
+  
+  .attendeeStatusSkeleton {
+    height: 24px;
+    width: 60%;
+    border-radius: 4px;
+    animation: pulse 1.5s ease-in-out infinite;
+    background-color: #f0f0f0;
+  }
+  
+  .attendeeNotesSkeleton {
+    height: 24px;
+    width: 90%;
+    border-radius: 4px;
+    animation: pulse 1.5s ease-in-out infinite;
+    background-color: #f0f0f0;
+  }
+  
+  /* Submit Button */
+  .submitButtonSkeleton {
+    height: 48px;
+    width: 200px;
+    border-radius: 6px;
+    animation: pulse 1.5s ease-in-out infinite;
+    background-color: #f0f0f0;
+    margin: 1rem 0;
+  }
+  
+  /* Dark Mode */
+  @media (prefers-color-scheme: dark) {
+    .attendanceListSkeleton {
+      background-color: #1a1a1a;
+      border-color: #2a2a2a;
+    }
+  
+    .listHeaderSkeleton {
+      border-bottom-color: #2a2a2a;
+    }
+  
+    .attendeeRowSkeleton {
+      border-bottom-color: #2a2a2a;
+    }
+  
+    .titleSkeleton,
+    .coachInfoSkeleton,
+    .teamInfoSkeleton,
+    .selectorLabelSkeleton,
+    .dropdownSkeleton,
+    .tabButtonSkeleton,
+    .dateInputSkeleton,
+    .nameColumnSkeleton,
+    .statusColumnSkeleton,
+    .notesColumnSkeleton,
+    .attendeeNameSkeleton,
+    .attendeeStatusSkeleton,
+    .attendeeNotesSkeleton,
+    .submitButtonSkeleton {
+      animation: pulseDark 1.5s ease-in-out infinite;
+      background-color: #2a2a2a;
+    }
+  }
+  
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .container {
+      padding: 1rem;
+    }
+  
+    .attendanceListSkeleton {
+      padding: 1rem;
+    }
+  
+    .listHeaderSkeleton,
+    .attendeeRowSkeleton {
+      grid-template-columns: 1.5fr 1fr 1fr;
+    }
+  
+    .titleSkeleton {
+      width: 250px;
+    }
+  
+    .dropdownSkeleton,
+    .dateInputSkeleton {
+      width: 100%;
+    }
+  
+    .tabButtonSkeleton {
+      width: 120px;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .listHeaderSkeleton,
+    .attendeeRowSkeleton {
+      grid-template-columns: 1.5fr 1fr;
+    }
+  
+    .notesColumnSkeleton,
+    .attendeeNotesSkeleton {
+      display: none;
+    }
+  
+    .submitButtonSkeleton {
+      width: 100%;
+    }
+  }

@@ -129,7 +129,7 @@ const SwimGroupPage: React.FC = () => {
         .eq('group_id', group.id);
 
       if (swimmersError) throw swimmersError;
-      setSwimmers(swimmersData as SwimmerWithDetails[]);
+      setSwimmers(swimmersData as unknown as SwimmerWithDetails[]);
 
       // Fetch invitations
       const { data: invitationsData, error: invitationsError } = await supabase
@@ -165,7 +165,7 @@ const SwimGroupPage: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  }, [params.groupName, coachId]);
+  }, [params.groupName, coachId, supabase]);
 
   useEffect(() => {
     const fetchCoachId = async () => {
