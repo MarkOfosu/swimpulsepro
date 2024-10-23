@@ -41,7 +41,7 @@ const LoginForm: React.FC = () => {
     };
 
     checkExistingSession();
-  }, [supabase]);
+  }, [refreshUser, setShouldRedirect]);
 
   const handleExistingSession = async () => {
     try {
@@ -55,7 +55,7 @@ const LoginForm: React.FC = () => {
     } catch (err) {
       // console.error('Session validation failed:', err);
     }
-  };
+  }
 
   const handleInputChange = (e: React.FormEvent<HTMLFormElement>) => {
     const form = e.currentTarget;
