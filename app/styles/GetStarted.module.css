@@ -1,0 +1,192 @@
+
+/* styles/GetStarted.module.css */
+
+.pageContainer {
+    min-height: calc(100vh - 64px);
+    background: linear-gradient(135deg, #585295 0%, #363738 100%);
+    padding: 4rem 1rem;
+    color: white;
+  }
+  
+  .mainContent {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3rem;
+  }
+  
+  .pageTitle {
+    font-size: 2.5rem;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 0.5rem;
+    background: linear-gradient(to right, #fff, #e9d5ff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  
+  .pageSubtitle {
+    font-size: 1.25rem;
+    color: #e5e7eb;
+    text-align: center;
+    max-width: 600px;
+    margin-bottom: 2rem;
+  }
+  
+  .roleCardsGrid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    width: 100%;
+    max-width: 1000px;
+    padding: 1rem;
+  }
+  
+  .roleCard {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 1rem;
+    padding: 2rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+  }
+  
+  .roleCard:hover {
+    transform: translateY(-4px);
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.2);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  }
+  
+  .cardInner {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  
+  .cardIconWrapper {
+    width: 3rem;
+    height: 3rem;
+    background: rgba(124, 58, 237, 0.2);
+    border-radius: 0.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #a78bfa;
+  }
+  
+  .cardIcon {
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+  
+  .cardTitle {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #fff;
+    margin: 0;
+  }
+  
+  .cardDescription {
+    color: #e5e7eb;
+    line-height: 1.6;
+    font-size: 1.125rem;
+    margin: 0;
+  }
+  
+  .cardFooter {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #a78bfa;
+    font-weight: 500;
+    margin-top: auto;
+  }
+  
+  .footerText {
+    font-size: 1.125rem;
+  }
+  
+  .arrowIcon {
+    transition: transform 0.2s ease;
+  }
+  
+  .roleCard:hover .arrowIcon {
+    transform: translateX(4px);
+  }
+  
+  .featuresSection {
+    text-align: center;
+    margin-top: 4rem;
+    width: 100%;
+    max-width: 800px;
+  }
+  
+  .featuresTitle {
+    font-size: 1.75rem;
+    font-weight: 600;
+    margin-bottom: 2rem;
+    color: #fff;
+  }
+  
+  .featuresList {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 2rem;
+  }
+  
+  .featureItem {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    color: #e5e7eb;
+    font-size: 1.125rem;
+  }
+  
+  .featureCheck {
+    width: 1.5rem;
+    height: 1.5rem;
+    background: rgba(124, 58, 237, 0.2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #a78bfa;
+  }
+  
+  /* Media Queries */
+  @media (min-width: 768px) {
+    .pageTitle {
+      font-size: 3.5rem;
+    }
+  
+    .pageSubtitle {
+      font-size: 1.5rem;
+    }
+  
+    .roleCardsGrid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  
+    .featuresList {
+      justify-content: space-around;
+    }
+  }
+  
+  @media (min-width: 1024px) {
+    .pageContainer {
+      padding: 6rem 2rem;
+    }
+  
+    .roleCard {
+      padding: 2.5rem;
+    }
+  
+    .cardDescription {
+      font-size: 1.125rem;
+    }
+  }

@@ -261,6 +261,7 @@ const Goal: React.FC<GoalProps> = ({ swimmerId }) => {
               <option value="100m_freestyle">100m Freestyle</option>
               <option value="200m_freestyle">200m Freestyle</option>
               <option value="400m_freestyle">400m Freestyle</option>
+              <option value="100m_breaststroke">100m Breaststroke</option>
               
               {/* Add more events as needed */}
             </Select>

@@ -1,60 +1,181 @@
-/* Banner.module.css */
-.banner {
+/* styles/Banner.module.css */
+.bannerContainer {
   position: relative;
-  width: 100%;
-  height: 100vh; /* Full viewport height for larger screens */
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  color: #fff;
-  text-align: center;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #1a1456 0%, #4a1d96 100%);
   overflow: hidden;
 }
 
-@media (max-width: 768px) {
-  .banner {
-    height: 60vh; /* Adjust height for smaller screens */
-  }
+.contentWrapper {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+  position: relative;
+  z-index: 10;
 }
 
-.backgroundImage {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 1; /* Ensure the image is behind the text */
-  object-fit: cover; /* Ensure the image covers the banner */
+.gridContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  align-items: center;
 }
 
-.bannerContent {
-  background: rgba(0, 0, 0, 0.5);
-  padding: 2rem;
-  border-radius: 10px;
-  z-index: 2; 
+.textContent {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  text-align: center;
+  max-width: 100%;
 }
 
-.banner h1 {
-  font-size: 3rem;
-  margin-bottom: 1rem;
+.title {
+  font-size: 3.5rem;
+  font-weight: 700;
+  color: white;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
 }
 
-.banner p {
-  font-size: 1.2rem;
-  margin-bottom: 2rem;
+.titleSpan {
+  display: block;
+  margin-top: 0.5rem;
+  /* font-size: 1.5rem; */
+  color: rgb(3, 103, 149);
+}
+
+.description {
+  font-size: 1.125rem;
+  color: #e5e7eb;
+  line-height: 1.6;
+  max-width: 36rem;
+  margin: 0 auto;
 }
 
 .ctaButton {
-  background-color: #e9085e;
-  color: #fff;
-  padding: 0.75rem 1.5rem;
-  font-size: 1rem;
+  display: inline-block;
+  padding: 1rem 2rem;
+  background-color: #7c3aed;
+  color: white;
   border: none;
-  border-radius: 5px;
+  border-radius: 0.5rem;
+  font-size: 1.125rem;
+  font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.3s;
+  transition: background-color 0.2s ease;
+  margin: 0 auto;
 }
 
 .ctaButton:hover {
-  background-color: #008fcc;
+  background-color: #6d28d9;
+}
+
+.imageSection {
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+.imageWrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 3/4;
+  border-radius: 1rem;
+  overflow: hidden;
+}
+
+.image {
+  width: 100%;
+  height: 100%;
+  border-radius: 1rem;
+}
+
+.imageOverlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, rgba(76, 29, 149, 0.2) 0%, transparent 100%);
+  border-radius: 1rem;
+}
+
+.backgroundElements {
+  position: absolute;
+  inset: 0;
+  opacity: 0.3;
+}
+
+.purpleBlur {
+  position: absolute;
+  top: 25%;
+  left: 25%;
+  width: 16rem;
+  height: 16rem;
+  background-color: #7c3aed;
+  border-radius: 50%;
+  filter: blur(70px);
+}
+
+.indigoBlur {
+  position: absolute;
+  bottom: 25%;
+  right: 25%;
+  width: 16rem;
+  height: 16rem;
+  background-color: #4f46e5;
+  border-radius: 50%;
+  filter: blur(70px);
+}
+
+/* Tablet Styles */
+@media (min-width: 768px) {
+  .contentWrapper {
+    padding: 3rem 1.5rem;
+  }
+
+  .title {
+    font-size: 3.5rem;
+  }
+
+  .description {
+    font-size: 1.25rem;
+  }
+
+  .imageSection {
+    max-width: 500px;
+  }
+}
+
+/* Desktop Styles */
+@media (min-width: 1024px) {
+  .contentWrapper {
+    padding: 5rem 2rem;
+  }
+
+  .gridContainer {
+    flex-direction: row;
+    justify-content: space-between;
+    text-align: left;
+  }
+
+  .textContent {
+    flex: 1;
+    text-align: left;
+    max-width: 50%;
+  }
+
+  .description {
+    margin: 0;
+  }
+
+  .ctaButton {
+    margin: 0;
+  }
+
+  .imageSection {
+    flex: 1;
+    max-width: none;
+  }
+
+  .title {
+    font-size: 4rem;
+  }
 }

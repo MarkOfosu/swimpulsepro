@@ -11,11 +11,11 @@ const WelcomeNavbar: React.FC = () => {
       </div>
       <div className={styles.welcomeNavLinksContainer}>
         <ul className={styles.welcomeNavLinks}>
-          <li><Link href="/about">About Us</Link></li>
-          <li><Link href="/features">Features</Link></li>
-          <li><Link href="/pricing">Pricing</Link></li>
+          {/* <li><Link href="/about">About Us</Link></li> */}
+          {/* <li><Link href="/features">Features</Link></li> */}
+          {/* <li><Link href="/pricing">Pricing</Link></li> */}
           <li><Link href="/login">Login</Link></li>
-          <li><Link href="/signup">Register</Link></li>
+          <li><Link href="/getStarted">signup</Link></li>
         </ul>
       </div>
     </nav>

@@ -1,3 +1,4 @@
+// components/SignupForm.tsx
 'use client';
 
 import React, { useState } from 'react';
@@ -5,11 +6,19 @@ import { createClient } from '@/utils/supabase/client';
 import styles from '../../styles/RegisterForm.module.css';
 import WelcomeNavbar from '@app/welcome/WelcomeNavbar';
 import Loader from '../../../components/elements/Loader';
+import { useRouter } from 'next/navigation';
+import { useUser } from '@app/context/UserContext';
 
-const SignupForm = () => {
-  const [role, setRole] = useState('coach');
+interface SignupFormProps {
+  role: 'coach' | 'swimmer';
+}
+
+const SignupForm: React.FC<SignupFormProps> = ({ role }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const router = useRouter();
+
+  const {refreshUser} = useUser();
 
   const capitalizeFirstLetter = (string: string) => {
     return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
@@ -101,8 +110,9 @@ const SignupForm = () => {
         localStorage.setItem('accessToken', data.session.access_token);
         localStorage.setItem('refreshToken', data.session.refresh_token);
         localStorage.setItem('tokenExpiry', data.session.expires_at?.toString() || '');
-
-        window.location.href = role === 'coach' ? 'user/coach/dashboard' : 'user/swimmer/dashboard';
+        //refresh usecontext to fetch user data
+        refreshUser();
+        router.push(role === 'coach' ? '/user/coach/dashboard' : '/user/swimmer/dashboard');
       } else {
         setError('Signup successful. Please check your email to confirm your account.');
       }
@@ -121,86 +131,77 @@ const SignupForm = () => {
           {loading ? (
             <Loader />
           ) : (
-            <form onSubmit={handleSubmit}>
-              <div className={styles.inputBox}>
-                <select 
-                  id="role" 
-                  name="role" 
-                  value={role} 
-                  onChange={(e) => setRole(e.target.value)}
-                >
-                  <option value="coach">Coach</option>
-                  <option value="swimmer">Swimmer</option>
-                </select>
-                <label>Register as:</label>
-              </div>
+            <form onSubmit={handleSubmit} className={styles.form}>
+              <h2 className={styles.title}>
+                {role === 'coach' ? 'Coach' : 'Swimmer'} Registration
+              </h2>
 
-              <h2>{role === 'coach' ? 'Coach' : 'Swimmer'} Registration</h2>
-
-              <div className={styles.inputBox}>
-                <input type="text" id="firstName" name="firstName" required />
-                <label>First Name</label>
-              </div>
-
-              <div className={styles.inputBox}>
-                <input type="text" id="lastName" name="lastName" required />
-                <label>Last Name</label>
-              </div>
-
-              <div className={styles.inputBox}>
-                <select id="gender" name="gender" required>
-                  <option value="">Select Gender</option>
-                  <option value="Male">Male</option>
-                  <option value="Female">Female</option>
-                </select>
-                <label>Gender</label>
-              </div>
-
-              {role === 'coach' && (
-                <>
-                  <div className={styles.inputBox}>
-                    <input type="text" id="swimTeam" name="swimTeam" required />
-                    <label>Swim Team</label>
-                  </div>
-
-                  <div className={styles.inputBox}>
-                    <input type="text" id="city" name="city" required />
-                    <label>City</label>
-                  </div>
-
-                  <div className={styles.inputBox}>
-                    <input type="text" id="country" name="country" required />
-                    <label>Country</label>
-                  </div>
-                </>
-              )}
-
-              {role === 'swimmer' && (
+              <div className={styles.formGrid}>
                 <div className={styles.inputBox}>
-                  <input type="date" id="dateOfBirth" name="dateOfBirth" required />
-                  <label>Date of Birth</label>
+                  <input type="text" id="firstName" name="firstName" required />
+                  <label>First Name</label>
                 </div>
-              )}
 
-              <div className={styles.inputBox}>
-                <input type="email" id="email" name="email" required />
-                <label>Email</label>
+                <div className={styles.inputBox}>
+                  <input type="text" id="lastName" name="lastName" required />
+                  <label>Last Name</label>
+                </div>
+
+                <div className={styles.inputBox}>
+                  <select id="gender" name="gender" required>
+                    <option value="">Select Gender</option>
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                  </select>
+                  <label>Gender</label>
+                </div>
+
+                {role === 'coach' && (
+                  <>
+                    <div className={styles.inputBox}>
+                      <input type="text" id="swimTeam" name="swimTeam" required />
+                      <label>Swim Team</label>
+                    </div>
+
+                    <div className={styles.inputBox}>
+                      <input type="text" id="city" name="city" required />
+                      <label>City</label>
+                    </div>
+
+                    <div className={styles.inputBox}>
+                      <input type="text" id="country" name="country" required />
+                      <label>Country</label>
+                    </div>
+                  </>
+                )}
+
+                {role === 'swimmer' && (
+                  <div className={styles.inputBox}>
+                    <input type="date" id="dateOfBirth" name="dateOfBirth" required />
+                    <label>Date of Birth</label>
+                  </div>
+                )}
+
+                <div className={styles.inputBox}>
+                  <input type="email" id="email" name="email" required />
+                  <label>Email</label>
+                </div>
+
+                <div className={styles.inputBox}>
+                  <input type="password" id="password" name="password" required />
+                  <label>Password</label>
+                </div>
+
+                <div className={styles.inputBox}>
+                  <input type="password" id="confirmPassword" name="confirmPassword" required />
+                  <label>Confirm Password</label>
+                </div>
               </div>
 
-              <div className={styles.inputBox}>
-                <input type="password" id="password" name="password" required />
-                <label>Password</label>
-              </div>
+              {error && <p className={styles.error}>{error}</p>}
 
-              <div className={styles.inputBox}>
-                <input type="password" id="confirmPassword" name="confirmPassword" required />
-                <label>Confirm Password</label>
-              </div>
-
-              {error && <p style={{ color: 'red' }}>{error}</p>}
-
-              <button type="submit" className={styles.btn}>
-                Register
+              <button type="submit" className={styles.submitButton}>
+                Register as {role === 'coach' ? 'Coach' : 'Swimmer'}
               </button>
             </form>
           )}

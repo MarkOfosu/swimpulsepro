@@ -92,7 +92,7 @@ const Dashboard: React.FC = () => {
               No swim team assigned
             </p>
           )}
-          <p>Here is an overview of your swim team's performance.</p>
+          <p>Here is an overview of your swim team&apos;s performance.</p>
         </section>
 
         {renderSwimGroups()}

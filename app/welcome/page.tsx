@@ -46,7 +46,7 @@ import WelcomeNavbar from './WelcomeNavbar';
 import styles from '../styles/WelcomePage.module.css';
 
 // Importing images
-import homeBanner from '../../public/image/featureImages/homebBanner1.png';
+import homeBanner from '../../public/image/fea tureImages/homebBanner1.png';
 import createGroup from '../../public/image/featureImages/createGroup.png';
 import communicate from '../../public/image/featureImages/communicate.png';
 import performanceCollection from '../../public/image/featureImages/performaceCollection.png';
@@ -56,33 +56,24 @@ import swimmerProfile from '../../public/image/featureImages/swimmerProfile.png'
 import bestTimes from '../../public/image/featureImages/bestTimes.png';
 import trackProgress from '../../public/image/featureImages/trackProgress.png';
 import injuryLog from '../../public/image/featureImages/injuryLog.png';
+import Banner from './Banner';
 
 const WelcomePage = () => {
   return (
     <div className={styles.container}>
       <WelcomeNavbar />
 
-      {/* Home Banner */}
-      <div className={styles.imageSection}>
-        <Image
-          src={homeBanner}
-          alt="Home Banner"
-          className={styles.image}
-          layout="responsive"
-          priority
-        />
-      </div>
-
+      <Banner />
       {/* Features Section */}
       <div className={styles.featureContainer}>
-        <div className={styles.feature}>
+        <div className={styles.feature}> 
           <Image
             src={createGroup}
             alt="Create Group"
             className={styles.featureImage}
             layout="responsive"
           />
-          <p>Create and manage swim groups with ease.</p>
+          {/* <p>Create and manage swim groups with ease.</p> */}
         </div>
         <div className={styles.feature}>
           <Image
@@ -91,7 +82,7 @@ const WelcomePage = () => {
             className={styles.featureImage}
             layout="responsive"
           />
-          <p>Communicate with swimmers and parents.</p>
+          {/* <p>Communicate with swimmers and parents.</p> */}
         </div>
         <div className={styles.feature}>
           <Image
@@ -100,7 +91,7 @@ const WelcomePage = () => {
             className={styles.featureImage}
             layout="responsive"
           />
-          <p>Collect and analyze swimmer performance data.</p>
+          {/* <p>Collect and analyze swimmer performance data.</p> */}
         </div>
         <div className={styles.feature}>
           <Image
@@ -109,7 +100,7 @@ const WelcomePage = () => {
             className={styles.featureImage}
             layout="responsive"
           />
-          <p>Manage swim groups and track progress.</p>
+          {/* <p>Manage swim groups and track progress.</p> */}
         </div>
         <div className={styles.feature}>
           <Image
@@ -118,7 +109,7 @@ const WelcomePage = () => {
             className={styles.featureImage}
             layout="responsive"
           />
-          <p>Create and assign workouts to swimmers.</p>
+          {/* <p>Create and assign workouts to swimmers.</p> */}
         </div>
         <div className={styles.feature}>
           <Image
@@ -127,7 +118,7 @@ const WelcomePage = () => {
             className={styles.featureImage}
             layout="responsive"
           />
-          <p>View and manage swimmer profiles.</p>
+          {/* <p>View and manage swimmer profiles.</p> */}
         </div>
         <div className={styles.feature}>
           <Image
@@ -136,7 +127,7 @@ const WelcomePage = () => {
             className={styles.featureImage}
             layout="responsive"
           />
-          <p>Track and manage swimmer best times.</p>
+          {/* <p>Track and manage swimmer best times.</p> */}
         </div>
         <div className={styles.feature}>
           <Image
@@ -145,7 +136,7 @@ const WelcomePage = () => {
             className={styles.featureImage}
             layout="responsive"
           />
-          <p>Track swimmer progress and performance.</p>
+          {/* <p>Track swimmer progress and performance.</p> */}
         </div>
         <div className={styles.feature}>
           <Image
@@ -154,7 +145,7 @@ const WelcomePage = () => {
             className={styles.featureImage}
             layout="responsive"
           />
-          <p>Record and manage swimmer injuries.</p>
+          {/* <p>Record and manage swimmer injuries.</p> */}
         </div>
       </div>
     </div>

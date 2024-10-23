@@ -1,119 +1,215 @@
+/* styles/RegisterForm.module.css */
 .container {
+  min-height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
-  flex-direction: column;
-  padding-top: 100px;
-  padding-bottom: 100px;
-  background: var(--background-gradient);
-  min-height: 100vh;
+  padding: 2rem;
+  background: linear-gradient(135deg, #1a1456 0%, #4a1d96 100%);
 }
 
 .registerBox {
-  width: 90%;
-  max-width: 500px;
-  padding: 40px;
-  background: var(--primary-dark);
-  border-radius: 20px;
-  text-align: center;
-  box-shadow: 0 0 30px rgba(144, 52, 107, 0.5);
+  width: 100%;
+  max-width: 900px;
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(20px);
+  border-radius: 24px;
+  padding: 3rem;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.registerBox form {
-  width: 100%;
+.form {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  gap: 2.5rem;
 }
 
-.registerBox h2 {
-  font-size: 2.5em;
-  color: var(--accent-teal);
-  margin-bottom: 30px;
-  text-shadow: 0 0 10px rgba(94, 234, 212, 0.3);
+.formGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 2rem;
+}
+
+.title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 2rem;
+  color: white;
+  letter-spacing: -0.02em;
+  background: linear-gradient(to right, #fff, #e9d5ff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 0 30px rgba(255, 255, 255, 0.1);
 }
 
 .inputBox {
   position: relative;
-  width: 80%;
-  margin: 20px 0;
 }
 
-.inputBox input {
+.inputBox input,
+.inputBox select {
   width: 100%;
-  height: 50px;
-  background: transparent;
-  border: 2px solid var(--secondary-light);
-  outline: none;
-  border-radius: 10px;
-  font-size: 1em;
-  color: var(--text-light);
-  padding: 0 20px;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  color: white;
+  font-size: 1rem;
   transition: all 0.3s ease;
+  outline: none;
+  height: 56px;
 }
 
 .inputBox input:focus,
-.inputBox input:valid {
-  border-color: var(--accent-teal);
-  box-shadow: 0 0 10px rgba(94, 234, 212, 0.3);
+.inputBox select:focus {
+  border-color: #a78bfa;
+  box-shadow: 0 0 0 4px rgba(167, 139, 250, 0.1);
 }
 
 .inputBox label {
   position: absolute;
-  top: 50%;
-  left: 20px;
-  transform: translateY(-50%);
-  font-size: 1em;
-  color: var(--text-light);
+  left: 0.75rem;
+  top: 0.5rem;
+  padding: 0 0.5rem;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 1rem;
+  transition: all 0.2s ease;
   pointer-events: none;
-  transition: all 0.3s ease;
-  background-color: var(--primary-dark);
-  padding: 0 5px;
+  background: transparent;
 }
 
 .inputBox input:focus ~ label,
-.inputBox input:valid ~ label {
-  top: -10px;
-  font-size: 0.8em;
-  color: var(--accent-teal);
+.inputBox input:not(:placeholder-shown) ~ label {
+  transform: translateY(-1.4rem) scale(0.85);
+  color: #a78bfa;
 }
 
-.btn {
-  width: 50%;
-  height: 50px;
-  border-radius: 25px;
-  background: var(--accent-purple);
-  border: none;
-  outline: none;
+/* Modified select element label handling */
+.inputBox select ~ label {
+  transform: translateY(-2rem) scale(0.85);
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.inputBox select:focus ~ label {
+  color: #a78bfa;
+}
+
+.inputBox input::placeholder {
+  color: transparent;
+}
+
+.inputBox select {
+  appearance: none;
+  padding-right: 2.5rem;
   cursor: pointer;
-  font-size: 1em;
-  color: var(--text-light);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='rgba(255, 255, 255, 0.6)' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  background-size: 1.25em;
+}
+
+.inputBox input[type="date"] {
+  color-scheme: dark;
+}
+
+.submitButton {
+  margin-top: 1rem;
+  height: 56px;
+  background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 1.125rem;
   font-weight: 600;
-  margin-top: 20px;
+  cursor: pointer;
   transition: all 0.3s ease;
+  box-shadow: 0 4px 20px rgba(124, 58, 237, 0.3);
 }
 
-.btn:hover {
-  background-color: var(--accent-pink);
-  box-shadow: 0 0 15px var(--accent-teal);
-  transform: translateY(-3px);
+.submitButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 25px rgba(124, 58, 237, 0.4);
+  background: linear-gradient(135deg, #6d28d9 0%, #5b21b6 100%);
 }
 
+.error {
+  text-align: center;
+  color: #ef4444;
+  background: rgba(239, 68, 68, 0.1);
+  padding: 1rem;
+  border-radius: 8px;
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  font-size: 0.875rem;
+}
+
+/* Media queries */
 @media (max-width: 768px) {
   .registerBox {
-    width: 95%;
-    padding: 30px;
+    padding: 2rem;
   }
 
-  .registerBox h2 {
-    font-size: 2em;
+  .formGrid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
   }
 
-  .inputBox {
-    width: 90%;
+  .title {
+    font-size: 2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 1rem;
   }
 
-  .btn {
-    width: 70%;
+  .registerBox {
+    padding: 1.5rem;
   }
+
+  .title {
+    font-size: 1.75rem;
+  }
+
+  .inputBox input,
+  .inputBox select,
+  .submitButton {
+    height: 68px;
+  }
+}
+
+/* Animation classes */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.registerBox {
+  animation: fadeIn 0.6s ease-out;
+}
+
+.inputBox input:focus::placeholder {
+  color: rgba(255, 255, 255, 0.3);
+  transition: color 0.2s ease;
+}
+
+/* Hover effects */
+.inputBox:hover input,
+.inputBox:hover select {
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Loading state */
+.submitButton:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
 }
