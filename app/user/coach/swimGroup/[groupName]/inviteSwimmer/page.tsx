@@ -35,7 +35,7 @@ const InviteSwimmerPage: React.FC = () => {
     };
 
     fetchGroup();
-  }, [groupName]);
+  }, [groupName, supabase, showToast, router]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
