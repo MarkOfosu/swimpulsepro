@@ -4,7 +4,7 @@
 import React, { useState, useEffect } from 'react';
 import  { AttendanceItem } from './AttendanceItem';
 
-import styles from '../../../styles/AttendanceList.module.css';
+import styles from '../../../../styles/AttendanceList.module.css';
 
 
 
