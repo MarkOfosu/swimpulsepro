@@ -5,10 +5,13 @@ import WelcomeNavbar from './WelcomeNavbar';
 import styles from '../styles/WelcomePage.module.css';
 import Banner from './Banner';
 import ComingSoonFeatures from './ComingSoonSection';
+import Footer from '@components/elements/Footer';
 
 const WelcomePage = () => {
   return (
+    <>
     <div className={styles.container}>
+      
       <WelcomeNavbar />
 
       <Banner />
@@ -18,6 +21,8 @@ const WelcomePage = () => {
       {/* </div> */}
       <ComingSoonFeatures />
     </div>
+    <Footer />
+    </>
   );
 };
 

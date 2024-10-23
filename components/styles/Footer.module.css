@@ -7,6 +7,8 @@
   padding: 4rem 0 2rem;
   position: relative;
   z-index: 1;
+  margin-top: auto; /* Push footer to bottom of flex container */
+  flex-shrink: 0; /* Prevent footer from shrinking */
 }
 
 .footerContent {
