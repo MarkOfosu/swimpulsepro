@@ -1,5 +1,6 @@
 
 // components/WelcomeNavbar.tsx
+'use client'
 import logo from '../../public/image/logo.png';
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
