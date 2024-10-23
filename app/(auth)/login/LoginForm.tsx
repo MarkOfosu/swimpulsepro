@@ -1,5 +1,3 @@
-
-
 // app/login/LoginForm.tsx
 'use client';
 
@@ -16,16 +14,29 @@ import { Mail, Lock, ArrowRight } from 'lucide-react';
 const LoginForm: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [shouldRedirect, setShouldRedirect] = useState<string | null>(null);
   const router = useRouter();
   const { refreshUser } = useUser();
   const supabase = createClient();
   const [formFilled, setFormFilled] = useState(false);
 
+  // Handle redirects in useEffect
+  useEffect(() => {
+    if (shouldRedirect) {
+      router.push(shouldRedirect);
+    }
+  }, [shouldRedirect, router]);
+
+  // Check existing session
   useEffect(() => {
     const checkExistingSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (session) {
-        await handleExistingSession();
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session) {
+          await handleExistingSession();
+        }
+      } catch (err) {
+        console.error('Session check failed:', err);
       }
     };
 
@@ -37,9 +48,9 @@ const LoginForm: React.FC = () => {
       await refreshUser();
       const userDetails = await getUserDetails();
       if (userDetails?.role === 'coach') {
-        router.push('/user/coach/dashboard');
+        setShouldRedirect('/user/coach/dashboard');
       } else if (userDetails?.role === 'swimmer') {
-        router.push('/user/swimmer/dashboard');
+        setShouldRedirect('/user/swimmer/dashboard');
       }
     } catch (err) {
       console.error('Session validation failed:', err);
@@ -59,11 +70,13 @@ const LoginForm: React.FC = () => {
     setError(null);
 
     const formData = new FormData(e.currentTarget);
+    const email = formData.get('email') as string;
+    const password = formData.get('password') as string;
 
     try {
       const { data, error: signInError } = await supabase.auth.signInWithPassword({
-        email: formData.get('email') as string,
-        password: formData.get('password') as string,
+        email,
+        password,
       });
 
       if (signInError) throw signInError;
@@ -72,15 +85,14 @@ const LoginForm: React.FC = () => {
       const userDetails = await getUserDetails();
 
       if (userDetails?.role === 'coach') {
-        router.push('/user/coach/dashboard');
+        setShouldRedirect('/user/coach/dashboard');
       } else if (userDetails?.role === 'swimmer') {
-        router.push('/user/swimmer/dashboard');
+        setShouldRedirect('/user/swimmer/dashboard');
       } else {
         throw new Error('Invalid user role');
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Login failed');
-    } finally {
       setLoading(false);
     }
   };
@@ -117,6 +129,7 @@ const LoginForm: React.FC = () => {
                     placeholder="Email address"
                     className={styles.input}
                     required
+                    autoComplete="email"
                   />
                 </div>
 
@@ -129,6 +142,7 @@ const LoginForm: React.FC = () => {
                     placeholder="Password"
                     className={styles.input}
                     required
+                    autoComplete="current-password"
                   />
                 </div>
 
