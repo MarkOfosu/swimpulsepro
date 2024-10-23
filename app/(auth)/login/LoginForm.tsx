@@ -36,12 +36,12 @@ const LoginForm: React.FC = () => {
           await handleExistingSession();
         }
       } catch (err) {
-        console.error('Session check failed:', err);
+        // console.error('Session check failed:', err);
       }
     };
 
     checkExistingSession();
-  }, []);
+  }, [supabase]);
 
   const handleExistingSession = async () => {
     try {
@@ -53,7 +53,7 @@ const LoginForm: React.FC = () => {
         setShouldRedirect('/user/swimmer/dashboard');
       }
     } catch (err) {
-      console.error('Session validation failed:', err);
+      // console.error('Session validation failed:', err);
     }
   };
 
