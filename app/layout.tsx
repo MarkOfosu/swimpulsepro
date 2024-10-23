@@ -1,4 +1,3 @@
-// app/layout.tsx
 import React, { ReactNode } from 'react';
 import Sidebar from '../components/nav/SideBar';
 import BottomNav from '@components/nav/BottomNav';
@@ -20,8 +19,6 @@ export const metadata = {
 };
 
 function RootLayout({ children }: { readonly children: ReactNode }) {
-  const signedin = true;
-
   return (
     <UserProvider>
       <html lang="en" className="h-full">
@@ -29,9 +26,10 @@ function RootLayout({ children }: { readonly children: ReactNode }) {
           <title>{metadata.title}</title>
           <meta name="description" content={metadata.description} />
         </head>
-        <body className="flex min-h-screen flex-col">
-          <main className="flex-grow">{children}</main>
-          <Footer />
+        <body className="flex min-h-screen flex-col bg-background">
+          <div className="flex flex-col min-h-screen">
+            {children}
+          </div>
         </body>
       </html>
     </UserProvider>

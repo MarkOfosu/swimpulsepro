@@ -1,33 +1,59 @@
-/* ContentRootLayout.module.css */
-.contentLayout {
-    display: flex;
-    flex-direction: column;
-    height: 100vh;
-    width: 100%;
+.pageWrapper {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  width: 100%;
+  position: relative;
+}
+
+.mainWrapper {
+  display: flex;
+  flex: 1;
+  position: relative;
+}
+
+.contentWrapper {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  position: relative;
+  margin-left: 60px;
+  min-height: 0; /* Important for proper flex behavior */
+}
+
+.contentArea {
+  flex: 1;
+  padding: 20px;
+  width: 100%;
+  position: relative;
+}
+
+.loadingContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+
+/* Media query for mobile devices */
+@media screen and (max-width: 768px) {
+  .contentWrapper {
+    margin-left: 0;
   }
-  
-  .contentMain {
-    display: flex;
-    flex-grow: 1;
-    overflow: hidden;
-  }
-  
+
   .contentArea {
-    flex-grow: 1;
-    overflow-y: auto;
-    padding: 20px;
-    transition: margin-left 0.3s ease;
-    margin-left: 60px;
-  
+    padding: 16px;
+    padding-bottom: 80px; /* Space for bottom navigation */
   }
-  
-  .contentArea.sidebarExpanded {
-    margin-left: 140px; /* 200px (expanded width) - 60px (collapsed width) */
+}
+
+/* Utility classes */
+.sidebarExpanded .contentWrapper {
+  margin-left: 200px;
+}
+
+@media screen and (max-width: 768px) {
+  .sidebarExpanded .contentWrapper {
+    margin-left: 0;
   }
-  
-  @media screen and (max-width: 768px) {
-    .contentArea,
-    .contentArea.sidebarExpanded {
-      margin-left: 0;
-    }
-  }
+}

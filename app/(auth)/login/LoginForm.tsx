@@ -9,6 +9,7 @@ import Loader from '../../../components/elements/Loader';
 import { useUser } from '../../context/UserContext';
 import { getUserDetails } from '@app/lib/getUserDetails';
 import { Mail, Lock, ArrowRight } from 'lucide-react';
+import Footer from '@components/elements/Footer';
 
 const LoginForm: React.FC = () => {
   const [loading, setLoading] = useState(false);
@@ -194,6 +195,7 @@ const LoginForm: React.FC = () => {
           </div>
         </div>
       </div>
+      <Footer />
     </>
   );
 };

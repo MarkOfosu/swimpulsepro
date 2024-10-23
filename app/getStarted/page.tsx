@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import WelcomeNavbar from '@app/welcome/WelcomeNavbar';
 import { ArrowRight } from 'lucide-react';
 import styles from '../styles/GetStarted.module.css';
+import Footer from '@components/elements/Footer';
 
 const GetStartedPage = () => {
   const router = useRouter();
@@ -101,7 +102,9 @@ const GetStartedPage = () => {
             </div>
           </div>
         </div>
+      
       </div>
+      <Footer />
     </>
   );
 };

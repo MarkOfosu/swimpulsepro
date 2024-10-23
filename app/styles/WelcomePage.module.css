@@ -19,6 +19,7 @@
   backdrop-filter: blur(10px);
   z-index: 50;
   transition: all 0.3s ease;
+  height: var(--navbar-height);
 }
 
 .logoContainer {
