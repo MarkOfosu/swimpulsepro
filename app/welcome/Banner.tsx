@@ -11,10 +11,10 @@ const Banner = () => {
           {/* Text Content */}
           <div className={styles.textContent}>
             <h1 className={styles.title}>
-              SwimPulsePro:
+            Connecting swimmers and coaches
               <span className={styles.titleSpan}>
                 {/* Elevate Your Swim experience */}
-                Connecting swimmers and coaches
+                {/* Connecting swimmers and coaches */}
               </span>
             </h1>
             

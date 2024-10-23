@@ -1,22 +1,58 @@
-import styles from '../styles/WelcomeNavbar.module.css';
-import Link from 'next/link';
-import Image from 'next/image';
-import logo from '../../public/image/logo.png';
 
-const WelcomeNavbar: React.FC = () => {
+// components/WelcomeNavbar.tsx
+import logo from '../../public/image/logo.png';
+import React, { useState, useEffect } from 'react';
+import Image from 'next/image';
+import Link from 'next/link';
+import styles from '../styles/WelcomePage.module.css';
+
+const WelcomeNavbar = () => {
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 20);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   return (
-    <nav className={styles.welcomeNavbar}>
-      <div className={styles.logo}>
-        <Link href='/'><Image src={logo} alt="SwimPulsePro Logo" width={50} height={50} /></Link>
+    <nav className={`${styles.navbar} ${isScrolled ? styles.scrolled : ''}`}>
+      <div className={styles.logoContainer}>
+        <Link href="/">
+          <Image
+            src={logo}
+            alt="SwimPulsePro Logo"
+            width={40}
+            height={40}
+            className={styles.logo}
+          />
+           <span className={styles.logoText}>SwimPulsePro</span>
+        </Link>
+       
       </div>
-      <div className={styles.welcomeNavLinksContainer}>
-        <ul className={styles.welcomeNavLinks}>
-          {/* <li><Link href="/about">About Us</Link></li> */}
-          {/* <li><Link href="/features">Features</Link></li> */}
-          {/* <li><Link href="/pricing">Pricing</Link></li> */}
-          <li><Link href="/login">Login</Link></li>
-          <li><Link href="/getStarted">signup</Link></li>
-        </ul>
+
+      {/* <div className={styles.navLinks}>
+        <Link href="/features" className={styles.link}>
+          Features
+        </Link>
+        <Link href="/pricing" className={styles.link}>
+          Pricing
+        </Link>
+        <Link href="/about" className={styles.link}>
+          About
+        </Link>
+      </div> */}
+
+      <div className={styles.authButtons}>
+        <Link href="/login">
+          <button className={styles.loginButton}>Login</button>
+        </Link>
+        <Link href="/getStarted">
+          <button className={styles.signupButton}>Sign up</button>
+        </Link>
       </div>
     </nav>
   );
