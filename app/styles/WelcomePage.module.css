@@ -1,100 +1,250 @@
-
 /* styles/WelcomePage.module.css */
-
-/* .container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    background: #133c63;
-    row-gap: 20px;
-  } */
-  
-  /* .banner {
-    margin-top: 90px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    color: rgb(206, 76, 76);
-    font-size: 2.5em;
-    text-align: center;
-    padding: 20px;
-  } */
-
-
-
-
-  
-  /* WelcomePage.module.css */
 .container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+  overflow: hidden;
+  position: relative;
+}
+
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
   display: flex;
-  flex-direction: column;
   align-items: center;
-  width: 100%;
-  margin-top: 20px;
-  background-color: rgb(155, 153, 167);
+  justify-content: space-between;
+  padding: 1.5rem 2rem;
+  background: rgba(15, 23, 42, 0.8);
+  backdrop-filter: blur(10px);
+  z-index: 50;
+  transition: all 0.3s ease;
 }
 
-/* Adjusted width for images */
-.imageSection {
-  width: 80%; /* Default width for large screens */
-  max-width: 1200px; /* Maximum width to prevent images from becoming too large */
-  padding: 20px;
+.logoContainer {
   display: flex;
-  justify-content: center;
   align-items: center;
-  height: 60vh;
+  gap: 1rem;
 }
 
-.image {
-  width: 100%;
-  height: auto;
+.logo {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  overflow: hidden;
 }
 
-/* Responsive settings */
-@media (max-width: 1024px) {
-  .imageSection {
-    width: 90%; /* Slightly wider on smaller screens */
-    height: 100vh
-  }
+.logoText {
+  font-size: 1.5rem;
+  font-weight: 700;
+  background: linear-gradient(to right, #06b6d4, #3b82f6);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
-@media (max-width: 768px) {
-  .imageSection {
-    width: 100%; /* Full width on mobile devices */
-    padding: 10px;
-  }
+.navLinks {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
 }
 
-/* Styles for the feature container */
+.link {
+  color: #94a3b8;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s ease;
+  font-size: 1rem;
+}
+
+.link:hover {
+  color: #f8fafc;
+}
+
+.authButtons {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.loginButton {
+  color: #0a3e71;
+  font-weight: 500;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.loginButton:hover {
+  background: rgba(230, 222, 222, 0.1);
+  color: #ffffff;
+
+}
+
+.signupButton {
+  background: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%);
+  color: white;
+  padding: 0.5rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.signupButton:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+/* Hero section styles */
+.heroSection {
+  padding-top: 5rem;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
 .featureContainer {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  align-items: flex-start;
-  width: 100%;
-  padding: 20px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+  padding: 4rem 2rem;
+  position: relative;
+  z-index: 1;
 }
 
 .feature {
-  width:100%; /* Three items per row on large screens */
-  margin: 10px;
-  text-align: center;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 16px;
+  padding: 1.5rem;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  overflow: hidden;
+}
+
+.feature:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+  border-color: rgba(6, 182, 212, 0.3);
 }
 
 .featureImage {
-  width: 100%;
-  height: auto;
-}
-
-/* Adjust feature items for smaller screens */
-@media (max-width: 1024px) {
-  .feature {
-    width: 45%; /* Two items per row on medium screens */
-  }
+  border-radius: 12px;
+  transition: all 0.3s ease;
 }
 
 @media (max-width: 768px) {
-  .feature {
-    width: 100%; /* One item per row on small screens */
+  .navbar {
+    padding: 1rem;
+  }
+  
+  .navLinks {
+    display: none;
+  }
+  
+  .authButtons {
+    gap: 0.5rem;
+  }
+  
+  .loginButton,
+  .signupButton {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.875rem;
+  }
+}
+
+
+/* comming soon section styles */
+/* styles/WelcomePage.module.css - Add these new styles */
+.comingSoonSection {
+  padding: 4rem 2rem;
+  text-align: center;
+  background: linear-gradient(to bottom, rgba(30, 27, 75, 0.3), rgba(30, 27, 75, 0.1));
+  border-top: 1px solid rgba(96, 165, 250, 0.1);
+  position: relative;
+  overflow: hidden;
+}
+
+.comingSoonContainer {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 3rem;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 24px;
+  border: 1px solid rgba(96, 165, 250, 0.1);
+  backdrop-filter: blur(10px);
+  position: relative;
+}
+
+.comingSoonText {
+  font-size: 2rem;
+  font-weight: 600;
+  color: #fff;
+  margin-bottom: 1rem;
+  background: linear-gradient(to right, #60A5FA, #818CF8);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.comingSoonDescription {
+  font-size: 1.1rem;
+  color: #94A3B8;
+  max-width: 600px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+.pulseCircle {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(96, 165, 250, 0.1);
+  animation: pulse 3s infinite;
+}
+
+.pulseCircle:nth-child(1) {
+  width: 150px;
+  height: 150px;
+  top: -75px;
+  left: 10%;
+}
+
+.pulseCircle:nth-child(2) {
+  width: 200px;
+  height: 200px;
+  bottom: -100px;
+  right: 15%;
+  animation-delay: 1s;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    opacity: 0.3;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 0.1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 0.3;
+  }
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+  .comingSoonSection {
+    padding: 3rem 1rem;
+  }
+  
+  .comingSoonContainer {
+    padding: 2rem 1rem;
+  }
+  
+  .comingSoonText {
+    font-size: 1.5rem;
+  }
+  
+  .comingSoonDescription {
+    font-size: 1rem;
   }
 }

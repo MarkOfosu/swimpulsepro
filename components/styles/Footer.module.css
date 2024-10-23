@@ -1,70 +1,213 @@
 /* styles/Footer.module.css */
-
 .footer {
   width: 100%;
-  background: #1f2a48;
-  color: #f086af;
-  text-align: center;
-  padding: 10px;
-  box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+  background: linear-gradient(to bottom, rgba(15, 23, 42, 0.95), rgba(15, 23, 42, 0.98));
+  backdrop-filter: blur(10px);
+  color: #94a3b8;
+  padding: 4rem 0 2rem;
   position: relative;
-  bottom: 0;
-  display: flex;
-  justify-content: center;
-  
-  align-items: center;
-  z-index: -11;
-  flex-shrink: 0; /* Prevent footer from shrinking */
+  z-index: 1;
 }
 
-.legal {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+.footerContent {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 2rem;
 }
 
-.legalLinksContainer {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+.footerGrid {
+  display: grid;
+  grid-template-columns: 1.5fr 2fr 1fr;
+  gap: 4rem;
+  margin-bottom: 4rem;
 }
 
-.legalLinks {
+.companyInfo {
+  animation: fadeIn 0.8s ease-out;
+}
+
+.companyName {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 1rem;
+  background: linear-gradient(to right, #60a5fa, #818cf8);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.companyDesc {
+  color: #cbd5e1;
+  line-height: 1.6;
+}
+
+.linksSection {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 2rem;
+  animation: fadeIn 0.8s ease-out 0.2s backwards;
+}
+
+.linkColumn h4 {
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 1.25rem;
+}
+
+.linkList {
   list-style: none;
-  display: flex;
   padding: 0;
   margin: 0;
-  gap: 10px;
 }
 
-.legalLinkItem {
-  display: inline;
+.linkList li {
+  margin-bottom: 0.75rem;
 }
 
-.legalLink {
-  color: white;
+.linkList a {
+  color: #94a3b8;
   text-decoration: none;
-  padding: 0 10px;
+  transition: all 0.2s ease;
+  position: relative;
 }
 
-.legalLink:hover {
-  text-decoration: underline;
+.linkList a::after {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 1px;
+  bottom: -2px;
+  left: 0;
+  background: linear-gradient(to right, #60a5fa, #818cf8);
+  transition: width 0.3s ease;
 }
 
-.legalCopyright {
-  margin-top: 5px;
+.linkList a:hover {
+  color: #fff;
+}
+
+.linkList a:hover::after {
+  width: 100%;
+}
+
+.socialSection {
+  animation: fadeIn 0.8s ease-out 0.4s backwards;
 }
 
 .socialLinks {
   display: flex;
-  gap: 10px;
+  gap: 1rem;
+  margin-top: 1rem;
 }
 
 .socialLink {
-  display: inline-block;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.05);
+  color: #94a3b8;
+  transition: all 0.3s ease;
 }
 
-.socialIcon {
-  width: 24px;
-  height: 24px;
+.socialLink:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  transform: translateY(-2px);
+}
+
+.bottomBar {
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding-top: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  animation: fadeIn 0.8s ease-out 0.6s backwards;
+}
+
+.legalLinks {
+  display: flex;
+  gap: 2rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.legalLinks a {
+  color: #94a3b8;
+  text-decoration: none;
+  font-size: 0.875rem;
+  transition: color 0.2s ease;
+}
+
+.legalLinks a:hover {
+  color: #fff;
+}
+
+.copyright {
+  color: #64748b;
+  font-size: 0.875rem;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Tablet Styles */
+@media (max-width: 1024px) {
+  .footerGrid {
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+  }
+
+  .socialSection {
+    grid-column: span 2;
+  }
+}
+
+/* Mobile Styles */
+@media (max-width: 768px) {
+  .footer {
+    padding: 3rem 0 1.5rem;
+  }
+
+  .footerContent {
+    padding: 0 1rem;
+  }
+
+  .footerGrid {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  .socialSection {
+    grid-column: auto;
+  }
+
+  .linksSection {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+
+  .companyInfo {
+    text-align: center;
+  }
+
+  .socialLinks {
+    justify-content: center;
+  }
+
+  .legalLinks {
+    gap: 1rem;
+  }
 }

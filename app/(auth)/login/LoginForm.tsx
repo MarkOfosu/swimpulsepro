@@ -1,122 +1,17 @@
-// "use client";
-// import React, { useState } from 'react';
-// import '@fortawesome/fontawesome-free/css/all.min.css';
-// import styles from '../../styles/LoginForm.module.css';
-// import WelcomeNavbar from '@app/welcome/WelcomeNavbar';
-// import { useRouter } from 'next/navigation';
-// import { createClient } from '@/utils/supabase/client';
-// import Loader from '../../../components/elements/Loader'; // Assuming you have a Loader component
-// import { getUserDetails } from '@app/lib/getUserDetails'; // Assuming this fetches user details like role
-
-// const LoginForm: React.FC = () => {
-//   const [loading, setLoading] = useState(false);
-//   const [error, setError] = useState<string | null>(null);
-//   const router = useRouter();
-
-//   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-//     e.preventDefault();
-//     setLoading(true);
-//     setError(null); // Reset error state
-
-//     const formData = new FormData(e.currentTarget);
-//     try {
-//       // Prepare login data
-//       const loginData = {
-//         email: formData.get('email') as string,
-//         password: formData.get('password') as string,
-//       };
-
-//       // Create Supabase client and attempt to log in
-//       const supabase = createClient();
-//       const { data: session, error } = await supabase.auth.signInWithPassword(loginData);
-
-//       // Handle login errors
-//       if (error) {
-//         setError('Login failed. Please check your credentials.');
-//         setLoading(false);
-//         return;
-//       }
-
-//       // After login, fetch user details
-//       const userDetails = await getUserDetails();
-
-//       // Handle redirection based on user role
-//       if (userDetails?.role === 'coach') {
-//         router.push('/user/coach/dashboard');
-//       } else if (userDetails?.role === 'swimmer') {
-//         router.push('/user/swimmer/dashboard');
-//       } else {
-//         setError('Unknown user. Please contact support.');
-//       }
-
-//     } catch (err) {
-//       setError('An unexpected error occurred.');
-//       setLoading(false);
-//     }
-//   };
-
-//   const handleSignup = () => {
-//     router.push('/signup');
-//   };
-
-//   return (
-//     <>
-//       <WelcomeNavbar />
-//       <div className={styles.container}>
-//         <div className={styles.loginBox}>
-//           <h2>Login</h2>
-//           {loading ? (
-//             <Loader /> 
-//           ) : (
-//             <form onSubmit={handleSubmit}>
-//               <div className={styles.inputBox}>
-//                 <input
-//                   id="email"
-//                   name="email"
-//                   type="email"
-//                   required
-//                 />
-//                 <label>Email</label>
-//               </div>
-//               <div className={styles.inputBox}>
-//                 <input
-//                   id="password"
-//                   name="password"
-//                   type="password"
-//                   required
-//                 />
-//                 <label>Password</label>
-//               </div>
-//               <div className={styles.forgotPassword}>
-//                 <a href="#">Forgot Password?</a>
-//               </div>
-//               {error && <p style={{ color: 'red' }}>{error}</p>}
-//               <button type="submit" className={styles.btn}>Log in</button>
-//             </form>
-//           )}
-//           <div className={styles.signupLink}>
-//             <button onClick={handleSignup} className={styles.signUpBtn}>Sign up</button>
-//           </div>
-//         </div>
-//       </div>
-//     </>
-//   );
-// };
-
-// export default LoginForm;
 
 
-// LoginForm.tsx
+// app/login/LoginForm.tsx
 'use client';
 
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@/utils/supabase/client';
-import styles from '../../styles/LoginForm.module.css';
+import styles from '../../styles/LoginPage.module.css';
 import WelcomeNavbar from '@app/welcome/WelcomeNavbar';
 import Loader from '../../../components/elements/Loader';
 import { useUser } from '../../context/UserContext';
-import { getUserDetails } from '@app/lib/getUserDetails'; // Assuming this fetches user details like role
+import { getUserDetails } from '@app/lib/getUserDetails';
+import { Mail, Lock, ArrowRight } from 'lucide-react';
 
 const LoginForm: React.FC = () => {
   const [loading, setLoading] = useState(false);
@@ -124,6 +19,7 @@ const LoginForm: React.FC = () => {
   const router = useRouter();
   const { refreshUser } = useUser();
   const supabase = createClient();
+  const [formFilled, setFormFilled] = useState(false);
 
   useEffect(() => {
     const checkExistingSession = async () => {
@@ -148,6 +44,13 @@ const LoginForm: React.FC = () => {
     } catch (err) {
       console.error('Session validation failed:', err);
     }
+  };
+
+  const handleInputChange = (e: React.FormEvent<HTMLFormElement>) => {
+    const form = e.currentTarget;
+    const email = form.email.value;
+    const password = form.password.value;
+    setFormFilled(email !== '' && password !== '');
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -185,42 +88,96 @@ const LoginForm: React.FC = () => {
   return (
     <>
       <WelcomeNavbar />
-      <div className={styles.container}>
-        <div className={styles.loginBox}>
-          <h2>Login</h2>
-          {loading ? (
-            <Loader />
-          ) : (
-            <form onSubmit={handleSubmit}>
-              <div className={styles.inputBox}>
-                <input
-                  id="email"
-                  name="email"
-                  type="email"
-                  required
-                />
-                <label>Email</label>
+      <div className={styles.pageContainer}>
+        <div className={styles.loginContainer}>
+          <div className={styles.formWrapper}>
+            <div className={styles.headerSection}>
+              <h1 className={styles.title}>Welcome Back</h1>
+              <p className={styles.subtitle}>
+                Enter your credentials to access your account
+              </p>
+            </div>
+
+            {loading ? (
+              <div className={styles.loaderWrapper}>
+                <Loader />
               </div>
-              <div className={styles.inputBox}>
-                <input
-                  id="password"
-                  name="password"
-                  type="password"
-                  required
-                />
-                <label>Password</label>
-              </div>
-              {error && <p className={styles.error}>{error}</p>}
-              <button type="submit" className={styles.btn}>Log in</button>
-            </form>
-          )}
-          <div className={styles.signupLink}>
-            <button 
-              onClick={() => router.push('/signup')} 
-              className={styles.signUpBtn}
-            >
-              Sign up
-            </button>
+            ) : (
+              <form 
+                onSubmit={handleSubmit} 
+                onChange={handleInputChange}
+                className={styles.form}
+              >
+                <div className={styles.inputGroup}>
+                  <Mail className={styles.inputIcon} size={20} />
+                  <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    placeholder="Email address"
+                    className={styles.input}
+                    required
+                  />
+                </div>
+
+                <div className={styles.inputGroup}>
+                  <Lock className={styles.inputIcon} size={20} />
+                  <input
+                    type="password"
+                    id="password"
+                    name="password"
+                    placeholder="Password"
+                    className={styles.input}
+                    required
+                  />
+                </div>
+
+                <div className={styles.forgotPassword}>
+                  <a href="/login">Forgot password?</a>
+                </div>
+
+                {error && (
+                  <div className={styles.errorMessage}>
+                    {error}
+                  </div>
+                )}
+
+                <button
+                  type="submit"
+                  className={`${styles.submitButton} ${formFilled ? styles.filled : ''}`}
+                  disabled={loading}
+                >
+                  <span>Log in</span>
+                  <ArrowRight size={20} />
+                </button>
+
+                <div className={styles.signupPrompt}>
+                  <span>Don't have an account?</span>
+                  <button
+                    type="button"
+                    onClick={() => router.push('/getStarted')}
+                    className={styles.signupLink}
+                  >
+                    Sign up
+                  </button>
+                </div>
+              </form>
+            )}
+          </div>
+
+          <div className={styles.featuresSection}>
+            <div className={styles.featureCard}>
+              <h3>Track Progress</h3>
+              <p>Monitor your swimming journey with detailed analytics</p>
+            </div>
+            <div className={styles.featureCard}>
+              <h3>Connect with Coaches</h3>
+              <p>Direct communication with your swimming coaches</p>
+            </div>
+            <div className={styles.featureCard}>
+              <h3>Performance Insights</h3>
+              <p>Get detailed insights into your swimming performance</p>
+            </div>
           </div>
         </div>
       </div>

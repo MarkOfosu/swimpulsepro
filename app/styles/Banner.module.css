@@ -2,8 +2,11 @@
 .bannerContainer {
   position: relative;
   min-height: 100vh;
+  padding-top: 80px; /* Add explicit padding for navbar height */
   background: linear-gradient(135deg, #1a1456 0%, #4a1d96 100%);
   overflow: hidden;
+  display: flex;
+  align-items: center;
 }
 
 .contentWrapper {
@@ -12,147 +15,217 @@
   padding: 2rem 1rem;
   position: relative;
   z-index: 10;
+  width: 100%;
 }
 
 .gridContainer {
   display: flex;
   flex-direction: column;
-  gap: 2rem;
+  gap: 3rem;
   align-items: center;
+  animation: fadeIn 1s ease-out;
+  padding: 2rem 0; /* Add some vertical padding */
 }
 
 .textContent {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 2rem;
   text-align: center;
   max-width: 100%;
 }
 
 .title {
-  font-size: 3.5rem;
-  font-weight: 700;
-  color: white;
-  line-height: 1.2;
+  font-size: 4rem;
+  font-weight: 800;
+  line-height: 1.1;
   letter-spacing: -0.02em;
-}
-
-.titleSpan {
-  display: block;
-  margin-top: 0.5rem;
-  /* font-size: 1.5rem; */
-  color: rgb(3, 103, 149);
+  background: linear-gradient(to right, #fff, #93c5fd);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: slideDown 0.8s ease-out;
+  text-shadow: 0 0 80px rgba(147, 197, 253, 0.2);
 }
 
 .description {
-  font-size: 1.125rem;
-  color: #e5e7eb;
-  line-height: 1.6;
+  font-size: 1.25rem;
+  color: #e2e8f0;
+  line-height: 1.7;
   max-width: 36rem;
   margin: 0 auto;
+  animation: slideDown 0.8s ease-out 0.2s backwards;
 }
 
 .ctaButton {
-  display: inline-block;
-  padding: 1rem 2rem;
-  background-color: #7c3aed;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.25rem 3rem;
+  background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
   color: white;
   border: none;
-  border-radius: 0.5rem;
-  font-size: 1.125rem;
+  border-radius: 12px;
+  font-size: 1.25rem;
   font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.2s ease;
-  margin: 0 auto;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  animation: slideUp 0.8s ease-out 0.4s backwards;
+  box-shadow: 
+    0 8px 24px rgba(99, 102, 241, 0.3),
+    0 4px 8px rgba(99, 102, 241, 0.2),
+    0 0 0 2px rgba(99, 102, 241, 0.1);
+}
+
+.ctaButton::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.2) 50%,
+    transparent 100%
+  );
+  animation: shine 3s infinite;
 }
 
 .ctaButton:hover {
-  background-color: #6d28d9;
+  transform: translateY(-2px);
+  box-shadow: 
+    0 12px 32px rgba(99, 102, 241, 0.4),
+    0 8px 16px rgba(99, 102, 241, 0.3),
+    0 0 0 2px rgba(99, 102, 241, 0.2);
 }
 
 .imageSection {
   width: 100%;
-  max-width: 400px;
+  max-width: 500px;
   margin: 0 auto;
+  animation: slideUp 0.8s ease-out 0.6s backwards;
 }
 
 .imageWrapper {
   position: relative;
   width: 100%;
   aspect-ratio: 3/4;
-  border-radius: 1rem;
+  border-radius: 24px;
   overflow: hidden;
+  box-shadow: 
+    0 20px 40px rgba(0, 0, 0, 0.3),
+    0 0 80px rgba(99, 102, 241, 0.2);
+  transform: perspective(1000px) rotateY(-5deg);
+  transition: transform 0.6s ease;
+}
+
+.imageWrapper:hover {
+  transform: perspective(1000px) rotateY(0deg);
 }
 
 .image {
   width: 100%;
   height: 100%;
-  border-radius: 1rem;
+  border-radius: 24px;
+  transform: scale(1.05);
+  transition: transform 0.6s ease;
+}
+
+.imageWrapper:hover .image {
+  transform: scale(1);
 }
 
 .imageOverlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(90deg, rgba(76, 29, 149, 0.2) 0%, transparent 100%);
-  border-radius: 1rem;
+  background: linear-gradient(
+    90deg,
+    rgba(99, 102, 241, 0.2) 0%,
+    transparent 100%
+  );
+  border-radius: 24px;
 }
 
 .backgroundElements {
   position: absolute;
   inset: 0;
-  opacity: 0.3;
+  opacity: 0.4;
+}
+
+.purpleBlur,
+.indigoBlur {
+  position: absolute;
+  width: 30rem;
+  height: 30rem;
+  border-radius: 50%;
+  filter: blur(100px);
+  animation: float 20s infinite;
 }
 
 .purpleBlur {
-  position: absolute;
-  top: 25%;
-  left: 25%;
-  width: 16rem;
-  height: 16rem;
-  background-color: #7c3aed;
-  border-radius: 50%;
-  filter: blur(70px);
+  background: radial-gradient(circle, #6366f1 0%, transparent 70%);
+  top: -10%;
+  left: -10%;
+  animation-delay: -10s;
 }
 
 .indigoBlur {
-  position: absolute;
-  bottom: 25%;
-  right: 25%;
-  width: 16rem;
-  height: 16rem;
-  background-color: #4f46e5;
-  border-radius: 50%;
-  filter: blur(70px);
+  background: radial-gradient(circle, #4f46e5 0%, transparent 70%);
+  bottom: -10%;
+  right: -10%;
 }
 
-/* Tablet Styles */
-@media (min-width: 768px) {
-  .contentWrapper {
-    padding: 3rem 1.5rem;
-  }
+@keyframes float {
+  0%, 100% { transform: translate(0, 0); }
+  50% { transform: translate(-30px, 30px); }
+}
 
-  .title {
-    font-size: 3.5rem;
-  }
+@keyframes shine {
+  0% { left: -100%; }
+  20% { left: 100%; }
+  100% { left: 100%; }
+}
 
-  .description {
-    font-size: 1.25rem;
-  }
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
 
-  .imageSection {
-    max-width: 500px;
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
 /* Desktop Styles */
 @media (min-width: 1024px) {
   .contentWrapper {
-    padding: 5rem 2rem;
+    padding: 0 2rem;
   }
 
   .gridContainer {
     flex-direction: row;
     justify-content: space-between;
+    gap: 4rem;
     text-align: left;
   }
 
@@ -176,6 +249,26 @@
   }
 
   .title {
-    font-size: 4rem;
+    font-size: 4.5rem;
+  }
+}
+
+/* Tablet and Mobile Styles */
+@media (max-width: 1023px) {
+  .contentWrapper {
+    padding: 0.5rem 1.5rem;
+  }
+
+  .title {
+    font-size: 3rem;
+  }
+
+  .description {
+    font-size: 1.125rem;
+  }
+
+  .ctaButton {
+    width: 100%;
+    max-width: 300px;
   }
 }
