@@ -45,7 +45,7 @@ const Dashboard: React.FC = () => {
     };
 
     fetchGroups();
-  }, [user]);
+  }, [user, supabase]);
 
  
 

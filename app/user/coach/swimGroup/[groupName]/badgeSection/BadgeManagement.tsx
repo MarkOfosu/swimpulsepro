@@ -48,15 +48,11 @@ const BadgeManagementPage: React.FC = () => {
     };
 
     getSwimGroupId();
-  }, [groupName, supabase]);
+  }, [groupName, supabase, setSwimGroupId, setError]);
 
-  useEffect(() => {
-    if (swimGroupId) {
-      fetchBadges();
-    }
-  }, [swimGroupId]);
+ 
 
-  const fetchBadges = async () => {
+  const fetchBadges = React.useCallback(async () => {
     if (!swimGroupId) return;
 
     try {
@@ -73,7 +69,13 @@ const BadgeManagementPage: React.FC = () => {
       console.error('Error fetching badges:', err);
       setError('Failed to fetch badges. Please try again later.');
     }
-  };
+  }, [swimGroupId, supabase]);
+
+  useEffect(() => {
+    if (swimGroupId) {
+      fetchBadges();
+    }
+  }, [swimGroupId, fetchBadges]);
 
   const createBadge = async () => {
     if (!newBadgeName || !selectedIcon || !swimGroupId) return;

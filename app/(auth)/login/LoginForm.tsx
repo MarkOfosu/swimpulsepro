@@ -1,7 +1,6 @@
-// app/login/LoginForm.tsx
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@/utils/supabase/client';
 import styles from '../../styles/LoginPage.module.css';
@@ -19,6 +18,20 @@ const LoginForm: React.FC = () => {
   const { refreshUser } = useUser();
   const supabase = createClient();
   const [formFilled, setFormFilled] = useState(false);
+
+  const handleExistingSession = useCallback(async () => {
+    try {
+      await refreshUser();
+      const userDetails = await getUserDetails();
+      if (userDetails?.role === 'coach') {
+        setShouldRedirect('/user/coach/dashboard');
+      } else if (userDetails?.role === 'swimmer') {
+        setShouldRedirect('/user/swimmer/dashboard');
+      }
+    } catch (err) {
+      // console.error('Session validation failed:', err);
+    }
+  }, [refreshUser, setShouldRedirect]);
 
   // Handle redirects in useEffect
   useEffect(() => {
@@ -41,21 +54,7 @@ const LoginForm: React.FC = () => {
     };
 
     checkExistingSession();
-  }, [refreshUser, setShouldRedirect]);
-
-  const handleExistingSession = async () => {
-    try {
-      await refreshUser();
-      const userDetails = await getUserDetails();
-      if (userDetails?.role === 'coach') {
-        setShouldRedirect('/user/coach/dashboard');
-      } else if (userDetails?.role === 'swimmer') {
-        setShouldRedirect('/user/swimmer/dashboard');
-      }
-    } catch (err) {
-      // console.error('Session validation failed:', err);
-    }
-  }
+  }, [supabase, handleExistingSession]);
 
   const handleInputChange = (e: React.FormEvent<HTMLFormElement>) => {
     const form = e.currentTarget;
@@ -64,7 +63,7 @@ const LoginForm: React.FC = () => {
     setFormFilled(email !== '' && password !== '');
   };
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = useCallback(async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
@@ -95,7 +94,7 @@ const LoginForm: React.FC = () => {
       setError(err instanceof Error ? err.message : 'Login failed');
       setLoading(false);
     }
-  };
+  }, [supabase, refreshUser, setShouldRedirect, setLoading, setError]);
 
   return (
     <>
@@ -166,7 +165,7 @@ const LoginForm: React.FC = () => {
                 </button>
 
                 <div className={styles.signupPrompt}>
-                  <span>Don't have an account?</span>
+                  <span>Don&apos;t have an account?</span>
                   <button
                     type="button"
                     onClick={() => router.push('/getStarted')}

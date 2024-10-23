@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { createClient } from '@/utils/supabase/client';
 import { SwimGroupSelector } from '../swimGroup/attendance/SwimGroupSelector';
 import { AttendanceList } from './AttendanceList';
@@ -31,6 +31,14 @@ interface AttendanceRecorderProps {
   groupId?: string;
 }
 
+interface SwimmerResponse {
+  id: string;
+  profiles: {
+    first_name: string;
+    last_name: string;
+  };
+}
+
 const AttendanceRecorder: React.FC<AttendanceRecorderProps> = ({ groupId }) => {
   const [swimGroups, setSwimGroups] = useState<SwimGroup[]>([]);
   const [selectedGroupId, setSelectedGroupId] = useState<string | null>(groupId || null);
@@ -44,48 +52,15 @@ const AttendanceRecorder: React.FC<AttendanceRecorderProps> = ({ groupId }) => {
   const supabase = createClient();
   const { showToast, ToastContainer } = useToast();
 
-  useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        const data = await getUserDetails();
-        if (data && data.role === 'coach') {
-          setUserData(data);
-        } else {
-          setError('User is not a coach or failed to fetch user data');
-        }
-      } catch (err) {
-        console.error('Error fetching user data:', err);
-        setError('Failed to load user details');
-      }
-    };
-
-    fetchUserData();
-    setCurrentDate();
-  }, []);
-
-  useEffect(() => {
-    if (userData) {
-      fetchSwimGroups();
-    }
-  }, [userData]);
-
-  useEffect(() => {
-    if (selectedGroupId && attendanceDate) {
-      fetchSwimmers();
-      fetchAttendanceRecords();
-    }
-  }, [selectedGroupId, attendanceDate]);
-
-  const setCurrentDate = () => {
+  const setCurrentDate = useCallback(() => {
     const now = new Date();
     const offset = now.getTimezoneOffset();
     const localDate = new Date(now.getTime() - (offset*60*1000));
     setAttendanceDate(localDate.toISOString().split('T')[0]);
-  };
+  }, []);
 
-  const fetchSwimGroups = async () => {
+  const fetchSwimGroups = useCallback(async () => {
     if (!userData) return;
-
 
     const { data, error } = await supabase
       .from('swim_groups')
@@ -101,17 +76,9 @@ const AttendanceRecorder: React.FC<AttendanceRecorderProps> = ({ groupId }) => {
         setSelectedGroupId(data[0].id);
       }
     }
-  };
+  }, [userData, supabase, selectedGroupId]);
 
-  interface SwimmerResponse {
-    id: string;
-    profiles: {
-      first_name: string;
-      last_name: string;
-    };
-  }
-  
-  const fetchSwimmers = async () => {
+  const fetchSwimmers = useCallback(async () => {
     if (!selectedGroupId) return;
   
     const { data, error } = await supabase
@@ -132,9 +99,9 @@ const AttendanceRecorder: React.FC<AttendanceRecorderProps> = ({ groupId }) => {
         lastName: swimmer.profiles.last_name,
       })));
     }
-  };
+  }, [selectedGroupId, supabase]);
 
-  const fetchAttendanceRecords = async () => {
+  const fetchAttendanceRecords = useCallback(async () => {
     if (!selectedGroupId) return;
 
     const { data, error } = await supabase
@@ -153,18 +120,50 @@ const AttendanceRecorder: React.FC<AttendanceRecorderProps> = ({ groupId }) => {
         notes: record.notes
       })));
     }
-  };
+  }, [selectedGroupId, attendanceDate, supabase]);
 
-  const handleGroupSelect = (groupId: string) => {
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const data = await getUserDetails();
+        if (data && data.role === 'coach') {
+          setUserData(data);
+        } else {
+          setError('User is not a coach or failed to fetch user data');
+        }
+      } catch (err) {
+        console.error('Error fetching user data:', err);
+        setError('Failed to load user details');
+      }
+    };
+
+    fetchUserData();
+    setCurrentDate();
+  }, [setCurrentDate]);
+
+  useEffect(() => {
+    if (userData) {
+      fetchSwimGroups();
+    }
+  }, [userData, fetchSwimGroups]);
+
+  useEffect(() => {
+    if (selectedGroupId && attendanceDate) {
+      fetchSwimmers();
+      fetchAttendanceRecords();
+    }
+  }, [selectedGroupId, attendanceDate, fetchSwimmers, fetchAttendanceRecords]);
+
+  const handleGroupSelect = useCallback((groupId: string) => {
     setSelectedGroupId(groupId);
     setCurrentDate();
-  };
+  }, [setCurrentDate]);
 
   const handleDateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setAttendanceDate(event.target.value);
   };
 
-  const handleAttendanceSubmit = async (records: AttendanceRecord[]) => {
+  const handleAttendanceSubmit = useCallback(async (records: AttendanceRecord[]) => {
     if (!selectedGroupId || !userData) return;
 
     const { data, error } = await supabase
@@ -191,12 +190,12 @@ const AttendanceRecorder: React.FC<AttendanceRecorderProps> = ({ groupId }) => {
       fetchAttendanceRecords();
       resetFields();
     }
-  };
+  }, [selectedGroupId, userData, attendanceDate, supabase, showToast, fetchAttendanceRecords]);
 
-  const resetFields = () => {
+  const resetFields = useCallback(() => {
     setCurrentDate();
     setAttendanceRecords([]);
-  };
+  }, [setCurrentDate]);
 
   if (error) {
     return <div className={styles.error}>{error}</div>;
