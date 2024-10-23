@@ -26,26 +26,33 @@ const SwimTeamPage: React.FC = () => {
     e.preventDefault();
     setError('');
     setLoading(true);
-
+  
     try {
+      // Simplified query without eq
       const { data: groupData, error: groupError } = await supabase
         .from('swim_groups')
         .select('id, name, description, coach_id, group_code')
-        .eq('group_code', groupCode)
-        .single();
-
+        .filter('group_code', 'eq', groupCode)
+        .limit(1)
+        .maybeSingle();
+  
       if (groupError) {
-        if (groupError.code === 'PGRST116') {
-          setError('No group found with this code.');
-        } else {
-          throw groupError;
-        }
-      } else if (groupData) {
-        // We found a group, now let's join it
-        await handleJoinGroup(groupData.id);
+        console.error('Group fetch error:', groupError);
+        setError('Failed to fetch group details. Please try again.');
+        return;
       }
+  
+      if (!groupData) {
+        setError('No group found with this code.');
+        return;
+      }
+  
+      // We found a group, now let's join it
+      await handleJoinGroup(groupData.id);
+  
     } catch (error) {
-      setError((error as Error).message || 'Failed to fetch group details. Please try again.');
+      console.error('Submit error:', error);
+      setError((error as Error).message || 'An unexpected error occurred. Please try again.');
     } finally {
       setLoading(false);
     }
