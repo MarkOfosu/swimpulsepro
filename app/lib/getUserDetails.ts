@@ -27,7 +27,7 @@ export async function getUserDetails(): Promise<UserData | null> {
 
   const { data: { user }, error: userError } = await supabase.auth.getUser();
   if (userError || !user) {
-    console.error('Error fetching user:', userError);
+    // console.error('Error fetching user:', userError);
     return null;
   }
 
@@ -38,7 +38,7 @@ export async function getUserDetails(): Promise<UserData | null> {
     .single();
 
   if (profileError || !profileData) {
-    console.error('Error fetching profile:', profileError);
+    // console.error('Error fetching profile:', profileError);
     return null;
   }
 
@@ -60,7 +60,7 @@ export async function getUserDetails(): Promise<UserData | null> {
       .single();
 
     if (swimmerError) {
-      console.error('Error fetching swimmer details:', swimmerError);
+      // console.error('Error fetching swimmer details:', swimmerError);
     } else if (swimmerData) {
       userData.group_id = swimmerData.group_id;
       userData.age_group = swimmerData.age_group;
@@ -73,7 +73,7 @@ export async function getUserDetails(): Promise<UserData | null> {
           .single();
 
         if (groupError) {
-          console.error('Error fetching group details:', groupError);
+          // console.error('Error fetching group details:', groupError);
         } else if (groupData) {
           userData.group_name = groupData.name;
 
@@ -85,7 +85,7 @@ export async function getUserDetails(): Promise<UserData | null> {
               .single();
 
             if (coachError) {
-              console.error('Error fetching coach details:', coachError);
+              // console.error('Error fetching coach details:', coachError);
             } else if (coachData) {
               userData.coach_first_name = coachData.first_name;
               userData.coach_last_name = coachData.last_name;
@@ -102,7 +102,7 @@ export async function getUserDetails(): Promise<UserData | null> {
       .single();
 
     if (coachError) {
-      console.error('Error fetching coach details:', coachError);
+      // console.error('Error fetching coach details:', coachError);
     } else if (coachData && coachData.team_id) {
       const { data: teamData, error: teamError } = await supabase
         .from('teams')
@@ -111,7 +111,7 @@ export async function getUserDetails(): Promise<UserData | null> {
         .single();
 
       if (teamError) {
-        console.error('Error fetching team details:', teamError);
+        // console.error('Error fetching team details:', teamError);
       } else if (teamData) {
         userData.team_name = teamData.name;
         userData.team_location = teamData.location;

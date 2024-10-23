@@ -1,15 +1,25 @@
+// actions.ts
 'use server'
 
-import { redirect } from 'next/navigation';
+import { cookies } from 'next/headers';
 import { createClient } from '@/utils/supabase/server';
-// import { useRouter } from 'next/navigation';
-import React from 'react';
 
 export async function logout() {
-  // const router = useRouter();
-  const supabase = createClient();
-  await supabase.auth.signOut();
-  return { success: true, message: 'Logged out successfully' }; 
-  // router.push('/login');
-}
+  try {
+    const cookieStore = cookies();
+    const supabase = createClient();
+    
+    // Sign out from Supabase server-side
+    await supabase.auth.signOut();
 
+    // Clear all cookies
+    for (const cookie of cookieStore.getAll()) {
+      cookieStore.delete(cookie.name);
+    }
+
+    return { success: true, message: 'Logged out successfully' };
+  } catch (error) {
+    console.error('Server-side logout error:', error);
+    return { success: false, message: 'Failed to logout' };
+  }
+}

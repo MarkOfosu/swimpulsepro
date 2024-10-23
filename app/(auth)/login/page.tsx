@@ -1,29 +1,34 @@
-// app/login/page.tsx
+// app/(auth)/login/page.tsx
 "use client";
+
 import React, { useEffect, useState } from 'react';
 import { getUserDetails } from '../../lib/getUserDetails';
 import LoginForm from './LoginForm';
 import { useRouter } from 'next/navigation';
 import Loader from '../../../components/elements/Loader';
-import styles from '../../styles/LoginPage.module.css';
 
 const LoginPage: React.FC = () => {
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [shouldRedirect, setShouldRedirect] = useState<string | null>(null);
   const router = useRouter();
 
   useEffect(() => {
     const fetchUser = async () => {
       try {
         const userDetails = await getUserDetails();
+        setUser(userDetails);
         if (userDetails) {
-          setUser(userDetails);
-          setLoading(false);
-        } else {
-          setLoading(false);
+          setShouldRedirect(
+            userDetails.role === 'coach' 
+              ? '/user/coach/dashboard' 
+              : '/user/swimmer/dashboard'
+          );
         }
       } catch (err) {
+        setError(err instanceof Error ? err.message : 'An error occurred');
+      } finally {
         setLoading(false);
       }
     };
@@ -31,27 +36,32 @@ const LoginPage: React.FC = () => {
     fetchUser();
   }, []);
 
+  // Handle navigation in a separate useEffect
+  useEffect(() => {
+    if (shouldRedirect) {
+      router.push(shouldRedirect);
+    }
+  }, [shouldRedirect, router]);
+
   if (loading) {
     return (
-      <div className={styles.loaderContainer}>
+      <div className="flex justify-center items-center min-h-screen">
         <Loader />
       </div>
     );
   }
 
   if (error) {
-    return <div className={styles.errorContainer}>{error}</div>;
+    return <div className="text-red-500 text-center p-4">{error}</div>;
   }
 
-  if (user?.role === 'coach') {
-    router.push('/user/coach/dashboard');
-    return null;
-  } else if (user?.role === 'swimmer') {
-    router.push('/user/swimmer/dashboard');
-    return null;
+  // Show login form if no user or redirect path
+  if (!shouldRedirect) {
+    return <LoginForm />;
   }
 
-  return <LoginForm />;
+  // Return null while redirect is happening
+  return null;
 };
 
 export default LoginPage;
