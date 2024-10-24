@@ -1,0 +1,146 @@
+.upcomingActivities {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .activityCard {
+    background: white;
+    border-radius: 12px;
+    padding: 1.25rem;
+    border: 1px solid #e0e0e0;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  
+  .activityCard:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  }
+  
+  .activityHeader {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+    color: #05857b;
+  }
+  
+  .activityHeader h3 {
+    margin: 0;
+    font-size: 1.1rem;
+    color: #333;
+    font-weight: 600;
+  }
+  
+  .activityDetails {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+  }
+  
+  .activityTime,
+  .activityLocation,
+  .activityGroups {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #666;
+    font-size: 0.9rem;
+    margin: 0;
+  }
+  
+  .activityDescription {
+    color: #666;
+    font-size: 0.95rem;
+    line-height: 1.4;
+    margin: 0 0 1rem 0;
+  }
+  
+  .responses {
+    border-top: 1px solid #e0e0e0;
+    padding-top: 1rem;
+  }
+  
+  .responseStats {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+  
+  .responseStat {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.25rem 0.75rem;
+    background: #f5f5f5;
+    border-radius: 16px;
+    font-size: 0.85rem;
+    color: #666;
+  }
+  
+  .responseButtons {
+    display: flex;
+    gap: 0.75rem;
+  }
+  
+  .attendButton,
+  .interestedButton {
+    flex: 1;
+    padding: 0.75rem;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  
+  .attendButton {
+    background: #05857b;
+    color: white;
+    border: none;
+  }
+  
+  .attendButton:hover {
+    background: #046d64;
+  }
+  
+  .interestedButton {
+    background: white;
+    color: #05857b;
+    border: 1px solid #05857b;
+  }
+  
+  .interestedButton:hover {
+    background: rgba(5, 133, 123, 0.1);
+  }
+  
+  .emptyState {
+    text-align: center;
+    padding: 2rem;
+    background: white;
+    border-radius: 8px;
+    border: 1px dashed #e0e0e0;
+    color: #666;
+  }
+  
+  .loading {
+    text-align: center;
+    padding: 1rem;
+    color: #666;
+  }
+  
+  .error {
+    color: #ef5350;
+    text-align: center;
+    padding: 1rem;
+    background: #ffebee;
+    border-radius: 8px;
+    margin: 1rem 0;
+  }
+  
+  @media (max-width: 640px) {
+    .responseButtons {
+      flex-direction: column;
+    }
+  }

@@ -25,7 +25,7 @@ const LoginForm: React.FC = () => {
       await refreshUser();
       const userDetails = await getUserDetails();
       if (userDetails?.role === 'coach') {
-        setShouldRedirect('/user/coach/swimGroup');
+        setShouldRedirect('/user/coach/coachDashboard');
       } else if (userDetails?.role === 'swimmer') {
         setShouldRedirect('/user/swimmer/dashboard');
       }
@@ -85,7 +85,7 @@ const LoginForm: React.FC = () => {
       const userDetails = await getUserDetails();
 
       if (userDetails?.role === 'coach') {
-        setShouldRedirect('/user/coach/swimGroup');
+        setShouldRedirect('/user/coach/coachDashboard');
       } else if (userDetails?.role === 'swimmer') {
         setShouldRedirect('/user/swimmer/dashboard');
       } else {

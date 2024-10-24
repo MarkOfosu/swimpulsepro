@@ -16,7 +16,6 @@ export async function logout() {
     for (const cookie of cookieStore.getAll()) {
       cookieStore.delete(cookie.name);
     }
-
     return { success: true, message: 'Logged out successfully' };
   } catch (error) {
     console.error('Server-side logout error:', error);

@@ -42,7 +42,9 @@ export default function LogoutButton() {
         // Use different redirect strategies based on role
         if (user?.role === 'swimmer') {
           // For swimmers, do a full page reload to clear any cached states
-          window.location.href = '/login';
+          // window.location.href = '/login';
+          router.push('/login');
+          router.refresh();
         } else {
           // For coaches, use the Next.js router
           router.push('/login');

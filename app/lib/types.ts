@@ -203,12 +203,6 @@ export type Metric = TimeTrialMetric | DistanceChallengeMetric | TechniqueAssess
                       RaceAnalysisMetric | ProgressTrackerMetric | BaseFitnessTestMetric;
 
 
-export interface SwimGroup {
-  id: string;
-  name: string;
-  group_code: string;
-}
-
 export interface User {
   id: string;
   first_name: string;
@@ -272,6 +266,72 @@ export interface SwimStandard {
   aaaa_standard: string;
   created_at: string;
   updated_at: string;
+}
+
+// Types for activities and events
+export interface UpcomingActivity {
+  id: string;
+  title: string;
+  description: string;
+  activity_type: 'meet' | 'practice' | 'event';
+  start_date: string;
+  end_date?: string;
+  location: string;
+  coach_id: string;
+  groups: {
+    id: string;
+    name: string;
+  }[];
+  responses?: {
+    count: number;
+    status: 'attending' | 'interested' | 'not_attending';
+  }[];
+}
+
+export interface ActivityResponse {
+  id: string;
+  activity_id: string;
+  swimmer_id: string;
+  response_status: 'attending' | 'interested' | 'not_attending';
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ActivityFeedItem {
+  id: string;
+  swimmer_id: string;
+  group_id: string;
+  coach_id: string;
+  activity_type: 'achievement' | 'swim_result' | 'badge_earned' | 'attendance';
+  title: string;
+  description: string;
+  reference_id: string;
+  reference_table: string;
+  created_at: string;
+  swimmer: {
+    profiles: {
+      first_name: string;
+      last_name: string;
+    };
+  };
+}
+
+export interface DashboardMetrics {
+  totalSwimmers: number;
+  totalGroups: number;
+  activeSwimmers: number;
+  totalBadgesAwarded: number;
+  attendanceRate: number;
+}
+
+// Shared interfaces
+export interface SwimGroup {
+  id: string;
+  name: string;
+  description: string;
+  group_code: string;
+  coach_id?: string;
+  swimmers?: { count: number }[];
 }
 
 

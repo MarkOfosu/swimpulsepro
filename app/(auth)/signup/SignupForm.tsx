@@ -279,7 +279,7 @@ const SignupForm: React.FC<{ role: 'coach' | 'swimmer' }> = ({ role }) => {
         localStorage.setItem('refreshToken', data.session.refresh_token);
         localStorage.setItem('tokenExpiry', data.session.expires_at?.toString() || '');
         refreshUser();
-        router.push(role === 'coach' ? '/user/coach/swimGroup' : '/user/swimmer/dashboard');
+        router.push(role === 'coach' ? '/user/coach/coachDashboard' : '/user/swimmer/dashboard');
       } else {
         setError('Signup successful. Please check your email to confirm your account.');
       }
