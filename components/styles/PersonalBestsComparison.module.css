@@ -1,24 +1,44 @@
 /* PersonalBestsComparison.module.css */
-
 .table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
+  width: 100%;
+  border-spacing: 0;
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.table th {
+  background: #f8fafc;
+  padding: 1rem;
+  text-align: left;
+  font-weight: 600;
+  color: #1e293b;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.table td {
+  padding: 1rem;
+  border-bottom: 1px solid #e2e8f0;
+  color: #475569;
+}
+
+.achievedStandard {
+  font-weight: 600;
+}
+
+.achievedStandard[data-standard="AAAA"] { color: #7c3aed; }
+.achievedStandard[data-standard="AAA"] { color: #2563eb; }
+.achievedStandard[data-standard="AA"] { color: #059669; }
+.achievedStandard[data-standard="A"] { color: #0891b2; }
+.achievedStandard[data-standard="BB"] { color: #ca8a04; }
+.achievedStandard[data-standard="B"] { color: #dc2626; }
+.achievedStandard[data-standard="Pre-B"] { color: #6b7280; }
+
+@media (max-width: 768px) {
+  .table {
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
   }
-  
-  .table th,
-  .table td {
-    border: 1px solid #ddd;
-    padding: 8px;
-    text-align: left;
-  }
-  
-  .table th {
-    background-color: #f2f2f2;
-    font-weight: bold;
-  }
-  
-  .achievedStandard {
-    font-weight: bold;
-    color: #28a745;
-  }
+}

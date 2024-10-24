@@ -6,55 +6,31 @@ import { createClient } from '@/utils/supabase/client';
 import CoachPageLayout from '../CoachPageLayout';
 import Loader from '@components/elements/Loader';
 import { useToast } from '@components/elements/toasts/Toast';
+import { ActivityFeed } from '@components/elements/dashboard/ActivityFeed';
+import { UpcomingActivities } from '@components/elements/dashboard/UpcomingActivities';
+import { DashboardUtils } from '@/utils/dashboard/dashboardUtils';
 import { 
-  LineChart, Activity, Users, Award, 
-  Calendar, Plus, User, Clock, MapPin
+  Activity, Users, Award, 
+  Calendar, Plus, User
 } from 'lucide-react';
 import { useUser } from '../../../context/UserContext';
 import styles from '../../../styles/Dashboard.module.css';
+import DashboardLoading from './loading';
+import { SwimGroup, DashboardMetrics } from '../../../lib/types';
 import CreateSwimGroupModal from './createSwimGroup/CreateSwimGroupModal';
 import InviteSwimmerModal from './[swimGroupName]/inviteSwimmer/InviteSwimmerModal';
-import DashboardLoading from './loading';
 
-interface SwimGroup {
-  id: string;
-  name: string;
-  description: string;
-  group_code: string;
-  coach_id: string;
-  swimmers: { count: number }[];
-}
-
-interface DashboardMetrics {
-  totalSwimmers: number;
-  totalGroups: number;
-  activeSwimmers: number;
-  totalBadgesAwarded: number;
-  attendanceRate: number;
-}
-
-interface Activity {
-  id: string;
-  type: string;
-  description: string;
-  created_at: string;
-  swimmer_id: string;
-  profiles?: {
-    first_name: string;
-    last_name: string;
-  };
-}
-
-interface Event {
-  id: string;
-  title: string;
-  date: string;
-  location: string;
-  description: string;
-}
+// Initialize Supabase client
+const supabase = createClient();
 
 const CoachDashboard: React.FC = () => {
+  // User and navigation
   const { user } = useUser();
+  const router = useRouter();
+  const { showToast, ToastContainer } = useToast();
+
+  // State
+  const [dashboardUtils, setDashboardUtils] = useState<DashboardUtils | null>(null);
   const [swimGroups, setSwimGroups] = useState<SwimGroup[]>([]);
   const [metrics, setMetrics] = useState<DashboardMetrics>({
     totalSwimmers: 0,
@@ -63,127 +39,70 @@ const CoachDashboard: React.FC = () => {
     totalBadgesAwarded: 0,
     attendanceRate: 0,
   });
-  const [recentActivities, setRecentActivities] = useState<Activity[]>([]);
-  const [upcomingEvents, setUpcomingEvents] = useState<Event[]>([]);
+  const [recentActivities, setRecentActivities] = useState<any[]>([]);
+  const [upcomingActivities, setUpcomingActivities] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [activityPage, setActivityPage] = useState(1);
+  const [hasMoreActivities, setHasMoreActivities] = useState(false);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showInviteModal, setShowInviteModal] = useState(false);
   const [selectedGroup, setSelectedGroup] = useState<SwimGroup | null>(null);
-  
-  const { showToast, ToastContainer } = useToast();
-  const router = useRouter();
-  const supabase = createClient();
 
-  const fetchDashboardData = useCallback(async () => {
-    if (!user?.id) {
-      setError('User not authenticated');
-      setLoading(false);
-      return;
+  // Initialize DashboardUtils
+  useEffect(() => {
+    if (user?.id) {
+      setDashboardUtils(new DashboardUtils(user.id, 'coach'));
     }
+  }, [user?.id]);
 
+  // Fetch dashboard data
+  const fetchDashboardData = useCallback(async () => {
+    if (!dashboardUtils || !user?.id) return;
+  
     try {
       setLoading(true);
       setError(null);
-
-      // Fetch swim groups with swimmer count
-      const { data: groupsData, error: groupsError } = await supabase
-        .from('swim_groups')
-        .select(`
-          id,
-          name,
-          description,
-          group_code,
-          coach_id,
-          swimmers(count)
-        `)
-        .eq('coach_id', user.id)
-        .order('name', { ascending: true });
-
-      if (groupsError) throw groupsError;
-
-      // Validate and transform groups data
-      const validatedGroups = (groupsData || []).map(group => ({
-        id: group.id,
-        name: group.name || 'Unnamed Group',
-        description: group.description || 'No description available',
-        group_code: group.group_code || 'No code available',
-        coach_id: group.coach_id,
-        swimmers: group.swimmers || [{ count: 0 }]
-      }));
-
-      setSwimGroups(validatedGroups);
-
-      // Calculate total swimmers
-      const totalSwimmers = validatedGroups.reduce((acc, group) => 
-        acc + (group.swimmers[0]?.count || 0), 0);
-
-      setMetrics({
-        totalSwimmers,
-        totalGroups: validatedGroups.length,
-        activeSwimmers: totalSwimmers,
-        totalBadgesAwarded: 0,
-        attendanceRate: 100,
-      });
-
-      // Note: These queries need to be adjusted based on your actual database structure
-      try {
-        const { data: activitiesData } = await supabase
-          .from('activities')
-          .select(`
-            id,
-            description,
-            created_at,
-            type,
-            swimmer_id,
-            profiles (
-              first_name,
-              last_name
-            )
-          `)
-          .in('group_id', validatedGroups.map(g => g.id))
-          .order('created_at', { ascending: false })
-          .limit(5);
-
-        const validatedActivities = (activitiesData || []).map(activity => ({
-          ...activity,
-          profiles: activity.profiles ? activity.profiles[0] : undefined,
-        }));
-
-        setRecentActivities(validatedActivities);
-      } catch (activityError) {
-        // console.log('Error fetching activities:', activityError);
-      }
-
-      try {
-        const { data: eventsData } = await supabase
-          .from('events')
-          .select('*')
-          .in('group_id', validatedGroups.map(g => g.id))
-          .order('date', { ascending: true })
-          .limit(3);
-
-        setUpcomingEvents(eventsData || []);
-      } catch (eventError) {
-        // console.log('Error fetching events:', eventError);
-      }
-
+  
+      // Fetch all data concurrently
+      const [
+        groups,
+        metricsData,
+        activitiesResponse,
+        upcomingResponse
+      ] = await Promise.all([
+        dashboardUtils.fetchSwimGroups(),
+        dashboardUtils.fetchDashboardMetrics(),
+        dashboardUtils.fetchActivityFeed({ page: activityPage }),
+        dashboardUtils.fetchUpcomingActivities()
+      ]);
+  
+  
+      // Update state with fetched data
+      setSwimGroups(groups);
+      setMetrics(metricsData);
+      setRecentActivities(activitiesResponse.data);
+      setHasMoreActivities(activitiesResponse.metadata.hasMore);
+      setUpcomingActivities(upcomingResponse.data);
+  
     } catch (err) {
-      // console.error('Error in fetchDashboardData:', err);
-      setError(err instanceof Error ? err.message : 'Failed to fetch dashboard data');
+      console.error('Error in fetchDashboardData:', err);
+      setError('Failed to fetch dashboard data');
       showToast('Failed to fetch dashboard data. Please try again later.', 'error');
     } finally {
       setLoading(false);
     }
-  }, [user?.id, supabase]);
+  }, [dashboardUtils, user?.id, activityPage]);
 
+  // Initial data fetch
   useEffect(() => {
     fetchDashboardData();
   }, [fetchDashboardData]);
 
-  const handleCreateGroup = () => {
-    setShowCreateModal(true);
-  };
+  // Handlers
+  const handleLoadMoreActivities = useCallback(() => {
+    setActivityPage(prev => prev + 1);
+  }, []);
 
   const handleGroupClick = (swimGroupName: string) => {
     if (!swimGroupName) {
@@ -193,16 +112,20 @@ const CoachDashboard: React.FC = () => {
     router.push(`/user/coach/swimGroup/${encodeURIComponent(swimGroupName)}`);
   };
 
+  const handleCreateGroup = () => setShowCreateModal(true);
+
   const handleInvite = (e: React.MouseEvent, group: SwimGroup) => {
     e.stopPropagation();
     setSelectedGroup(group);
     setShowInviteModal(true);
   };
 
+  // Loading state
   if (loading) {
     return <DashboardLoading />;
   }
 
+  // Error state
   if (error) {
     return (
       <CoachPageLayout>
@@ -222,9 +145,11 @@ const CoachDashboard: React.FC = () => {
     );
   }
 
+  // Main render
   return (
     <CoachPageLayout>
       <div className={styles.dashboardContainer}>
+        {/* Welcome Section */}
         <section className={styles.welcomeSection}>
           <div className={styles.welcomeContent}>
             <h1>Welcome, Coach {user?.first_name}!</h1>
@@ -236,6 +161,7 @@ const CoachDashboard: React.FC = () => {
           </div>
         </section>
 
+        {/* Metrics Grid */}
         <div className={styles.metricsGrid}>
           <div className={styles.metricCard}>
             <div className={styles.metricIcon}>
@@ -278,7 +204,9 @@ const CoachDashboard: React.FC = () => {
           </div>
         </div>
 
+        {/* Content Grid */}
         <div className={styles.contentGrid}>
+          {/* Swim Groups Section */}
           <section className={styles.groupsSection}>
             <div className={styles.sectionHeader}>
               <h2>Swim Groups</h2>
@@ -291,31 +219,31 @@ const CoachDashboard: React.FC = () => {
               </button>
             </div>
             <div className={styles.groupsGrid}>
-              {swimGroups.map((group) => (
-                <div 
-                  key={group.id} 
-                  className={styles.groupCard}
-                  onClick={() => handleGroupClick(group.name)}
-                >
-                  <h3>{group.name}</h3>
-                  <p>{group.description}</p>
-                  <div className={styles.groupStats}>
-                    <span>
-                      <User size={16} />
-                      {group.swimmers[0]?.count || 0} swimmers
-                    </span>
-                    <span className={styles.groupCode}>
-                      Code: {group.group_code}
-                    </span>
-                  </div>
-                  <button
-                    onClick={(e) => handleInvite(e, group)}
-                    className={styles.inviteButton}
-                  >
-                    Invite Swimmer
-                  </button>
-                </div>
-              ))}
+            {swimGroups.map((group) => (
+  <div
+    key={group.id}
+    className={styles.groupCard}
+    onClick={() => handleGroupClick(group.name)}
+  >
+    <h3>{group.name}</h3>
+    <p>{group.description}</p>
+    <div className={styles.groupStats}>
+      <span>
+        <User size={16} />
+        {group.swimmerCount || 0} swimmers
+      </span>
+      <span className={styles.groupCode}>
+        Code: {group.group_code}
+      </span>
+    </div>
+    <button
+      onClick={(e) => handleInvite(e, group)}
+      className={styles.inviteButton}
+    >
+      Invite Swimmer
+    </button>
+  </div>
+))}
               {swimGroups.length === 0 && (
                 <div className={styles.emptyState}>
                   <p>No swim groups created yet</p>
@@ -325,81 +253,38 @@ const CoachDashboard: React.FC = () => {
             </div>
           </section>
 
+          {/* Side Content */}
           <div className={styles.sideContent}>
             <section className={styles.recentActivities}>
               <div className={styles.sectionHeader}>
                 <h2>Recent Activities</h2>
               </div>
-              <div className={styles.activityList}>
-                {recentActivities.map((activity) => (
-                  <div key={activity.id} className={styles.activityItem}>
-                    <div className={styles.activityIcon}>
-                      <Activity size={16} />
-                    </div>
-                    <div className={styles.activityContent}>
-                      <p className={styles.activityDescription}>
-                        {activity.description}
-                      </p>
-                      <div className={styles.activityMeta}>
-                        <span className={styles.activityTime}>
-                          <Clock size={14} />
-                          {new Date(activity.created_at).toLocaleDateString()}
-                        </span>
-                        {activity.profiles && (
-                          <span className={styles.activityUser}>
-                            <User size={14} />
-                            {activity.profiles.first_name} {activity.profiles.last_name}
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                ))}
-                {recentActivities.length === 0 && (
-                  <div className={styles.emptyState}>
-                    <p>No recent activities</p>
-                  </div>
-                )}
-              </div>
+              <ActivityFeed
+                activities={recentActivities}
+                loading={loading}
+                error={error}
+                onLoadMore={handleLoadMoreActivities}
+                hasMore={hasMoreActivities}
+              />
             </section>
 
             <section className={styles.upcomingEvents}>
               <div className={styles.sectionHeader}>
-                <h2>Upcoming Events</h2>
+                <h2>Upcoming Activities</h2>
               </div>
-              <div className={styles.eventsList}>
-                {upcomingEvents.map((event) => (
-                  <div key={event.id} className={styles.eventCard}>
-                    <div className={styles.eventHeader}>
-                      <Calendar size={18} />
-                      <h3>{event.title}</h3>
-                    </div>
-                    <div className={styles.eventDetails}>
-                      <p className={styles.eventDate}>
-                        <Clock size={14} />
-                        {new Date(event.date).toLocaleDateString()}
-                      </p>
-                      <p className={styles.eventLocation}>
-                        <MapPin size={14} />
-                        {event.location}
-                      </p>
-                    </div>
-                    {event.description && (
-                      <p className={styles.eventDescription}>{event.description}</p>
-                    )}
-                  </div>
-                ))}
-                {upcomingEvents.length === 0 && (
-                  <div className={styles.emptyState}>
-                    <p>No upcoming events</p>
-                  </div>
-                )}
-              </div>
+              <UpcomingActivities
+                activities={upcomingActivities}
+                loading={loading}
+                error={error}
+                userRole="coach"
+                showResponses={true}
+              />
             </section>
           </div>
         </div>
       </div>
 
+      {/* Modals */}
       {showCreateModal && (
         <CreateSwimGroupModal
           onClose={() => setShowCreateModal(false)}
@@ -432,3 +317,4 @@ const CoachDashboard: React.FC = () => {
 };
 
 export default CoachDashboard;
+

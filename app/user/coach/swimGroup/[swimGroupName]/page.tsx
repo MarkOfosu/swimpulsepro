@@ -58,7 +58,7 @@ interface SwimmerBadge {
   awarded_at: string;
 }
 
-const CoachDashboard: React.FC = () => {
+const SwimGroupPage: React.FC = () => {
   const [swimGroup, setSwimGroup] = useState<SwimGroup | null>(null);
   const [swimmers, setSwimmers] = useState<SwimmerWithDetails[]>([]);
   const [invitations, setInvitations] = useState<Invitation[]>([]);
@@ -403,4 +403,4 @@ const CoachDashboard: React.FC = () => {
   );
 };
 
-export default CoachDashboard;
+export default SwimGroupPage;

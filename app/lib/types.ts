@@ -332,6 +332,6 @@ export interface SwimGroup {
   group_code: string;
   coach_id?: string;
   swimmers?: { count: number }[];
+  swimmerCount?: number; // New property
 }
-
 

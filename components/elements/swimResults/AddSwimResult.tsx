@@ -1,4 +1,3 @@
-
 // components/elements/swimResults/AddSwimResult.tsx
 'use client';
 import React, { useState, useEffect } from 'react';
@@ -47,7 +46,6 @@ export const AddSwimResult: React.FC<AddSwimResultProps> = ({ swimmerId, onSubmi
     setEventId('');
     setTime('');
     setDate('');
-    
   };
 
   return (
@@ -60,8 +58,8 @@ export const AddSwimResult: React.FC<AddSwimResultProps> = ({ swimmerId, onSubmi
         required
         className={styles.input}
       />
-      <select 
-        value={eventId} 
+      <select
+        value={eventId}
         onChange={(e) => setEventId(e.target.value)}
         required
         className={styles.select}
@@ -89,7 +87,9 @@ export const AddSwimResult: React.FC<AddSwimResultProps> = ({ swimmerId, onSubmi
         required
         className={styles.input}
       />
-      <button type="submit" className={styles.button}>Add Result</button>
+      <button type="submit" className={styles.button}>
+        Add Result
+      </button>
     </form>
   );
 };
