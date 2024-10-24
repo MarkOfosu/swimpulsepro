@@ -7,7 +7,7 @@ const CoachPageLayout: React.FC<{ children: ReactNode }> = ({ children }) => {
  
 
   const links = [
-    { href: '/user/coach/dashboard', label: 'Dashboard' },
+    // { href: '/user/coach/dashboard', label: 'Dashboard' },
     { href: '/user/coach/swimGroup', label: 'Swim Groups' },
     { href: '/user/coach/analytics', label: 'Analytics' },
     { href: '/user/coach/workout', label: 'Workout' },
