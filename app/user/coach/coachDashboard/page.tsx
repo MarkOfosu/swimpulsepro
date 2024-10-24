@@ -13,7 +13,7 @@ import {
 import { useUser } from '../../../context/UserContext';
 import styles from '../../../styles/Dashboard.module.css';
 import CreateSwimGroupModal from './createSwimGroup/CreateSwimGroupModal';
-import InviteSwimmerModal from './[groupName]/inviteSwimmer/InviteSwimmerModal';
+import InviteSwimmerModal from './[swimGroupName]/inviteSwimmer/InviteSwimmerModal';
 import DashboardLoading from './loading';
 
 interface SwimGroup {
@@ -185,12 +185,12 @@ const CoachDashboard: React.FC = () => {
     setShowCreateModal(true);
   };
 
-  const handleGroupClick = (groupName: string) => {
-    if (!groupName) {
+  const handleGroupClick = (swimGroupName: string) => {
+    if (!swimGroupName) {
       showToast('Invalid group selected', 'error');
       return;
     }
-    router.push(`/user/coach/swimGroup/${encodeURIComponent(groupName)}`);
+    router.push(`/user/coach/swimGroup/${encodeURIComponent(swimGroupName)}`);
   };
 
   const handleInvite = (e: React.MouseEvent, group: SwimGroup) => {
@@ -413,7 +413,7 @@ const CoachDashboard: React.FC = () => {
       {showInviteModal && selectedGroup && (
         <InviteSwimmerModal
           groupId={selectedGroup.id}
-          groupName={selectedGroup.name}
+          swimGroupName={selectedGroup.name}
           onClose={() => {
             setShowInviteModal(false);
             setSelectedGroup(null);

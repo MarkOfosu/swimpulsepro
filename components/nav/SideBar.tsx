@@ -42,7 +42,7 @@ const Sidebar: React.FC<SidebarProps> = ({ userRole, isAdmin, userEmail }) => {
       </Link>
       {userRole === 'coach' ? (
         <>
-          <Link href="/user/coach/swimGroup" className={styles.pureMenuLink}>
+          <Link href="/user/coach/coachDashboard" className={styles.pureMenuLink}>
             <FaChalkboardTeacher className={styles.icon} /> <span className={styles.text}>Coach Dashboard</span>
           </Link>
           {/* {isAdmin && (

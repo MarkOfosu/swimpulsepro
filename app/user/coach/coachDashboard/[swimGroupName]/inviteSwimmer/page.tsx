@@ -12,7 +12,7 @@ const InviteSwimmerPage: React.FC = () => {
   const [group, setGroup] = useState<{ id: string; name: string } | null>(null);
   const router = useRouter();
   const params = useParams();
-  const groupName = params.groupName as string;
+  const swimGroupName = params.swimGroupName as string;
   const { showToast, ToastContainer } = useToast();
   const supabase = createClient();
 
@@ -22,7 +22,7 @@ const InviteSwimmerPage: React.FC = () => {
         const { data, error } = await supabase
           .from('swim_groups')
           .select('id, name')
-          .eq('name', decodeURIComponent(groupName))
+          .eq('name', decodeURIComponent(swimGroupName))
           .single();
 
         if (error) throw error;
@@ -35,7 +35,7 @@ const InviteSwimmerPage: React.FC = () => {
     };
 
     fetchGroup();
-  }, [groupName, supabase, showToast, router]);
+  }, [swimGroupName, supabase, showToast, router]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

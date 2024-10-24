@@ -103,14 +103,14 @@ import styles from '../../../../../styles/InviteSwimmerModal.module.css';
 
 interface InviteSwimmerModalProps {
   groupId: string;
-  groupName: string;
+  swimGroupName: string;
   onClose: () => void;
   onInviteSuccess: () => void;
 }
 
 const InviteSwimmerModal: React.FC<InviteSwimmerModalProps> = ({
   groupId,
-  groupName,
+  swimGroupName,
   onClose,
   onInviteSuccess
 }) => {
@@ -181,7 +181,7 @@ const InviteSwimmerModal: React.FC<InviteSwimmerModalProps> = ({
     <div className={styles.modalOverlay}>
       <div className={styles.modalContent}>
         <div className={styles.modalHeader}>
-          <h2>Invite Swimmer to {groupName}</h2>
+          <h2>Invite Swimmer to {swimGroupName}</h2>
           <button onClick={onClose} className={styles.closeButton}>
             <X size={24} />
           </button>

@@ -18,12 +18,12 @@ const BadgeManagementPage: React.FC = () => {
   const [selectedIcon, setSelectedIcon] = useState('');
   const [swimGroupId, setSwimGroupId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const { groupName } = useParams();
+  const { swimGroupName } = useParams();
   const supabase = createClient();
 
   useEffect(() => {
     const getSwimGroupId = async () => {
-      if (!groupName) {
+      if (!swimGroupName) {
         setError('Group name is missing');
         return;
       }
@@ -32,7 +32,7 @@ const BadgeManagementPage: React.FC = () => {
         const { data, error } = await supabase
           .from('swim_groups')
           .select('id')
-          .eq('name', decodeURIComponent(groupName as string))
+          .eq('name', decodeURIComponent(swimGroupName as string))
           .single();
 
         if (error) throw error;
@@ -48,7 +48,7 @@ const BadgeManagementPage: React.FC = () => {
     };
 
     getSwimGroupId();
-  }, [groupName, supabase, setSwimGroupId, setError]);
+  }, [swimGroupName, supabase, setSwimGroupId, setError]);
 
  
 
@@ -86,7 +86,7 @@ const BadgeManagementPage: React.FC = () => {
         .insert({
           name: newBadgeName,
           icon: selectedIcon,
-          description: `Custom badge for ${groupName}`
+          description: `Custom badge for ${swimGroupName}`
         })
         .select()
         .single();
@@ -120,7 +120,7 @@ const BadgeManagementPage: React.FC = () => {
 
   return (
     <div className={styles.container}>
-      <h1 className={styles.pageTitle}>Badge Management for {decodeURIComponent(groupName as string)}</h1>
+      <h1 className={styles.pageTitle}>Badge Management for {decodeURIComponent(swimGroupName as string)}</h1>
       <div className={styles.createBadgeSection}>
         <h2 className={styles.sectionTitle}>Create New Badge</h2>
         <input
