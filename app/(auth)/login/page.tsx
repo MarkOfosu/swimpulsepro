@@ -22,7 +22,7 @@ const LoginPage: React.FC = () => {
         if (userDetails) {
           setShouldRedirect(
             userDetails.role === 'coach' 
-              ? '/user/coach/coachDashboard' 
+              ? '/user/coach/swimGroup' 
               : '/user/swimmer/dashboard'
           );
         }

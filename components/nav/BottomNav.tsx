@@ -17,7 +17,7 @@ const BottomNav: React.FC<BottomNavProps> = ({ userRole, isAdmin }) => {
       </Link>
       {userRole === 'coach' ? (
         <>
-          <Link href="/user/coach/coachDashboard" className="pure-menu-link">
+          <Link href="/user/coach/swimGroup" className="pure-menu-link">
             <FaChalkboardTeacher className="icon" />
           </Link>
           {/* {isAdmin && (
