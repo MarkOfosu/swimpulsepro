@@ -50,14 +50,14 @@ const CollapsibleNav: React.FC<CollapsibleNavProps> = ({ userRole, isAdmin, user
           </Link>
           {userRole === 'coach' && (
             <>
-              <Link href="/user/coach/dashboard" className={styles.pureMenuLink} onClick={toggleMenu}>
+              <Link href="/user/coach/swimGroup" className={styles.pureMenuLink} onClick={toggleMenu}>
                 <FaChalkboardTeacher className={styles.icon} /> Dashboard
               </Link>
-              {isAdmin && (
+              {/* {isAdmin && (
                 <Link href="/user/team/teamOverview" className={styles.pureMenuLink} onClick={toggleMenu}>
                   <FaUsers className={styles.icon} /> Team Overview
                 </Link>
-              )}
+              )} */}
             </>
           )}
           {userRole === 'swimmer' && (

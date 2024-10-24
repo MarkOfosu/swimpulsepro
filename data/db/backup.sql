@@ -32,14 +32,33 @@ CREATE TABLE IF NOT EXISTS swimmers (
     gender TEXT
 );
 
-CREATE TABLE IF NOT EXISTS teams (
+CREATE TABLE IF NOT EXISTS public.teams (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    name VARCHAR NOT NULL,
+    location VARCHAR NOT NULL,
+    admin_id UUID REFERENCES public.profiles(id),
+    is_active BOOLEAN DEFAULT true,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW(),
+    UNIQUE(name, location)  -- Prevent duplicate teams in same location
+);
+
+CREATE OR REPLACE FUNCTION public.search_teams(search_term TEXT)
+RETURNS TABLE (
+    id UUID,
     name VARCHAR,
     location VARCHAR,
-    admin_id UUID REFERENCES profiles(id),  -- admin_id referencing profiles
-    created_at TIMESTAMPTZ DEFAULT NOW(),
-    updated_at TIMESTAMPTZ DEFAULT NOW()
-);
+    admin_id UUID
+) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT t.id, t.name, t.location, t.admin_id
+    FROM public.teams t
+    WHERE t.name ILIKE '%' || search_term || '%'
+    AND t.is_active = true
+    ORDER BY t.name;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
 
 
 CREATE TABLE IF NOT EXISTS swim_groups (
@@ -56,6 +75,9 @@ CREATE TABLE IF NOT EXISTS swim_groups (
 --final handle_new_user
 CREATE OR REPLACE FUNCTION public.handle_new_user()
 RETURNS TRIGGER AS $$
+DECLARE
+    v_team_id UUID;
+    v_is_admin BOOLEAN;
 BEGIN
     -- Insert into profiles table
     INSERT INTO public.profiles (id, email, first_name, last_name, role, gender)
@@ -79,15 +101,44 @@ BEGIN
             NEW.raw_user_meta_data->>'age_group',
             NEW.raw_user_meta_data->>'gender'
         );
-    -- If the user is a coach, insert into coaches table
+    
+    -- If the user is a coach, handle team creation/assignment
     ELSIF NEW.raw_user_meta_data->>'role' = 'coach' THEN
+        -- Check if this coach is creating a new team (is_admin)
+        v_is_admin := COALESCE((NEW.raw_user_meta_data->>'is_team_admin')::boolean, false);
+        
+        IF v_is_admin THEN
+            -- Create new team
+            INSERT INTO public.teams (name, location, admin_id)
+            VALUES (
+                NEW.raw_user_meta_data->>'swim_team',
+                NEW.raw_user_meta_data->>'swim_team_location',
+                NEW.id
+            )
+            RETURNING id INTO v_team_id;
+        ELSE
+            -- Get existing team ID
+            SELECT id INTO v_team_id
+            FROM public.teams
+            WHERE name = NEW.raw_user_meta_data->>'swim_team'
+            AND location = NEW.raw_user_meta_data->>'swim_team_location'
+            AND is_active = true;
+            
+            IF NOT FOUND THEN
+                RAISE EXCEPTION 'Team not found: % in %', 
+                    NEW.raw_user_meta_data->>'swim_team',
+                    NEW.raw_user_meta_data->>'swim_team_location';
+            END IF;
+        END IF;
+
+        -- Insert into coaches table
         INSERT INTO public.coaches (id, first_name, last_name, gender, team_id)
         VALUES (
             NEW.id,
             NEW.raw_user_meta_data->>'first_name',
             NEW.raw_user_meta_data->>'last_name',
             NEW.raw_user_meta_data->>'gender',
-            (SELECT id FROM public.teams WHERE admin_id = NEW.id)
+            v_team_id
         );
     END IF;
 
@@ -1362,3 +1413,57 @@ VALUES
 ('17-18', 'Male', '200 FL', 'LCM', '2:46.99', '2:35.09', '2:23.19', '2:17.19', '2:11.29', '2:05.29'),
 ('17-18', 'Male', '200 IM', 'LCM', '2:51.89', '2:39.59', '2:27.39', '2:21.19', '2:15.09', '2:08.99'),
 ('17-18', 'Male', '400 IM', 'LCM', '6:07.59', '5:41.29', '5:15.09', '5:01.89', '4:48.79', '4:35.69');
+
+
+
+
+
+-- Table for upcoming activities
+CREATE TABLE IF NOT EXISTS upcoming_activities (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    title VARCHAR(255) NOT NULL,
+    description TEXT,
+    activity_type VARCHAR(50) NOT NULL, -- 'meet', 'practice', 'event', etc.
+    start_date TIMESTAMPTZ NOT NULL,
+    end_date TIMESTAMPTZ,
+    location VARCHAR(255),
+    coach_id UUID REFERENCES coaches(id) ON DELETE CASCADE,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Junction table for activities and groups
+CREATE TABLE IF NOT EXISTS activity_groups (
+    activity_id UUID REFERENCES upcoming_activities(id) ON DELETE CASCADE,
+    group_id UUID REFERENCES swim_groups(id) ON DELETE CASCADE,
+    PRIMARY KEY (activity_id, group_id)
+);
+
+-- Table for swimmer activity responses
+CREATE TABLE IF NOT EXISTS activity_responses (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    activity_id UUID REFERENCES upcoming_activities(id) ON DELETE CASCADE,
+    swimmer_id UUID REFERENCES swimmers(id) ON DELETE CASCADE,
+    response_status VARCHAR(20) NOT NULL CHECK (response_status IN ('attending', 'interested', 'not_attending')),
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW(),
+    UNIQUE (activity_id, swimmer_id)
+);
+
+-- Table for tracking various activities (achievements, results, etc.)
+CREATE TABLE IF NOT EXISTS activity_feed (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    swimmer_id UUID REFERENCES swimmers(id) ON DELETE CASCADE,
+    group_id UUID REFERENCES swim_groups(id) ON DELETE CASCADE,
+    coach_id UUID REFERENCES coaches(id) ON DELETE CASCADE,
+    activity_type VARCHAR(50) NOT NULL, -- 'achievement', 'swim_result', 'badge_earned', etc.
+    title VARCHAR(255) NOT NULL,
+    description TEXT,
+    reference_id UUID, -- ID from the source table (achievements, swim_results, etc.)
+    reference_table VARCHAR(50), -- Name of the source table
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Index for faster retrieval of recent activities
+CREATE INDEX idx_activity_feed_created_at ON activity_feed(created_at DESC);
+CREATE INDEX idx_activity_feed_coach_groups ON activity_feed(coach_id, group_id);

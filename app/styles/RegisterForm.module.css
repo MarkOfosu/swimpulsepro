@@ -1,11 +1,13 @@
 /* styles/RegisterForm.module.css */
 .container {
-  min-height: 100vh;
+  min-height: calc(100vh + var(--navbar-height));
   display: flex;
   justify-content: center;
   align-items: center;
   padding: 2rem;
   background: linear-gradient(135deg, #1a1456 0%, #4a1d96 100%);
+  padding-top: var(--navbar-height);
+
 }
 
 .registerBox {
@@ -162,7 +164,7 @@
 
 @media (max-width: 480px) {
   .container {
-    padding: 1rem;
+    padding-top: var(--navbar-height);
   }
 
   .registerBox {
@@ -212,4 +214,40 @@
   opacity: 0.7;
   cursor: not-allowed;
   transform: none;
+}
+
+/* Add to your RegisterForm.module.css */
+.teamsList {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  max-height: 200px;
+  overflow-y: auto;
+  z-index: 1000;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.teamItem {
+  padding: 0.75rem 1rem;
+  cursor: pointer;
+  color: white;
+  transition: all 0.2s ease;
+}
+
+.teamItem:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.selectedTeam {
+  background: rgba(124, 58, 237, 0.2);
+  border-left: 3px solid #7c3aed;
+}
+
+.inputBox {
+  position: relative;
 }

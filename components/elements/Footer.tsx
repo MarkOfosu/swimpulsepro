@@ -28,10 +28,10 @@ const Footer: React.FC = () => {
             </div>
             
             <div className={styles.linkColumn}>
-              <h4 className={styles.columnTitle}>Company</h4>
+              <h4 className={styles.columnTitle}>Team</h4>
               <ul className={styles.linkList}>
                 <li><a href="#">About Us</a></li>
-                <li><a href="#">Careers</a></li>
+                {/* <li><a href="#">Careers</a></li> */}
                 <li><a href="#">Contact</a></li>
               </ul>
             </div>
