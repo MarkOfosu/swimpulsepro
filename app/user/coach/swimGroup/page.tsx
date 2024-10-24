@@ -1,37 +1,81 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@/utils/supabase/client';
 import CoachPageLayout from '../CoachPageLayout';
-import CreateSwimGroup from './createSwimGroup/page';
-import Card2 from '@components/elements/Card2';
-import InviteSwimmerModal from '../swimGroup/[groupName]/inviteSwimmer/InviteSwimmerModal';
+import Loader from '@components/elements/Loader';
 import { useToast } from '@components/elements/toasts/Toast';
-import SwimGroupsLoading from './loading';
-import styles from '../../../styles/SwimGroups.module.css';
-import { useUser } from '../../../context/UserContext'
+import { 
+  LineChart, Activity, Users, Award, 
+  Calendar, Plus, User, Clock, MapPin
+} from 'lucide-react';
+import { useUser } from '../../../context/UserContext';
+import styles from '../../../styles/Dashboard.module.css';
+import CreateSwimGroupModal from './createSwimGroup/CreateSwimGroupModal';
+import InviteSwimmerModal from './[groupName]/inviteSwimmer/InviteSwimmerModal';
+import DashboardLoading from './loading';
 
 interface SwimGroup {
   id: string;
   name: string;
   description: string;
-  coach_id: string;
   group_code: string;
+  coach_id: string;
+  swimmers: { count: number }[];
 }
 
-const SwimGroupsPage: React.FC = () => {
+interface DashboardMetrics {
+  totalSwimmers: number;
+  totalGroups: number;
+  activeSwimmers: number;
+  totalBadgesAwarded: number;
+  attendanceRate: number;
+}
+
+interface Activity {
+  id: string;
+  type: string;
+  description: string;
+  created_at: string;
+  swimmer_id: string;
+  profiles?: {
+    first_name: string;
+    last_name: string;
+  };
+}
+
+interface Event {
+  id: string;
+  title: string;
+  date: string;
+  location: string;
+  description: string;
+}
+
+const CoachDashboard: React.FC = () => {
+  const { user } = useUser();
   const [swimGroups, setSwimGroups] = useState<SwimGroup[]>([]);
+  const [metrics, setMetrics] = useState<DashboardMetrics>({
+    totalSwimmers: 0,
+    totalGroups: 0,
+    activeSwimmers: 0,
+    totalBadgesAwarded: 0,
+    attendanceRate: 0,
+  });
+  const [recentActivities, setRecentActivities] = useState<Activity[]>([]);
+  const [upcomingEvents, setUpcomingEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [inviteModalOpen, setInviteModalOpen] = useState(false);
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [showInviteModal, setShowInviteModal] = useState(false);
   const [selectedGroup, setSelectedGroup] = useState<SwimGroup | null>(null);
-  const router = useRouter();
+  
   const { showToast, ToastContainer } = useToast();
+  const router = useRouter();
   const supabase = createClient();
-  const { user } = useUser();
 
-  const fetchSwimGroups = useCallback(async () => {
+  const fetchDashboardData = useCallback(async () => {
     if (!user?.id) {
       setError('User not authenticated');
       setLoading(false);
@@ -42,84 +86,132 @@ const SwimGroupsPage: React.FC = () => {
       setLoading(true);
       setError(null);
 
-      // Basic query without RLS
-      const { data, error: queryError } = await supabase
+      // Fetch swim groups with swimmer count
+      const { data: groupsData, error: groupsError } = await supabase
         .from('swim_groups')
-        .select('id, name, description, coach_id, group_code')
-        .filter('coach_id', 'eq', user.id)
+        .select(`
+          id,
+          name,
+          description,
+          group_code,
+          coach_id,
+          swimmers(count)
+        `)
+        .eq('coach_id', user.id)
         .order('name', { ascending: true });
 
-      if (queryError) {
-        console.error('Database query error:', queryError);
-        throw new Error('Failed to fetch swim groups');
-      }
+      if (groupsError) throw groupsError;
 
-      if (!data) {
-        throw new Error('No data returned from the database');
-      }
-
-      // Validate and transform the data
-      const validatedGroups = data.map(group => ({
+      // Validate and transform groups data
+      const validatedGroups = (groupsData || []).map(group => ({
         id: group.id,
         name: group.name || 'Unnamed Group',
         description: group.description || 'No description available',
+        group_code: group.group_code || 'No code available',
         coach_id: group.coach_id,
-        group_code: group.group_code || 'No code available'
+        swimmers: group.swimmers || [{ count: 0 }]
       }));
 
       setSwimGroups(validatedGroups);
 
+      // Calculate total swimmers
+      const totalSwimmers = validatedGroups.reduce((acc, group) => 
+        acc + (group.swimmers[0]?.count || 0), 0);
+
+      setMetrics({
+        totalSwimmers,
+        totalGroups: validatedGroups.length,
+        activeSwimmers: totalSwimmers,
+        totalBadgesAwarded: 0,
+        attendanceRate: 100,
+      });
+
+      // Note: These queries need to be adjusted based on your actual database structure
+      try {
+        const { data: activitiesData } = await supabase
+          .from('activities')
+          .select(`
+            id,
+            description,
+            created_at,
+            type,
+            swimmer_id,
+            profiles (
+              first_name,
+              last_name
+            )
+          `)
+          .in('group_id', validatedGroups.map(g => g.id))
+          .order('created_at', { ascending: false })
+          .limit(5);
+
+        const validatedActivities = (activitiesData || []).map(activity => ({
+          ...activity,
+          profiles: activity.profiles ? activity.profiles[0] : undefined,
+        }));
+
+        setRecentActivities(validatedActivities);
+      } catch (activityError) {
+        // console.log('Error fetching activities:', activityError);
+      }
+
+      try {
+        const { data: eventsData } = await supabase
+          .from('events')
+          .select('*')
+          .in('group_id', validatedGroups.map(g => g.id))
+          .order('date', { ascending: true })
+          .limit(3);
+
+        setUpcomingEvents(eventsData || []);
+      } catch (eventError) {
+        // console.log('Error fetching events:', eventError);
+      }
+
     } catch (err) {
-      console.error('Error in fetchSwimGroups:', err);
-      setError(err instanceof Error ? err.message : 'Failed to fetch swim groups');
-      showToast('Failed to fetch swim groups. Please try again later.', 'error');
+      // console.error('Error in fetchDashboardData:', err);
+      setError(err instanceof Error ? err.message : 'Failed to fetch dashboard data');
+      showToast('Failed to fetch dashboard data. Please try again later.', 'error');
     } finally {
       setLoading(false);
     }
   }, [user?.id, supabase]);
 
   useEffect(() => {
-    fetchSwimGroups();
-  }, [fetchSwimGroups]);
+    fetchDashboardData();
+  }, [fetchDashboardData]);
 
-  const handleGroupClick = useCallback((groupName: string) => {
+  const handleCreateGroup = () => {
+    setShowCreateModal(true);
+  };
+
+  const handleGroupClick = (groupName: string) => {
     if (!groupName) {
       showToast('Invalid group selected', 'error');
       return;
     }
     router.push(`/user/coach/swimGroup/${encodeURIComponent(groupName)}`);
-  }, [router, showToast]);
+  };
 
-  const handleInviteClick = useCallback((e: React.MouseEvent, group: SwimGroup) => {
+  const handleInvite = (e: React.MouseEvent, group: SwimGroup) => {
     e.stopPropagation();
-    if (!group.id) {
-      showToast('Invalid group selected for invitation', 'error');
-      return;
-    }
     setSelectedGroup(group);
-    setInviteModalOpen(true);
-  }, [showToast]);
-
-  const handleCreateSuccess = useCallback(async () => {
-    showToast('Group created successfully!', 'success');
-    await fetchSwimGroups();
-  }, [fetchSwimGroups]);
+    setShowInviteModal(true);
+  };
 
   if (loading) {
-    return (
-        <SwimGroupsLoading />
-    )
+    return <DashboardLoading />;
   }
 
   if (error) {
     return (
       <CoachPageLayout>
         <div className={styles.pageContainer}>
-          <h1 className={styles.pageHeading}>Swim Groups</h1>
+          <h1 className={styles.pageHeading}>Dashboard</h1>
           <div className={styles.errorContainer}>
             <p className={styles.errorMessage}>{error}</p>
             <button 
-              onClick={() => fetchSwimGroups()} 
+              onClick={() => fetchDashboardData()} 
               className={styles.retryButton}
             >
               Retry
@@ -132,63 +224,211 @@ const SwimGroupsPage: React.FC = () => {
 
   return (
     <CoachPageLayout>
-      <div className={styles.pageContainer}>
-        <h1 className={styles.pageHeading}>Swim Groups</h1>
-        <div className={styles.swimGroupsGrid}>
-          {swimGroups.length > 0 ? (
-            swimGroups.map((group) => (
-              <Card2
-                key={group.id}
-                title={group.name}
-                description={group.description}
-                size="small"
-                color="dark"
-                glow={true}
-                onClick={() => handleGroupClick(group.name)}
+      <div className={styles.dashboardContainer}>
+        <section className={styles.welcomeSection}>
+          <div className={styles.welcomeContent}>
+            <h1>Welcome, Coach {user?.first_name}!</h1>
+            {user?.team_name && (
+              <p className={styles.swimTeamName}>
+                {user.team_name}, {user.team_location}
+              </p>
+            )}
+          </div>
+        </section>
+
+        <div className={styles.metricsGrid}>
+          <div className={styles.metricCard}>
+            <div className={styles.metricIcon}>
+              <Users size={24} />
+            </div>
+            <div className={styles.metricContent}>
+              <h3>Total Swimmers</h3>
+              <p>{metrics.totalSwimmers}</p>
+            </div>
+          </div>
+
+          <div className={styles.metricCard}>
+            <div className={styles.metricIcon}>
+              <Activity size={24} />
+            </div>
+            <div className={styles.metricContent}>
+              <h3>Active Swimmers</h3>
+              <p>{metrics.activeSwimmers}</p>
+            </div>
+          </div>
+
+          <div className={styles.metricCard}>
+            <div className={styles.metricIcon}>
+              <Award size={24} />
+            </div>
+            <div className={styles.metricContent}>
+              <h3>Badges Awarded</h3>
+              <p>{metrics.totalBadgesAwarded}</p>
+            </div>
+          </div>
+
+          <div className={styles.metricCard}>
+            <div className={styles.metricIcon}>
+              <Calendar size={24} />
+            </div>
+            <div className={styles.metricContent}>
+              <h3>Attendance Rate</h3>
+              <p>{metrics.attendanceRate}%</p>
+            </div>
+          </div>
+        </div>
+
+        <div className={styles.contentGrid}>
+          <section className={styles.groupsSection}>
+            <div className={styles.sectionHeader}>
+              <h2>Swim Groups</h2>
+              <button 
+                className={styles.addButton}
+                onClick={handleCreateGroup}
               >
-                <div className={styles.groupContent}>
-                  <p className={styles.groupDescription}>{group.description}</p>
-                  <p className={styles.groupCode}>Group Code: {group.group_code}</p>
+                <Plus size={16} />
+                New Group
+              </button>
+            </div>
+            <div className={styles.groupsGrid}>
+              {swimGroups.map((group) => (
+                <div 
+                  key={group.id} 
+                  className={styles.groupCard}
+                  onClick={() => handleGroupClick(group.name)}
+                >
+                  <h3>{group.name}</h3>
+                  <p>{group.description}</p>
+                  <div className={styles.groupStats}>
+                    <span>
+                      <User size={16} />
+                      {group.swimmers[0]?.count || 0} swimmers
+                    </span>
+                    <span className={styles.groupCode}>
+                      Code: {group.group_code}
+                    </span>
+                  </div>
                   <button
-                    onClick={(e) => handleInviteClick(e, group)}
+                    onClick={(e) => handleInvite(e, group)}
                     className={styles.inviteButton}
                   >
                     Invite Swimmer
                   </button>
                 </div>
-              </Card2>
-            ))
-          ) : (
-            <div className={styles.noGroupsContainer}>
-              <p className={styles.noGroupsMessage}>No swim groups available.</p>
-              <p className={styles.noGroupsSubtext}>Create your first group to get started!</p>
+              ))}
+              {swimGroups.length === 0 && (
+                <div className={styles.emptyState}>
+                  <p>No swim groups created yet</p>
+                  <p>Click &apos;New Group&apos; to get started</p>
+                </div>
+              )}
             </div>
-          )}
-        </div>
-        
-        <div className={styles.createGroupSection}>
-          <CreateSwimGroup onGroupCreated={handleCreateSuccess} />
+          </section>
+
+          <div className={styles.sideContent}>
+            <section className={styles.recentActivities}>
+              <div className={styles.sectionHeader}>
+                <h2>Recent Activities</h2>
+              </div>
+              <div className={styles.activityList}>
+                {recentActivities.map((activity) => (
+                  <div key={activity.id} className={styles.activityItem}>
+                    <div className={styles.activityIcon}>
+                      <Activity size={16} />
+                    </div>
+                    <div className={styles.activityContent}>
+                      <p className={styles.activityDescription}>
+                        {activity.description}
+                      </p>
+                      <div className={styles.activityMeta}>
+                        <span className={styles.activityTime}>
+                          <Clock size={14} />
+                          {new Date(activity.created_at).toLocaleDateString()}
+                        </span>
+                        {activity.profiles && (
+                          <span className={styles.activityUser}>
+                            <User size={14} />
+                            {activity.profiles.first_name} {activity.profiles.last_name}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+                {recentActivities.length === 0 && (
+                  <div className={styles.emptyState}>
+                    <p>No recent activities</p>
+                  </div>
+                )}
+              </div>
+            </section>
+
+            <section className={styles.upcomingEvents}>
+              <div className={styles.sectionHeader}>
+                <h2>Upcoming Events</h2>
+              </div>
+              <div className={styles.eventsList}>
+                {upcomingEvents.map((event) => (
+                  <div key={event.id} className={styles.eventCard}>
+                    <div className={styles.eventHeader}>
+                      <Calendar size={18} />
+                      <h3>{event.title}</h3>
+                    </div>
+                    <div className={styles.eventDetails}>
+                      <p className={styles.eventDate}>
+                        <Clock size={14} />
+                        {new Date(event.date).toLocaleDateString()}
+                      </p>
+                      <p className={styles.eventLocation}>
+                        <MapPin size={14} />
+                        {event.location}
+                      </p>
+                    </div>
+                    {event.description && (
+                      <p className={styles.eventDescription}>{event.description}</p>
+                    )}
+                  </div>
+                ))}
+                {upcomingEvents.length === 0 && (
+                  <div className={styles.emptyState}>
+                    <p>No upcoming events</p>
+                  </div>
+                )}
+              </div>
+            </section>
+          </div>
         </div>
       </div>
 
-      {inviteModalOpen && selectedGroup && (
+      {showCreateModal && (
+        <CreateSwimGroupModal
+          onClose={() => setShowCreateModal(false)}
+          onGroupCreated={async () => {
+            await fetchDashboardData();
+            setShowCreateModal(false);
+          }}
+        />
+      )}
+
+      {showInviteModal && selectedGroup && (
         <InviteSwimmerModal
           groupId={selectedGroup.id}
           groupName={selectedGroup.name}
           onClose={() => {
-            setInviteModalOpen(false);
+            setShowInviteModal(false);
             setSelectedGroup(null);
           }}
           onInviteSuccess={() => {
             showToast('Invitation sent successfully!', 'success');
-            setInviteModalOpen(false);
+            setShowInviteModal(false);
             setSelectedGroup(null);
           }}
         />
       )}
+
       <ToastContainer />
     </CoachPageLayout>
   );
 };
 
-export default SwimGroupsPage;
+export default CoachDashboard;

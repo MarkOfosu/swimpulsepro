@@ -112,7 +112,7 @@ const SignupForm: React.FC<SignupFormProps> = ({ role }) => {
         localStorage.setItem('tokenExpiry', data.session.expires_at?.toString() || '');
         //refresh usecontext to fetch user data
         refreshUser();
-        router.push(role === 'coach' ? '/user/coach/dashboard' : '/user/swimmer/dashboard');
+        router.push(role === 'coach' ? '/user/coach/swimGroup' : '/user/swimmer/dashboard');
       } else {
         setError('Signup successful. Please check your email to confirm your account.');
       }
