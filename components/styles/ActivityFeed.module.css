@@ -1,9 +1,11 @@
+
+
 .activityFeed {
     display: flex;
     flex-direction: column;
     gap: 1rem;
   }
-  
+
   .activityItem {
     display: flex;
     gap: 1rem;
@@ -13,12 +15,12 @@
     border: 1px solid #e0e0e0;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
   }
-  
+
   .activityItem:hover {
     transform: translateY(-2px);
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
   }
-  
+
   .activityIcon {
     background: rgba(5, 133, 123, 0.1);
     padding: 0.75rem;
@@ -26,37 +28,37 @@
     color: #05857b;
     height: fit-content;
   }
-  
+
   .activityContent {
     flex: 1;
   }
-  
+
   .activityTitle {
     font-weight: 500;
     color: #333;
     margin: 0 0 0.25rem 0;
   }
-  
+
   .activityDescription {
     color: #666;
     font-size: 0.95rem;
     margin: 0 0 0.5rem 0;
   }
-  
+
   .activityMeta {
     display: flex;
     gap: 1rem;
     color: #666;
     font-size: 0.85rem;
   }
-  
+
   .activityTime,
   .activityUser {
     display: flex;
     align-items: center;
     gap: 0.25rem;
   }
-  
+
   .loadMoreButton {
     padding: 0.75rem;
     background: white;
@@ -67,11 +69,11 @@
     cursor: pointer;
     transition: all 0.2s ease;
   }
-  
+
   .loadMoreButton:hover {
     background: #f5f5f5;
   }
-  
+
   .emptyState {
     text-align: center;
     padding: 2rem;
@@ -80,7 +82,7 @@
     border: 1px solid #e0e0e0;
     color: #666;
   }
-  
+
   .error {
     color: #ef5350;
     text-align: center;

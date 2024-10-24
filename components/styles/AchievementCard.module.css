@@ -1,24 +1,24 @@
 .achievementCard {
-    text-align: center;
-    transition: transform 0.3s ease;
-  }
-  
-  .achievementCard:hover {
-    transform: translateY(-5px);
-  }
-  
-  .achievementIcon {
-    font-size: 2rem;
-    margin-bottom: 0.5rem;
-  }
-  
-  .achievementTitle {
-    font-size: 1rem;
-    font-weight: bold;
-    margin-bottom: 0.5rem;
-  }
-  
-  .achievementDescription {
-    font-size: 0.875rem;
-    color: #6c757d;
-  }
+  text-align: center;
+  transition: transform 0.3s ease;
+}
+
+.achievementCard:hover {
+  transform: translateY(-5px);
+}
+
+.achievementIcon {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
+
+.achievementTitle {
+  font-size: 1rem;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+}
+
+.achievementDescription {
+  font-size: 0.875rem;
+  color: #6c757d;
+}

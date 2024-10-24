@@ -1418,7 +1418,7 @@ VALUES
 
 
 
--- Table for upcoming activities
+-- Recreate the tables
 CREATE TABLE IF NOT EXISTS upcoming_activities (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     title VARCHAR(255) NOT NULL,
@@ -1432,14 +1432,12 @@ CREATE TABLE IF NOT EXISTS upcoming_activities (
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- Junction table for activities and groups
 CREATE TABLE IF NOT EXISTS activity_groups (
     activity_id UUID REFERENCES upcoming_activities(id) ON DELETE CASCADE,
     group_id UUID REFERENCES swim_groups(id) ON DELETE CASCADE,
     PRIMARY KEY (activity_id, group_id)
 );
 
--- Table for swimmer activity responses
 CREATE TABLE IF NOT EXISTS activity_responses (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     activity_id UUID REFERENCES upcoming_activities(id) ON DELETE CASCADE,
@@ -1450,7 +1448,6 @@ CREATE TABLE IF NOT EXISTS activity_responses (
     UNIQUE (activity_id, swimmer_id)
 );
 
--- Table for tracking various activities (achievements, results, etc.)
 CREATE TABLE IF NOT EXISTS activity_feed (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     swimmer_id UUID REFERENCES swimmers(id) ON DELETE CASCADE,

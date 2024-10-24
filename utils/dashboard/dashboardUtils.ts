@@ -45,6 +45,16 @@ export interface DashboardMetrics {
   attendanceRate: number;
 }
 
+export interface SwimGroup {
+  id: string;
+  name: string;
+  description: string;
+  group_code: string;
+  coach_id: string;
+  swimmers: { count: number }[];
+  swimmerCount: number;
+}
+
 export interface ActivityResponse {
   activity_id: string;
   response_status: 'attending' | 'interested' | 'not_attending';
@@ -168,8 +178,8 @@ export class DashboardUtils {
         return {
           ...event,
           groups: event.groups?.map(g => ({
-            id: g.swim_groups.id,
-            name: g.swim_groups.name
+            id: g.swim_groups[0]?.id,
+            name: g.swim_groups[0]?.name
           })) || [],
           responses: eventResponses
         };
@@ -267,19 +277,37 @@ export class DashboardUtils {
     }
   }
 
-  async fetchSwimGroups() {
+  async fetchSwimGroups(): Promise<SwimGroup[]> {
     try {
-      const { data, error } = await supabase
+      const { data: groupsData, error: groupsError } = await supabase
         .from('swim_groups')
-        .select('*')
-        .eq('coach_id', this.userId);
-
-      if (error) throw error;
-
-      return data || [];
+        .select(`
+          id,
+          name,
+          description,
+          group_code,
+          coach_id,
+          swimmers(count)
+        `)
+        .eq('coach_id', this.userId)
+        .order('name', { ascending: true });
+  
+      if (groupsError) throw groupsError;
+  
+      const validatedGroups = (groupsData || []).map(group => ({
+        id: group.id,
+        name: group.name || 'Unnamed Group',
+        description: group.description || 'No description available',
+        group_code: group.group_code || 'No code available',
+        coach_id: group.coach_id,
+        swimmers: group.swimmers || [{ count: 0 }],
+        swimmerCount: group.swimmers?.[0]?.count || 0
+      }));
+  
+      return validatedGroups;
     } catch (error) {
       console.error('Error fetching swim groups:', error);
-      return [];
+      throw error;
     }
   }
 }
