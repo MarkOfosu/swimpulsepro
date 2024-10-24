@@ -1,6 +1,6 @@
 /* styles/GetStarted.module.css */
 .pageContainer {
-  min-height: calc(100vh - 64px);
+  /* min-height: calc(100vh - 64px); */
   background: linear-gradient(135deg, #1a1456 0%, #4a1d96 100%);
   padding: 4rem 1rem;
   color: white;

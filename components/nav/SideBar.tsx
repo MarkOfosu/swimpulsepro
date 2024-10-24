@@ -42,17 +42,17 @@ const Sidebar: React.FC<SidebarProps> = ({ userRole, isAdmin, userEmail }) => {
       </Link>
       {userRole === 'coach' ? (
         <>
-          <Link href="/user/coach/dashboard" className={styles.pureMenuLink}>
+          <Link href="/user/coach/swimGroup" className={styles.pureMenuLink}>
             <FaChalkboardTeacher className={styles.icon} /> <span className={styles.text}>Coach Dashboard</span>
           </Link>
-          {isAdmin && (
+          {/* {isAdmin && (
             <>
               <hr className={styles.separator} />
               <Link href="/user/team/teamOverview" className={styles.pureMenuLink}>
                 <FaUsers className={styles.icon} /> <span className={styles.text}>Team Dashboard</span>
               </Link>
             </>
-          )}
+          )} */}
         </>
       ) : userRole === 'swimmer' ? (
         <Link href="/user/swimmer/dashboard" className={styles.pureMenuLink}>

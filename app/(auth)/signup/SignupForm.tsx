@@ -1,27 +1,98 @@
-// components/SignupForm.tsx
-'use client';
-
-import React, { useState } from 'react';
+"use client";
+import React, { useState, useEffect, useRef } from 'react';
 import { createClient } from '@/utils/supabase/client';
 import styles from '../../styles/RegisterForm.module.css';
 import WelcomeNavbar from '@app/welcome/WelcomeNavbar';
 import Loader from '../../../components/elements/Loader';
 import { useRouter } from 'next/navigation';
 import { useUser } from '@app/context/UserContext';
+import Footer from '@components/elements/Footer';
 
-interface SignupFormProps {
-  role: 'coach' | 'swimmer';
+interface Team {
+  id: string;
+  name: string;
+  location: string;
 }
 
-const SignupForm: React.FC<SignupFormProps> = ({ role }) => {
+interface FormData {
+  firstName: string;
+  lastName: string;
+  email: string;
+  gender: string;
+  swimTeam: string;
+  city: string;
+  country: string;
+  password: string;
+  confirmPassword: string;
+  dateOfBirth?: string;
+}
+
+const SignupForm: React.FC<{ role: 'coach' | 'swimmer' }> = ({ role }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [teams, setTeams] = useState<Team[]>([]);
+  const [selectedTeam, setSelectedTeam] = useState<Team | null>(null);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const [formData, setFormData] = useState<FormData>({
+    firstName: '',
+    lastName: '',
+    email: '',
+    gender: '',
+    swimTeam: '',
+    city: '',
+    country: '',
+    password: '',
+    confirmPassword: '',
+    dateOfBirth: role === 'swimmer' ? '' : undefined
+  });
+
+  const teamInputRef = useRef<HTMLInputElement>(null);
+  const suggestionBoxRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
+  const { refreshUser } = useUser();
+  const supabase = createClient();
 
-  const {refreshUser} = useUser();
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (suggestionBoxRef.current && 
+          !suggestionBoxRef.current.contains(event.target as Node) &&
+          teamInputRef.current && 
+          !teamInputRef.current.contains(event.target as Node)) {
+        setShowSuggestions(false);
+      }
+    };
 
-  const capitalizeFirstLetter = (string: string) => {
-    return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  // Improved text formatting utilities
+  const formatName = (str: string): string => {
+    if (!str) return '';
+    
+    return str
+      .split(/\s+/)
+      .filter(word => word.length > 0)
+      .map(word => {
+        // Handle hyphenated words and apostrophes
+        return word
+          .split(/(-|')/)
+          .map((part, index, array) => {
+            // Don't capitalize hyphens and apostrophes
+            if (part === '-' || part === "'") return part;
+            // Capitalize if it's a word part
+            return part.charAt(0).toUpperCase() + part.slice(1).toLowerCase();
+          })
+          .join('');
+      })
+      .join(' ')
+      .trim();
+  };
+
+  const formatLocation = (city: string, country: string): string => {
+    const formattedCity = formatName(city);
+    const formattedCountry = formatName(country);
+    return `${formattedCity}, ${formattedCountry}`;
   };
 
   const calculateAgeGroup = (dateOfBirth: string): string => {
@@ -29,9 +100,11 @@ const SignupForm: React.FC<SignupFormProps> = ({ role }) => {
     const birthDate = new Date(dateOfBirth);
     let age = today.getFullYear() - birthDate.getFullYear();
     const monthDiff = today.getMonth() - birthDate.getMonth();
+    
     if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
       age--;
     }
+    
     if (age <= 10) return '10 & under';
     if (age <= 12) return '11-12';
     if (age <= 14) return '13-14';
@@ -39,23 +112,109 @@ const SignupForm: React.FC<SignupFormProps> = ({ role }) => {
     return '17-18';
   };
 
+  const searchTeams = async (searchTerm: string) => {
+    if (searchTerm.length >= 2) {
+      const { data, error } = await supabase.rpc('search_teams', { 
+        search_term: searchTerm 
+      });
+      
+      if (!error && data) {
+        setTeams(data);
+        setShowSuggestions(true);
+      }
+    } else {
+      setTeams([]);
+      setShowSuggestions(false);
+    }
+  };
+
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
+    const { name, value } = e.target;
+    
+    let formattedValue = value;
+    
+    switch (name) {
+      case 'firstName':
+      case 'lastName':
+      case 'swimTeam':
+      case 'city':
+      case 'country':
+        // Allow free typing, format on blur
+        formattedValue = value.replace(/[^a-zA-Z\s'-]/, '');
+        break;
+      case 'email':
+        formattedValue = value.toLowerCase();
+        break;
+      default:
+        formattedValue = value;
+    }
+
+    setFormData(prev => ({
+      ...prev,
+      [name]: formattedValue
+    }));
+
+    if (name === 'swimTeam' && role === 'coach') {
+      searchTeams(formattedValue);
+    }
+  };
+
+  const handleNameBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    
+    if (['firstName', 'lastName', 'swimTeam', 'city', 'country'].includes(name)) {
+      setFormData(prev => ({
+        ...prev,
+        [name]: formatName(value)
+      }));
+    }
+  };
+
+  const handleTeamSelect = (team: Team) => {
+    const [city, country] = team.location.split(',').map(part => part.trim());
+    
+    setSelectedTeam(team);
+    setFormData(prev => ({
+      ...prev,
+      swimTeam: formatName(team.name),
+      city: formatName(city),
+      country: formatName(country)
+    }));
+    setShowSuggestions(false);
+  };
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError('');
     setLoading(true);
 
-    const formData = new FormData(e.target as HTMLFormElement);
-    const supabase = createClient();
-
     try {
-      const firstName = capitalizeFirstLetter(formData.get('firstName') as string);
-      const lastName = capitalizeFirstLetter(formData.get('lastName') as string);
-      const email = (formData.get('email') as string).toLowerCase();
-      const password = formData.get('password') as string;
-      const confirmPassword = formData.get('confirmPassword') as string;
-      const gender = formData.get('gender') as string;
+      const {
+        firstName,
+        lastName,
+        email,
+        password,
+        confirmPassword,
+        gender,
+        swimTeam,
+        city,
+        country,
+        dateOfBirth
+      } = formData;
 
-      if (!firstName || !lastName || !email || !password || !confirmPassword || !gender) {
+      // Final formatting of all text fields
+      const finalFirstName = formatName(firstName);
+      const finalLastName = formatName(lastName);
+      const finalSwimTeam = formatName(swimTeam);
+      const finalCity = formatName(city);
+      const finalCountry = formatName(country);
+
+      // Validation
+      if (!finalFirstName || !finalLastName || !email || !password || !confirmPassword || 
+          !gender || (role === 'coach' && (!finalSwimTeam || !finalCity || !finalCountry)) ||
+          (role === 'swimmer' && !dateOfBirth)) {
         throw new Error('All fields are required');
       }
 
@@ -63,54 +222,62 @@ const SignupForm: React.FC<SignupFormProps> = ({ role }) => {
         throw new Error('Passwords do not match');
       }
 
-      let additionalData: any = { gender };
+      if (password.length < 8) {
+        throw new Error('Password must be at least 8 characters long');
+      }
+
+      if (role === 'swimmer' && dateOfBirth) {
+        const birthDate = new Date(dateOfBirth);
+        if (birthDate > new Date()) {
+          throw new Error('Date of birth cannot be in the future');
+        }
+      }
+
+      // Prepare user metadata
+      let userData: any = {
+        first_name: finalFirstName,
+        last_name: finalLastName,
+        role,
+        gender
+      };
+
       if (role === 'coach') {
-        const swimTeam = capitalizeFirstLetter(formData.get('swimTeam') as string);
-        const city = capitalizeFirstLetter(formData.get('city') as string);
-        const country = capitalizeFirstLetter(formData.get('country') as string);
-        if (!swimTeam || !city || !country) {
-          throw new Error('Swim team, city, and country are required for coaches');
-        }
-        additionalData = { 
-          ...additionalData,
-          swim_team: swimTeam, 
-          swim_team_location: `${city}, ${country}`
+        const teamData = selectedTeam ? {
+          swim_team: formatName(selectedTeam.name),
+          swim_team_location: selectedTeam.location
+            .split(',')
+            .map(part => formatName(part.trim()))
+            .join(', '),
+          is_team_admin: false
+        } : {
+          swim_team: finalSwimTeam,
+          swim_team_location: formatLocation(finalCity, finalCountry),
+          is_team_admin: true
         };
-      } else {
-        const dateOfBirth = formData.get('dateOfBirth') as string;
-        if (!dateOfBirth) {
-          throw new Error('Date of birth is required for swimmers');
-        }
-        const formattedDate = new Date(dateOfBirth).toISOString().split('T')[0];
-        const ageGroup = calculateAgeGroup(formattedDate);
-        additionalData = { 
-          ...additionalData,
-          date_of_birth: formattedDate,
-          age_group: ageGroup,
+        userData = { ...userData, ...teamData };
+      } else if (role === 'swimmer' && dateOfBirth) {
+        userData = {
+          ...userData,
+          date_of_birth: dateOfBirth,
+          age_group: calculateAgeGroup(dateOfBirth),
           last_age_group_update: new Date().toISOString().split('T')[0]
         };
       }
 
-      const { data, error } = await supabase.auth.signUp({
+      const { data, error: signUpError } = await supabase.auth.signUp({
         email,
         password,
         options: {
-          data: {
-            first_name: firstName,
-            last_name: lastName,
-            role,
-            ...additionalData,
-          },
+          data: userData,
         },
       });
 
-      if (error) throw error;
+      if (signUpError) throw signUpError;
 
       if (data.session) {
         localStorage.setItem('accessToken', data.session.access_token);
         localStorage.setItem('refreshToken', data.session.refresh_token);
         localStorage.setItem('tokenExpiry', data.session.expires_at?.toString() || '');
-        //refresh usecontext to fetch user data
         refreshUser();
         router.push(role === 'coach' ? '/user/coach/swimGroup' : '/user/swimmer/dashboard');
       } else {
@@ -133,22 +300,46 @@ const SignupForm: React.FC<SignupFormProps> = ({ role }) => {
           ) : (
             <form onSubmit={handleSubmit} className={styles.form}>
               <h2 className={styles.title}>
-                {role === 'coach' ? 'Coach' : 'Swimmer'} Registration
+                {formatName(role)} Registration
               </h2>
 
               <div className={styles.formGrid}>
                 <div className={styles.inputBox}>
-                  <input type="text" id="firstName" name="firstName" required />
+                  <input
+                    type="text"
+                    id="firstName"
+                    name="firstName"
+                    value={formData.firstName}
+                    onChange={handleInputChange}
+                    onBlur={handleNameBlur}
+                    placeholder=" "
+                    required
+                  />
                   <label>First Name</label>
                 </div>
 
                 <div className={styles.inputBox}>
-                  <input type="text" id="lastName" name="lastName" required />
+                  <input
+                    type="text"
+                    id="lastName"
+                    name="lastName"
+                    value={formData.lastName}
+                    onChange={handleInputChange}
+                    onBlur={handleNameBlur}
+                    placeholder=" "
+                    required
+                  />
                   <label>Last Name</label>
                 </div>
 
                 <div className={styles.inputBox}>
-                  <select id="gender" name="gender" required>
+                  <select
+                    id="gender"
+                    name="gender"
+                    value={formData.gender}
+                    onChange={handleInputChange}
+                    required
+                  >
                     <option value="">Select Gender</option>
                     <option value="Male">Male</option>
                     <option value="Female">Female</option>
@@ -156,44 +347,124 @@ const SignupForm: React.FC<SignupFormProps> = ({ role }) => {
                   <label>Gender</label>
                 </div>
 
+                {role === 'swimmer' && (
+                  <div className={styles.inputBox}>
+                    <input
+                      type="date"
+                      id="dateOfBirth"
+                      name="dateOfBirth"
+                      value={formData.dateOfBirth}
+                      onChange={handleInputChange}
+                      max={new Date().toISOString().split('T')[0]}
+                      required
+                    />
+                    <label>Date of Birth</label>
+                  </div>
+                )}
+
                 {role === 'coach' && (
                   <>
                     <div className={styles.inputBox}>
-                      <input type="text" id="swimTeam" name="swimTeam" required />
-                      <label>Swim Team</label>
+                      <input
+                        ref={teamInputRef}
+                        type="text"
+                        id="swimTeam"
+                        name="swimTeam"
+                        value={formData.swimTeam}
+                        onChange={handleInputChange}
+                        onBlur={handleNameBlur}
+                        onFocus={() => 
+                          formData.swimTeam.length >= 2 && setShowSuggestions(true)
+                        }
+                        placeholder=" "
+                        required
+                      />
+                      <label>Swim Team Name</label>
+                      {showSuggestions && teams.length > 0 && (
+                        <div ref={suggestionBoxRef} className={styles.teamsList}>
+                          {teams.map((team) => (
+                            <div
+                              key={team.id}
+                              className={`${styles.teamItem} ${
+                                selectedTeam?.id === team.id ? styles.selectedTeam : ''
+                              }`}
+                              onClick={() => handleTeamSelect(team)}
+                            >
+                              {formatName(team.name)} - {team.location.split(',').map(part => 
+                                formatName(part.trim())).join(', ')}
+                            </div>
+                          ))}
+                        </div>
+                      )}
                     </div>
 
                     <div className={styles.inputBox}>
-                      <input type="text" id="city" name="city" required />
+                      <input
+                        type="text"
+                        id="city"
+                        name="city"
+                        value={formData.city}
+                        onChange={handleInputChange}
+                        onBlur={handleNameBlur}
+                        placeholder=" "
+                        required
+                      />
                       <label>City</label>
                     </div>
 
                     <div className={styles.inputBox}>
-                      <input type="text" id="country" name="country" required />
+                      <input
+                        type="text"
+                        id="country"
+                        name="country"
+                        value={formData.country}
+                        onChange={handleInputChange}
+                        onBlur={handleNameBlur}
+                        placeholder=" "
+                        required
+                      />
                       <label>Country</label>
                     </div>
                   </>
                 )}
 
-                {role === 'swimmer' && (
-                  <div className={styles.inputBox}>
-                    <input type="date" id="dateOfBirth" name="dateOfBirth" required />
-                    <label>Date of Birth</label>
-                  </div>
-                )}
-
                 <div className={styles.inputBox}>
-                  <input type="email" id="email" name="email" required />
+                  <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleInputChange}
+                    placeholder=" "
+                    required
+                  />
                   <label>Email</label>
                 </div>
 
                 <div className={styles.inputBox}>
-                  <input type="password" id="password" name="password" required />
+                  <input
+                    type="password"
+                    id="password"
+                    name="password"
+                    value={formData.password}
+                    onChange={handleInputChange}
+                    placeholder=" "
+                    minLength={8}
+                    required
+                  />
                   <label>Password</label>
                 </div>
 
                 <div className={styles.inputBox}>
-                  <input type="password" id="confirmPassword" name="confirmPassword" required />
+                  <input
+                    type="password"
+                    id="confirmPassword"
+                    name="confirmPassword"
+                    value={formData.confirmPassword}
+                    onChange={handleInputChange}
+                    placeholder=" "
+                    required
+                  />
                   <label>Confirm Password</label>
                 </div>
               </div>
@@ -201,12 +472,13 @@ const SignupForm: React.FC<SignupFormProps> = ({ role }) => {
               {error && <p className={styles.error}>{error}</p>}
 
               <button type="submit" className={styles.submitButton}>
-                Register as {role === 'coach' ? 'Coach' : 'Swimmer'}
+                Register as {formatName(role)}
               </button>
             </form>
           )}
         </div>
       </div>
+      <Footer />
     </>
   );
 };
