@@ -21,7 +21,7 @@ const NavItems: React.FC<NavItemsProps> = ({ userRole, isAdmin, userEmail, style
       
       {userRole === 'coach' && (
         <>
-          <Link href="/user/coach/coachDashboard" className={styles.pureMenuLink} onClick={onClick}>
+          <Link href="/user/coach/swimGroup" className={styles.pureMenuLink} onClick={onClick}>
             <FaChalkboardTeacher className={styles.icon} /> <span className={styles.text}>Coach Dashboard</span>
           </Link>
           {isAdmin && (

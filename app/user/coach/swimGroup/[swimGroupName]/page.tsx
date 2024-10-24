@@ -80,7 +80,7 @@ const CoachDashboard: React.FC = () => {
   const supabase = createClient();
 
   const fetchSwimGroupData = useCallback(async () => {
-    if (!params.groupName || !coachId) {
+    if (!params.swimGroupName || !coachId) {
       console.error('No groupName in params or coachId not set');
       setError('Unable to fetch swim group data. Please try again.');
       return;
@@ -90,13 +90,13 @@ const CoachDashboard: React.FC = () => {
       setLoading(true);
       setError(null);
 
-      const groupName = decodeURIComponent(params.groupName as string);
+      const swimGroupName = decodeURIComponent(params.swimGroupName as string);
 
       // Fetch the swim group
       const { data: group, error: groupError } = await supabase
         .from('swim_groups')
         .select('*')
-        .eq('name', groupName)
+        .eq('name', swimGroupName)
         .eq('coach_id', coachId)
         .single();
 
