@@ -49,47 +49,86 @@ export const AddSwimResult: React.FC<AddSwimResultProps> = ({ swimmerId, onSubmi
   };
 
   return (
-    <form onSubmit={handleSubmit} className={styles.form}>
-      <input
-        type="text"
-        value={meetName}
-        onChange={(e) => setMeetName(e.target.value)}
-        placeholder="Meet Name"
-        required
-        className={styles.input}
-      />
-      <select
-        value={eventId}
-        onChange={(e) => setEventId(e.target.value)}
-        required
-        className={styles.select}
-      >
-        <option value="">Select Event</option>
-        {events.map((event) => (
-          <option key={event.id} value={event.id}>
-            {`${event.name} (${event.course})`}
-          </option>
-        ))}
-      </select>
-      <input
-        type="text"
-        value={time}
-        onChange={(e) => setTime(e.target.value)}
-        placeholder="Time (HH:MM:SS.ss)"
-        pattern="^(?:(?:([01]?\d|2[0-3]):)?([0-5]?\d):)?([0-5]?\d)(\.\d{1,2})?$"
-        required
-        className={styles.input}
-      />
-      <input
-        type="date"
-        value={date}
-        onChange={(e) => setDate(e.target.value)}
-        required
-        className={styles.input}
-      />
-      <button type="submit" className={styles.button}>
-        Add Result
-      </button>
-    </form>
+    <div className={styles.container}>
+      <div className={styles.infoSection}>
+        <h2 className={styles.title}>Add New Result</h2>
+        <div className={styles.infoCards}>
+          <div className={styles.infoCard}>
+            <h3>🏆 Track Your Progress</h3>
+            <p>Every time counts! Record your race times to track your improvement and celebrate your achievements.</p>
+          </div>
+          <div className={styles.infoCard}>
+            <h3>🎯 Set New Goals</h3>
+            <p>Watch your progress charts update and see how close you are to reaching the next standard level!</p>
+          </div>
+          <div className={styles.infoCard}>
+            <h3>💡 Pro Tips</h3>
+            <ul>
+              <li>Always double-check your times before submitting</li>
+              <li>Include all meets, even practice ones</li>
+              <li>Add results right after your races</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <form onSubmit={handleSubmit} className={styles.form}>
+        <div className={styles.inputGroup}>
+          <input
+            type="text"
+            value={meetName}
+            onChange={(e) => setMeetName(e.target.value)}
+            placeholder="Meet Name (e.g., Summer Championships 2024)"
+            required
+            className={styles.input}
+          />
+        </div>
+
+        <div className={styles.inputGroup}>
+          <select
+            value={eventId}
+            onChange={(e) => setEventId(e.target.value)}
+            required
+            className={styles.select}
+          >
+            <option value="">Select Your Event</option>
+            {events.map((event) => (
+              <option key={event.id} value={event.id}>
+                {`${event.name} (${event.course})`}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div className={styles.inputGroup}>
+          <input
+            type="text"
+            value={time}
+            onChange={(e) => setTime(e.target.value)}
+            placeholder="Your Time (MM:SS.ss)"
+            pattern="^(?:(?:([01]?\d|2[0-3]):)?([0-5]?\d):)?([0-5]?\d)(\.\d{1,2})?$"
+            required
+            className={styles.input}
+          />
+          <span className={styles.inputHint}>Example: 1:23.45</span>
+        </div>
+
+        <div className={styles.inputGroup}>
+          <input
+            type="date"
+            value={date}
+            onChange={(e) => setDate(e.target.value)}
+            required
+            className={styles.input}
+          />
+          <span className={styles.inputHint}>When did you swim this time?</span>
+        </div>
+
+        <button type="submit" className={styles.button}>
+          Add Result 🎉
+        </button>
+      </form>
+    </div>
   );
 };
+

@@ -115,26 +115,45 @@ export const PersonalBestsComparison: React.FC<PersonalBestsComparisonProps> = (
     if (resultTime <= parseTimeToSeconds(standard.b_standard)) return 'B';
     return 'Pre-B';
   };
+  const getStandardClassName = (standard: string) => {
+    const standardMap: { [key: string]: string } = {
+      'AAAA': styles.AAAA,
+      'AAA': styles.AAA,
+      'AA': styles.AA,
+      'A': styles.A,
+      'BB': styles.BB,
+      'B': styles.B,
+      'Pre-B': styles.PreB,
+      'N/A': styles.NA
+    };
+    return `${styles.achievedStandard} ${standardMap[standard] || styles.NA}`;
+  };
 
   return (
-    <table className={styles.table}>
-      <thead>
-        <tr>
-          <th>Event</th>
-          <th>Personal Best</th>
-          <th>Achieved Standard</th>
-        </tr>
-      </thead>
-      <tbody>
-        {personalBests.map((pb) => (
-          <tr key={pb.id}>
-            <td>{`${pb.event} (${pb.course})`}</td>
-            <td>{pb.time}</td>
-            <td className={styles.achievedStandard}>{getAchievedStandard(pb)}</td>
+    <div className={styles.tableContainer}>
+      <table className={styles.table}>
+        <thead>
+          <tr>
+            <th>Event</th>
+            <th>Personal Best</th>
+            <th>Achieved Standard</th>
           </tr>
-        ))}
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+          {personalBests.map((pb) => (
+            <tr key={pb.id}>
+              <td data-label="Event">{`${pb.event} (${pb.course})`}</td>
+              <td data-label="Personal Best">{pb.time}</td>
+              <td data-label="Achieved Standard">
+                <span className={getStandardClassName(getAchievedStandard(pb))}>
+                  {getAchievedStandard(pb)}
+                </span>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
   );
 };
 

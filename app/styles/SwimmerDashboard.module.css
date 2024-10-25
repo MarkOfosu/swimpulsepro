@@ -1,243 +1,229 @@
-/* Main Container */
-.dashboardContainer {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 1.5rem;
-  }
-  
-  /* Welcome Section */
-  .welcomeSection {
-    background: linear-gradient(135deg, #05857b 0%, #38c2ab 100%);
-    border-radius: 12px;
-    padding: 1.5rem;
-    margin-bottom: 1.5rem;
-    color: white;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  }
-  
-  .welcomeContent h1 {
-    font-size: 2rem;
-    margin: 0;
-    font-weight: 600;
-  }
-  
-  .swimTeamName {
-    font-size: 1.1rem;
-    margin-top: 0.5rem;
-    opacity: 0.9;
-  }
-  
-  /* Join Group Card */
-  .joinGroupCard {
-    background-color: #fff;
-    border-radius: 12px;
-    padding: 1.5rem;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
-    text-align: center;
-    margin-bottom: 1.5rem;
-  }
-  
-  .joinGroupCard h2 {
-    font-size: 1.4rem;
-    margin-bottom: 1rem;
-  }
-  
-  .joinGroupCard p {
-    margin-bottom: 1.5rem;
-  }
-  
-  /* Performance Overview */
-  .performanceOverview {
-    background-color: #fff;
-    border-radius: 12px;
-    padding: 1.25rem;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-    margin-bottom: 1.5rem;
-  }
-  
-  .performanceOverview h2 {
-    font-size: 1.25rem;
-    margin-top: 0;
-    margin-bottom: 1rem;
-  }
-  
-  /* Recent Activities */
-  .recentActivities {
-    background-color: #fff;
-    border-radius: 12px;
-    padding: 1.25rem;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-    margin-bottom: 1.5rem;
-  }
-  
-  .recentActivities h2 {
-    font-size: 1.25rem;
-    margin-top: 0;
-    margin-bottom: 1rem;
-  }
-  
-  /* Personal Bests */
-  .personalBests {
-    background-color: #fff;
-    border-radius: 12px;
-    padding: 1.25rem;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-    margin-bottom: 1.5rem;
-  }
-  
-  .personalBests h2 {
-    font-size: 1.25rem;
-    margin-top: 0;
-    margin-bottom: 1rem;
-  }
-  
-  /* Age Group Standards */
-  .ageGroupStandards {
-    background-color: #fff;
-    border-radius: 12px;
-    padding: 1.25rem;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-    margin-bottom: 1.5rem;
-  }
-  
-  .ageGroupStandards h2 {
-    font-size: 1.25rem;
-    margin-top: 0;
-    margin-bottom: 1rem;
-  }
-  
-  /* Add New Result */
-  .addResult {
-    background-color: #fff;
-    border-radius: 12px;
-    padding: 1.25rem;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-    margin-bottom: 1.5rem;
-  }
-  
-  .addResult h2 {
-    font-size: 1.25rem;
-    margin-top: 0;
-    margin-bottom: 1rem;
-  }
-  
-  /* Upcoming Activities */
-  .upcomingActivities {
-    background-color: #fff;
-    border-radius: 12px;
-    padding: 1.25rem;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-    margin-bottom: 1.5rem;
-  }
-  
-  .upcomingActivities h2 {
-    font-size: 1.25rem;
-    margin-top: 0;
-    margin-bottom: 1rem;
-  }
-  
-  .activityList {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 1.25rem;
-  }
-  
-  .activityCard {
-    background-color: #fff;
-    border-radius: 8px;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+.dashboard {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 2rem;
+  background: linear-gradient(135deg, #f0f7ff 0%, #ffffff 100%);
+}
+
+/* Welcome Section with Achievement Banner */
+.welcomeSection {
+  background: linear-gradient(135deg, #05857b 0%, #38c2ab 100%);
+  border-radius: 24px;
+  padding: 2rem;
+  margin-bottom: 2rem;
+  color: white;
+  box-shadow: 0 8px 32px rgba(5, 133, 123, 0.15);
+  position: relative;
+  overflow: hidden;
+}
+
+.welcomeSection::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 200px;
+  height: 200px;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='rgba(255,255,255,0.1)' stroke-width='2'%3E%3Cpath d='M12 15l-2-2h4l-2 2zm0 2l-2-2h4l-2 2zm0 2l-2-2h4l-2 2z'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  opacity: 0.1;
+  transform: rotate(45deg);
+}
+
+.welcomeContent {
+  position: relative;
+  z-index: 1;
+}
+
+.welcomeContent h1 {
+  font-size: 2.5rem;
+  margin: 0;
+  font-weight: 800;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.welcomeContent h1::after {
+  content: '🏊‍♂️';
+  font-size: 2rem;
+}
+
+.swimTeamName {
+  font-size: 1.2rem;
+  margin-top: 0.75rem;
+  opacity: 0.9;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Section Containers with Hover Effects */
+.performanceOverview,
+.recentActivities,
+.personalBests,
+.ageGroupStandards,
+.addResult,
+.upcomingActivities,
+.quickActions {
+  background: white;
+  border-radius: 16px;
+  padding: 1.75rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(224, 224, 224, 0.5);
+  transition: all 0.3s ease;
+}
+
+.performanceOverview:hover,
+.recentActivities:hover,
+.personalBests:hover,
+.ageGroupStandards:hover,
+.addResult:hover,
+.upcomingActivities:hover,
+.quickActions:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+}
+
+/* Section Headers with Icons */
+.performanceOverview h2::before { content: '📈 '; }
+.recentActivities h2::before { content: '🎯 '; }
+.personalBests h2::before { content: '🏆 '; }
+.ageGroupStandards h2::before { content: '🌟 '; }
+.addResult h2::before { content: '➕ '; }
+.upcomingActivities h2::before { content: '📅 '; }
+.quickActions h2::before { content: '⚡ '; }
+
+/* Activity Cards with Enhanced Styling */
+.activityCard {
+  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  padding: 1.25rem;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.activityCard:hover {
+  transform: translateY(-3px) scale(1.01);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+.activityCard::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 100px;
+  height: 100px;
+  background: linear-gradient(135deg, transparent 0%, rgba(5, 133, 123, 0.05) 100%);
+  border-radius: 0 12px 0 100%;
+}
+
+/* Enhanced Response Status */
+.responseStatus {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.35rem 0.75rem;
+  border-radius: 20px;
+  margin: 0.25rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.accepted { 
+  background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+  color: #1e88e5;
+}
+
+.declined { 
+  background: linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%);
+  color: #ef5350;
+}
+
+.pending { 
+  background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);
+  color: #ff9800;
+}
+
+/* Quick Action Buttons */
+.actionButton {
+  background: linear-gradient(135deg, #05857b 0%, #038276 100%);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  padding: 1rem 1.5rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  width: 100%;
+  margin-bottom: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  position: relative;
+  overflow: hidden;
+}
+
+.actionButton:hover {
+  background: linear-gradient(135deg, #046d64 0%, #035951 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(5, 133, 123, 0.2);
+}
+
+.actionButton:active {
+  transform: translateY(0);
+}
+
+/* Achievement Badges */
+.achievementBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  margin-top: 1rem;
+}
+
+.achievementBadge::before {
+  content: '🎖️';
+}
+
+/* Media Queries with Enhanced Mobile Experience */
+@media (max-width: 768px) {
+  .dashboard {
     padding: 1rem;
   }
-  
-  .activityHeader {
-    border-bottom: 1px solid #e5e5e5;
-    padding-bottom: 0.75rem;
-    margin-bottom: 0.75rem;
+
+  .welcomeSection {
+    border-radius: 16px;
+    padding: 1.5rem;
   }
-  
-  .activityHeader h3 {
-    font-size: 1.1rem;
-    margin: 0;
+
+  .welcomeContent h1 {
+    font-size: 2rem;
   }
-  
-  .activityBody p {
-    margin-bottom: 0.5rem;
-  }
-  
-  .responseStatus {
-    display: inline-block;
-    padding: 4px 8px;
-    border-radius: 4px;
-    font-size: 0.8rem;
-    margin-right: 6px;
-  }
-  
-  .responseStatus.attending {
-    background-color: #e6f7ff;
-    color: #1890ff;
-  }
-  
-  .responseStatus.interested {
-    background-color: #fff7e6;
-    color: #faad14;
-  }
-  
-  .responseStatus.not_attending {
-    background-color: #fff1f0;
-    color: #f5222d;
-  }
-  
-  /* Quick Actions */
-  .quickActions {
-    background-color: #fff;
-    border-radius: 12px;
-    padding: 1.25rem;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-  }
-  
-  .quickActions h2 {
-    font-size: 1.25rem;
-    margin-top: 0;
-    margin-bottom: 1rem;
-  }
-  
+
   .actionButton {
-    display: block;
-    width: 100%;
-    padding: 0.75rem 1rem;
-    background-color: #05857b;
-    color: #fff;
-    border: none;
-    border-radius: 6px;
-    font-size: 0.95rem;
-    cursor: pointer;
-    transition: background-color 0.2s;
-    margin-bottom: 0.75rem;
+    padding: 0.875rem 1.25rem;
+    font-size: 1rem;
   }
-  
-  .actionButton:hover {
-    background-color: #046d64;
+
+  /* Stack sections more compactly on mobile */
+  .performanceOverview,
+  .recentActivities,
+  .personalBests,
+  .ageGroupStandards,
+  .addResult,
+  .upcomingActivities,
+  .quickActions {
+    margin-bottom: 1rem;
+    padding: 1.25rem;
   }
-  
-  /* Responsive Design */
-  @media (max-width: 768px) {
-    .dashboardContainer {
-      padding: 1rem;
-    }
-  
-    .welcomeContent h1 {
-      font-size: 1.75rem;
-    }
-  
-    .swimTeamName {
-      font-size: 1rem;
-    }
-  
-    .activityList {
-      grid-template-columns: 1fr;
-    }
-  
-    .actionButton {
-      font-size: 0.9rem;
-    }
-  }
+}

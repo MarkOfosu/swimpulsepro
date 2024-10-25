@@ -124,16 +124,19 @@ const SwimmerDashboard: React.FC = () => {
           <ProgressChart swimmerId={user.id} />
         </section>
 
-        {/* Recent Activities */}
-        <section className={styles.recentActivities}>
-          <h2>Recent Activities</h2>
-          <SwimmerResultsHistory swimmerId={user.id} />
-        </section>
-
         {/* Personal Bests */}
         <section className={styles.personalBests}>
           <h2>Personal Bests</h2>
           <PersonalBestsComparison swimmerId={user.id} />
+        </section>
+
+         {/* Add New Result */}
+         <section className={styles.addResult}>
+          <h2>Add New Result</h2>
+          <AddSwimResult
+            swimmerId={user.id}
+            onSubmit={handleAddResult}
+          />
         </section>
 
         {/* Age Group Standards */}
@@ -142,14 +145,6 @@ const SwimmerDashboard: React.FC = () => {
           <SwimmerStandardsProgress swimmerId={user.id} displayCount={5} />
         </section>
 
-        {/* Add New Result */}
-        <section className={styles.addResult}>
-          <h2>Add New Result</h2>
-          <AddSwimResult
-            swimmerId={user.id}
-            onSubmit={handleAddResult}
-          />
-        </section>
 
         {/* Upcoming Activities */}
         <section className={styles.upcomingActivities}>
@@ -191,6 +186,12 @@ const SwimmerDashboard: React.FC = () => {
           ) : (
             <p>No upcoming activities at the moment.</p>
           )}
+        </section>
+
+         {/* Recent Activities */}
+         <section className={styles.recentActivities}>
+          <h2>Recent Activities</h2>
+          <SwimmerResultsHistory swimmerId={user.id} />
         </section>
 
         {/* Quick Actions */}
