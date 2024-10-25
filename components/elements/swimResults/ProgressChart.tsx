@@ -58,6 +58,15 @@ export const ProgressChart: React.FC<ProgressChartProps> = ({ swimmerId }) => {
     }
   };
 
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric'
+    });
+  };
+
   const groupedResults = useMemo(() => {
     return results.reduce((acc, result) => {
       const key = `${result.event} (${result.course})`;
@@ -65,23 +74,19 @@ export const ProgressChart: React.FC<ProgressChartProps> = ({ swimmerId }) => {
         acc[key] = [];
       }
       acc[key].push({
-        date: new Date(result.date).toLocaleDateString(),
+        date: result.date.toString(), // Store the date as a string
+        displayDate: formatDate(result.date.toString()), // Add formatted date for display
         time: parseTimeToSeconds(result.time)
       });
       return acc;
-    }, {} as Record<string, { date: string; time: number }[]>);
+    }, {} as Record<string, { date: string; displayDate: string; time: number }[]>);
   }, [results]);
 
-  const formatYAxis = (seconds: number) => {
-    const minutes = Math.floor(seconds / 60);
-    const remainingSeconds = (seconds % 60).toFixed(2);
-    return `${minutes}:${remainingSeconds.padStart(5, '0')}`;
+  const formatYAxis = (time: number) => {
+    const minutes = Math.floor(time / 60);
+    const seconds = (time % 60).toFixed(2);
+    return `${minutes}:${seconds.padStart(5, '0')}`;
   };
-
-  if (isLoading) return <div className={styles.loading}>Loading...</div>;
-  if (error) return <div className={styles.error}>Error: {error}</div>;
-
-  const eventOptions = Object.keys(groupedResults);
 
   const renderChart = () => {
     if (!selectedEvent) return null;
@@ -98,7 +103,13 @@ export const ProgressChart: React.FC<ProgressChartProps> = ({ swimmerId }) => {
         <ResponsiveContainer width="100%" height={400}>
           <LineChart data={data} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
             <CartesianGrid strokeDasharray="3 3" />
-            <CustomXAxis dataKey="date" />
+            <CustomXAxis 
+              dataKey="displayDate" 
+              angle={-45}
+              textAnchor="end"
+              height={60}
+              interval={0}
+            />
             <YAxis 
               tickFormatter={formatYAxis} 
               domain={domain} 
@@ -107,16 +118,46 @@ export const ProgressChart: React.FC<ProgressChartProps> = ({ swimmerId }) => {
             />
             <Tooltip
               formatter={(value: number) => formatYAxis(value)}
-              labelFormatter={(label) => `Date: ${label}`}
+              labelFormatter={(label, payload) => {
+                if (payload && payload[0]) {
+                  return `Date: ${payload[0].payload.displayDate}`;
+                }
+                return `Date: ${label}`;
+              }}
+              contentStyle={{
+                background: 'white',
+                border: '1px solid #e0e0e0',
+                borderRadius: '8px',
+                padding: '8px 12px'
+              }}
             />
             <Legend />
-            <Line type="monotone" dataKey="time" stroke="#8884d8" name="Time" dot={{ r: 4 }} />
-            <ReferenceLine y={minTime} label="Best Time" stroke="green" strokeDasharray="3 3" />
+            <Line 
+              type="monotone" 
+              dataKey="time" 
+              stroke="#05857b" 
+              name="Time" 
+              dot={{ r: 4, fill: '#05857b' }} 
+              activeDot={{ r: 6, fill: '#05857b' }}
+            />
+            <ReferenceLine 
+              y={minTime} 
+              label={{ 
+                value: "Best Time", 
+                position: 'right',
+                fill: '#4caf50',
+                fontSize: 12 
+              }} 
+              stroke="#4caf50" 
+              strokeDasharray="3 3" 
+            />
           </LineChart>
         </ResponsiveContainer>
       </div>
     );
   };
+
+  const eventOptions = Object.keys(groupedResults);
 
   return (
     <div className={styles.container}>

@@ -1,27 +1,172 @@
-/* SwimmerResultsHistory.module.css */
+/* Table Container */
+.tableContainer {
+  width: 100%;
+  overflow-x: auto;
+  border-radius: 8px;
+  background: white;
+}
 
+/* Base Table Styles */
 .table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 0.95rem;
+}
+
+/* Header Styles */
+.table thead tr {
+  background: #f8f9fa;
+  border-bottom: 2px solid #e0e0e0;
+}
+
+.table th {
+  padding: 1rem;
+  text-align: left;
+  font-weight: 600;
+  color: #333;
+  white-space: nowrap;
+  border-bottom: 2px solid #e0e0e0;
+}
+
+/* Body Styles */
+.table tbody tr {
+  border-bottom: 1px solid #e0e0e0;
+  transition: background-color 0.2s ease;
+}
+
+.table tbody tr:last-child {
+  border-bottom: none;
+}
+
+.table tbody tr:hover {
+  background-color: #f8f9fa;
+}
+
+.table td {
+  padding: 1rem;
+  color: #666;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+/* Personal Best Indicator */
+.personalBest {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.75rem;
+  background: #e3f2fd;
+  color: #1e88e5;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.notPersonalBest {
+  color: #666;
+  font-size: 0.85rem;
+}
+
+/* Empty State */
+.emptyState {
+  text-align: center;
+  padding: 2rem;
+  color: #666;
+}
+
+/* Loading State */
+.loadingState {
+  text-align: center;
+  padding: 2rem;
+  color: #666;
+}
+
+/* Error State */
+.errorState {
+  text-align: center;
+  padding: 2rem;
+  color: #ef5350;
+  background: #ffebee;
+  border-radius: 8px;
+}
+
+/* Mobile Transformation */
+@media (max-width: 768px) {
+  .table {
+    display: block;
   }
   
-  .table th,
+  .table thead {
+    display: none; /* Hide headers on mobile */
+  }
+  
+  .table tbody {
+    display: block;
+  }
+  
+  .table tr {
+    display: flex;
+    flex-direction: column;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    background: white;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  }
+
   .table td {
-    border: 1px solid #ddd;
-    padding: 8px;
-    text-align: left;
+    display: flex;
+    padding: 0.5rem 0;
+    border: none;
+    font-size: 0.9rem;
+  }
+
+  /* Add labels for mobile view */
+  .table td::before {
+    content: attr(data-label);
+    font-weight: 600;
+    width: 40%;
+    min-width: 100px;
+    color: #333;
+  }
+
+  .personalBest,
+  .notPersonalBest {
+    margin-left: auto;
+  }
+}
+
+/* Responsive font sizes */
+@media (max-width: 480px) {
+  .table {
+    font-size: 0.875rem;
   }
   
-  .table th {
-    background-color: #f2f2f2;
-    font-weight: bold;
+  .table td::before {
+    font-size: 0.875rem;
   }
   
-  .table tr:nth-child(even) {
-    background-color: #f9f9f9;
+  .personalBest,
+  .notPersonalBest {
+    font-size: 0.8rem;
   }
-  
-  .table tr:hover {
-    background-color: #f5f5f5;
-  }
+}
+
+/* Scrollbar styling */
+.tableContainer::-webkit-scrollbar {
+  height: 8px;
+}
+
+.tableContainer::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.tableContainer::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 4px;
+}
+
+.tableContainer::-webkit-scrollbar-thumb:hover {
+  background: #bbb;
+}
