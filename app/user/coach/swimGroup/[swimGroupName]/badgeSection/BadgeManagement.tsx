@@ -8,7 +8,7 @@ const badgeIcons = ['🏅', '🎖️', '🥇', '🥈', '🥉', '🏆', '🌟', '
 interface Badge {
   id: string;
   name: string;
-  icon: string;
+  icon: string; 
   description: string;
 }
 
@@ -42,15 +42,13 @@ const BadgeManagementPage: React.FC = () => {
         setError(null);
       } catch (err) {
         console.error('Error fetching swim group:', err);
-        setError('Failed to fetch swim group. Please check the group name and try again.');
+        setError('Failed to fetch swim group. Please try again.');
         setSwimGroupId(null);
       }
     };
 
     getSwimGroupId();
-  }, [swimGroupName, supabase, setSwimGroupId, setError]);
-
- 
+  }, [swimGroupName, supabase]);
 
   const fetchBadges = React.useCallback(async () => {
     if (!swimGroupId) return;
@@ -112,49 +110,63 @@ const BadgeManagementPage: React.FC = () => {
   if (error) {
     return (
       <div className={styles.errorContainer}>
-        <h1>Error</h1>
-        <p>{error}</p>
+        <p className={styles.errorMessage}>{error}</p>
       </div>
     );
   }
 
   return (
     <div className={styles.container}>
-      <h1 className={styles.pageTitle}>Badge Management for {decodeURIComponent(swimGroupName as string)}</h1>
+      <h1 className={styles.pageTitle}>
+        Badge Management for {decodeURIComponent(swimGroupName as string)}
+      </h1>
+
       <div className={styles.createBadgeSection}>
-        <h2 className={styles.sectionTitle}>Create New Badge</h2>
-        <input
-          type="text"
-          value={newBadgeName}
-          onChange={(e) => setNewBadgeName(e.target.value)}
-          placeholder="Enter badge name"
-          className={styles.input}
-        />
-        <div className={styles.iconSelector}>
-          {badgeIcons.map(icon => (
-            <button
-              key={icon}
-              onClick={() => setSelectedIcon(icon)}
-              className={`${styles.iconButton} ${selectedIcon === icon ? styles.selectedIcon : ''}`}
-              data-icon={icon}
-            >
-              {icon}
-            </button>
-          ))}
+        <div className={styles.formContent}>
+          <h2 className={styles.sectionTitle}>Create New Badge</h2>
+          
+          <div className={styles.inputContainer}>
+            <input
+              type="text"
+              value={newBadgeName}
+              onChange={(e) => setNewBadgeName(e.target.value)}
+              placeholder="Enter badge name"
+              className={styles.input}
+            />
+          </div>
+
+          <div className={styles.iconSelector}>
+            {badgeIcons.map(icon => (
+              <button
+                key={icon}
+                onClick={() => setSelectedIcon(icon)}
+                className={`${styles.iconButton} ${
+                  selectedIcon === icon ? styles.selectedIcon : ''
+                }`}
+                data-icon={icon}
+              >
+                {icon}
+              </button>
+            ))}
+          </div>
         </div>
+
         {(newBadgeName || selectedIcon) && (
-          <div className={styles.badgePreview}>
-            <h3>Preview</h3>
+          <div className={styles.previewSection}>
+            <h3 className={styles.previewTitle}>Preview</h3>
             <div className={styles.previewContent}>
               {selectedIcon && (
                 <span className={styles.previewIcon} data-icon={selectedIcon}>
                   {selectedIcon}
                 </span>
               )}
-              {newBadgeName && <span className={styles.previewName}>{newBadgeName}</span>}
+              {newBadgeName && (
+                <span className={styles.previewName}>{newBadgeName}</span>
+              )}
             </div>
           </div>
         )}
+
         <button 
           onClick={createBadge} 
           disabled={!newBadgeName || !selectedIcon}
@@ -163,6 +175,7 @@ const BadgeManagementPage: React.FC = () => {
           Create Badge
         </button>
       </div>
+
       <div className={styles.existingBadgesSection}>
         <h2 className={styles.sectionTitle}>Existing Badges</h2>
         <div className={styles.badgeList}>

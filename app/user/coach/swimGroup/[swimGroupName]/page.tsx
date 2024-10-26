@@ -304,228 +304,229 @@ const SwimGroupPage: React.FC = () => {
       </div>
     </CoachPageLayout>
   );
+ 
   return (
     <CoachPageLayout>
-      <div className={styles.swimGroupContainer}>
-        {/* Header Section */}
-        <div className={styles.header}>
-          <div className={styles.headerContent}>
-            <h1 className={styles.title}>
-              {swimGroup.name}
-              <span className={styles.groupBadge}>{swimmers.length} Swimmers</span>
-            </h1>
-            <p className={styles.description}>{swimGroup.description}</p>
-            <div className={styles.groupInfo}>
-              <p className={styles.groupCode}>
-                <span className={styles.groupCodeLabel}>Group Code:</span>
-                <code className={styles.groupCodeValue}>{swimGroup.group_code}</code>
-                <button 
-                  className={styles.copyButton}
-                  onClick={() => {
-                    navigator.clipboard.writeText(swimGroup.group_code);
-                    showToast('Group code copied!', 'success');
-                  }}
-                >
-                  Copy 📋
-                </button>
-              </p>
+      <div className={styles.pageWrapper}>
+        <div className={styles.swimGroupContainer}>
+          {/* Header Section */}
+          <header className={styles.header}>
+            <div className={styles.headerContent}>
+              <h1 className={styles.title}>
+                {swimGroup?.name}
+                <span className={styles.groupBadge}>{swimmers.length} Swimmers</span>
+              </h1>
+              <p className={styles.description}>{swimGroup?.description}</p>
+              <div className={styles.groupCodeContainer}>
+                <div className={styles.groupCode}>
+                  <span className={styles.groupCodeLabel}>Group Code</span>
+                  <code className={styles.groupCodeValue}>{swimGroup?.group_code}</code>
+                  <button 
+                    className={styles.copyButton}
+                    onClick={() => {
+                      navigator.clipboard.writeText(swimGroup?.group_code || '');
+                      showToast('Group code copied!', 'success');
+                    }}
+                  >
+                    Copy Code
+                  </button>
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
+          </header>
 
-        {/* Swimmers Section */}
-        <div className={styles.section}>
-          <h2 
-            className={styles.sectionTitle} 
-            onClick={toggleSwimmerList}
-            role="button"
-            aria-expanded={isSwimmerListOpen}
-          >
-            <span className={styles.sectionIcon}>👥</span>
-            Swimmers Management
-            <span className={styles.toggleIcon}>
-              {isSwimmerListOpen ? '▼' : '▶'}
-            </span>
-          </h2>
-          
-          {isSwimmerListOpen && (
-            <div className={styles.content}>
-              <div className={styles.swimmersList}>
-                {swimmers.length > 0 ? (
-                  <ul>
-                    {swimmers.map((swimmer) => (
-                      <li
-                        key={swimmer.id}
-                        onClick={() => setSelectedSwimmerId(swimmer.id === selectedSwimmerId ? null : swimmer.id)}
-                        className={`
-                          ${styles.swimmerItem}
-                          ${selectedSwimmerId === swimmer.id ? styles.selectedSwimmer : ''}
-                        `}
-                      >
+          {/* Main Content */}
+          <main className={styles.mainContent}>
+            {/* Swimmers Management */}
+            <section className={styles.managementSection}>
+              <div className={styles.sectionHeader}>
+                <span className={styles.sectionIcon}>👥</span>
+                <div>
+                  <h2 className={styles.sectionTitle}>
+                    Swimmers Management
+                  </h2>
+                  <p className={styles.sectionDescription}>
+                    View and manage your group's swimmers
+                  </p>
+                </div>
+              </div>
+              
+              <div className={styles.sectionContent}>
+                <div className={styles.swimmersList}>
+                  {swimmers.map((swimmer) => (
+                    <div
+                      key={swimmer.id}
+                      onClick={() => setSelectedSwimmerId(
+                        swimmer.id === selectedSwimmerId ? null : swimmer.id
+                      )}
+                      className={`${styles.swimmerItem} ${
+                        selectedSwimmerId === swimmer.id ? styles.selectedSwimmer : ''
+                      }`}
+                    >
+                      <div className={styles.swimmerInfo}>
                         <span className={styles.swimmerName}>
                           {swimmer.profiles.last_name}, {swimmer.profiles.first_name}
                         </span>
-                        {swimmerBadges.filter(badge => badge.swimmer_id === swimmer.id).length > 0 && (
-                          <span className={styles.badgeCount}>
-                            🏅 {swimmerBadges.filter(badge => badge.swimmer_id === swimmer.id).length}
-                          </span>
-                        )}
-                      </li>
-                    ))}
-                  </ul>
-                ) : (
-                  <div className={styles.emptyState}>
-                    <p>No swimmers in this group yet</p>
-                    <p>Invite swimmers using the form below</p>
+                      </div>
+                      {swimmerBadges.filter(badge => 
+                        badge.swimmer_id === swimmer.id
+                      ).length > 0 && (
+                        <span className={styles.badgeCount}>
+                          🏅 {swimmerBadges.filter(badge => 
+                            badge.swimmer_id === swimmer.id
+                          ).length}
+                        </span>
+                      )}
+                    </div>
+                  ))}
+                </div>
+
+                <div className={styles.swimmerDetails}>
+                  {selectedSwimmerId ? (
+                    <SwimmerDetails swimmerId={selectedSwimmerId} />
+                  ) : (
+                    <div className={styles.detailsPlaceholder}>
+                      <p>Select a swimmer to view details</p>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </section>
+
+            {/* Badge and Invitation Management Grid */}
+            <div className={styles.managementGrid}>
+              {/* Badge Award Section */}
+              <section className={styles.managementSection}>
+                <div className={styles.sectionHeader}>
+                  <span className={styles.sectionIcon}>🏅</span>
+                  <div>
+                    <h2 className={styles.sectionTitle}>Award Achievement Badge</h2>
+                    <p className={styles.sectionDescription}>
+                      Recognize swimmer achievements and milestones
+                    </p>
                   </div>
-                )}
+                </div>
+
+                <div className={styles.sectionContent}>
+                  <div className={styles.formGroup}>
+                    <label className={styles.inputLabel}>
+                      Badge Type
+                      <select
+                        value={selectedBadge}
+                        onChange={(e) => setSelectedBadge(e.target.value)}
+                        className={styles.select}
+                      >
+                        <option value="">Select a badge</option>
+                        {badges.map((badge) => (
+                          <option key={badge.id} value={badge.id}>
+                            {badge.icon} {badge.name}
+                          </option>
+                        ))}
+                      </select>
+                    </label>
+                  </div>
+
+                  <div className={styles.formGroup}>
+                    <label className={styles.inputLabel}>
+                      Swimmer
+                      <select
+                        value={selectedSwimmer}
+                        onChange={(e) => setSelectedSwimmer(e.target.value)}
+                        className={styles.select}
+                      >
+                        <option value="">Select a swimmer</option>
+                        {swimmers.map((swimmer) => (
+                          <option key={swimmer.id} value={swimmer.id}>
+                            {swimmer.profiles.first_name} {swimmer.profiles.last_name}
+                          </option>
+                        ))}
+                      </select>
+                    </label>
+                  </div>
+
+                  <button 
+                    onClick={handleAwardBadge} 
+                    className={styles.button}
+                    disabled={!selectedBadge || !selectedSwimmer}
+                  >
+                    Award Badge
+                  </button>
+                </div>
+              </section>
+
+              {/* Invitations Section */}
+              <section className={styles.managementSection}>
+                <div className={styles.sectionHeader}>
+                  <span className={styles.sectionIcon}>✉️</span>
+                  <div>
+                    <h2 className={styles.sectionTitle}>Manage Invitations</h2>
+                    <p className={styles.sectionDescription}>
+                      Invite new swimmers to join your group
+                    </p>
+                  </div>
+                </div>
+
+                <div className={styles.sectionContent}>
+                  {invitations.length > 0 && (
+                    <div className={styles.invitationsList}>
+                      {invitations.map((invitation) => (
+                        <div key={invitation.id} className={styles.invitationItem}>
+                          <span className={styles.invitationEmail}>
+                            {invitation.email}
+                          </span>
+                          <span className={`${styles.invitationStatus} ${styles[invitation.status]}`}>
+                            {invitation.status}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  <form onSubmit={handleInviteSwimmer} className={styles.inviteForm}>
+                    <div className={styles.formGroup}>
+                      <label className={styles.inputLabel}>
+                        Swimmer's Email
+                        <input
+                          type="email"
+                          value={inviteEmail}
+                          onChange={(e) => setInviteEmail(e.target.value)}
+                          placeholder="Enter email address"
+                          className={styles.input}
+                          required
+                        />
+                      </label>
+                    </div>
+                    <button type="submit" className={styles.button}>
+                      Send Invitation
+                    </button>
+                  </form>
+                </div>
+              </section>
+            </div>
+
+            {/* Attendance Section */}
+            <section className={styles.managementSection}>
+              <div className={styles.sectionHeader}>
+                <span className={styles.sectionIcon}>📊</span>
+                <div>
+                  <h2 className={styles.sectionTitle}>Attendance Insights</h2>
+                  <p className={styles.sectionDescription}>
+                    Track and analyze attendance patterns
+                  </p>
+                </div>
               </div>
               
-              <div className={styles.swimmerDetails}>
-                {selectedSwimmerId ? (
-                  <SwimmerDetails swimmerId={selectedSwimmerId} />
-                ) : (
-                  <div className={styles.detailsPlaceholder}>
-                    <p>👈 Select a swimmer to view their details</p>
-                  </div>
-                )}
+              <div className={styles.sectionContent}>
+                <AttendanceInsights groupId={swimGroup?.id} />
               </div>
-            </div>
-          )}
+            </section>
+          </main>
         </div>
-
-        {/* Attendance Section */}
-        <div className={styles.section}>
-          <h2 
-            className={styles.sectionTitle} 
-            onClick={toggleAttendanceInsights}
-            role="button"
-            aria-expanded={showAttendanceInsights}
-          >
-            <span className={styles.sectionIcon}>📊</span>
-            Attendance Insights
-            <span className={styles.toggleIcon}>
-              {showAttendanceInsights ? '▼' : '▶'}
-            </span>
-          </h2>
-          {showAttendanceInsights && <AttendanceInsights groupId={swimGroup.id} />}
-        </div>
-
-        {/* Badge Award Section */}
-        <div className={styles.badgeAwardingSection}>
-          <div className={styles.sectionHeader}>
-            <h2 className={styles.sectionTitle}>
-              <span className={styles.sectionIcon}>🏅</span>
-              Award Achievement Badge
-            </h2>
-            <p className={styles.sectionDescription}>
-              Recognize swimmer achievements and milestones with special badges
-            </p>
-          </div>
-
-          <div className={styles.awardForm}>
-            <div className={styles.selectGroup}>
-              <label htmlFor="badge-select" className={styles.selectLabel}>
-                Choose Badge Type
-              </label>
-              <select
-                id="badge-select"
-                value={selectedBadge}
-                onChange={(e) => setSelectedBadge(e.target.value)}
-                className={styles.select}
-              >
-                <option value="">Select a badge</option>
-                {badges.map((badge) => (
-                  <option key={badge.id} value={badge.id}>
-                    {badge.icon} {badge.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div className={styles.selectGroup}>
-              <label htmlFor="swimmer-select" className={styles.selectLabel}>
-                Select Swimmer
-              </label>
-              <select
-                id="swimmer-select"
-                value={selectedSwimmer}
-                onChange={(e) => setSelectedSwimmer(e.target.value)}
-                className={styles.select}
-              >
-                <option value="">Select a swimmer</option>
-                {swimmers.map((swimmer) => (
-                  <option key={swimmer.id} value={swimmer.id}>
-                    {swimmer.profiles.first_name} {swimmer.profiles.last_name}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <button 
-              onClick={handleAwardBadge} 
-              className={styles.awardButton}
-              disabled={!selectedBadge || !selectedSwimmer}
-            >
-              Award Badge 🎉
-            </button>
-          </div>
-        </div>
-
-        {/* Invitations Section */}
-        <div className={styles.invitationsSection}>
-          <div className={styles.sectionHeader}>
-            <h2 className={styles.sectionTitle}>
-              <span className={styles.sectionIcon}>✉️</span>
-              Manage Invitations
-            </h2>
-            <p className={styles.sectionDescription}>
-              Invite new swimmers to join your group
-            </p>
-          </div>
-
-          {invitations.length > 0 ? (
-            <ul className={styles.invitationsList}>
-              {invitations.map((invitation) => (
-                <li key={invitation.id} className={styles.invitationItem}>
-                  <span className={styles.invitationEmail}>
-                    {invitation.email}
-                  </span>
-                  <span className={`${styles.invitationStatus} ${styles[invitation.status]}`}>
-                    {invitation.status}
-                  </span>
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <p className={styles.noInvitationsMessage}>
-              No pending invitations
-            </p>
-          )}
-
-          <form onSubmit={handleInviteSwimmer} className={styles.inviteForm}>
-            <div className={styles.inputGroup}>
-              <input
-                type="email"
-                value={inviteEmail}
-                onChange={(e) => setInviteEmail(e.target.value)}
-                placeholder="Enter swimmer's email address"
-                required
-                className={styles.inviteInput}
-              />
-              <button type="submit" className={styles.inviteButton}>
-                Send Invitation
-              </button>
-            </div>
-          </form>
-        </div>
+        <BadgeManagementPage />
       </div>
-
-      <BadgeManagementPage />
       <ToastContainer />
     </CoachPageLayout>
   );
-}
+};
 
-
-  export default SwimGroupPage;
+export default SwimGroupPage;
