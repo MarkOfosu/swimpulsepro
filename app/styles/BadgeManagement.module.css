@@ -1,227 +1,326 @@
+/* Mobile First Base Styles */
 .container {
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 20px;
-    background-color: #fcfcfc;
-    border-radius: 12px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  padding: 1rem;
+  background-color: #f8fafc;
+}
+
+.pageTitle {
+  font-size: 1.5rem;
+  color: #1e293b;
+  margin-bottom: 1.5rem;
+  font-weight: 700;
+  text-align: center;
+}
+
+.sectionTitle {
+  font-size: 1.25rem;
+  color: #334155;
+  margin-bottom: 1rem;
+  font-weight: 600;
+}
+
+/* Create Badge Section */
+.createBadgeSection {
+  background: white;
+  border-radius: 16px;
+  padding: 1.25rem;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.input {
+  width: 100%;
+  padding: 0.875rem;
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  font-size: 1rem;
+  background: #f8fafc;
+  transition: all 0.2s ease;
+  margin-bottom: 1rem;
+}
+
+.input:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+/* Icon Selector Grid */
+.iconSelector {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.iconButton {
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  border-radius: 12px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: white;
+}
+
+.selectedIcon {
+  transform: scale(1.1);
+  box-shadow: 0 0 0 3px white, 0 0 0 6px currentColor;
+}
+
+/* Badge Preview */
+.badgePreview {
+  background: #f8fafc;
+  border-radius: 12px;
+  padding: 1.25rem;
+  margin-bottom: 1.5rem;
+  text-align: center;
+  color: #64748b;
+}
+
+.previewContent {
+  background: currentColor;
+  border-radius: 12px;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  color: rgb(192, 166, 166);
+}
+
+.previewIcon {
+  font-size: 3rem;
+  background: rgba(255, 255, 255, 0.2);
+  width: 80px;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  backdrop-filter: blur(4px);
+}
+
+.previewName {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: white; /* Ensure text is white for contrast */
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1); /* Add shadow for better readability */
+  background: rgba(0, 0, 0, 0.1); /* Subtle background for better contrast */
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  width: fit-content;
+  margin: 0 auto;
+}
+
+/* Badge Grid */
+.badgeList {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 1rem;
+}
+
+.badgeItem {
+  position: relative;
+  background: white;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease;
+  aspect-ratio: 1;
+}
+
+.badgeIcon {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.5rem;
+  color: white;
+}
+
+.badgeName {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 0.75rem;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(4px);
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #1e293b;
+  text-align: center;
+}
+
+/* Badge Colors */
+.iconButton[data-icon='🏅'],
+.badgeIcon[data-icon='🏅'] { 
+  background: linear-gradient(135deg, #ffd700 0%, #ffa500 100%);
+}
+
+.iconButton[data-icon='🎖️'],
+.badgeIcon[data-icon='🎖️'] { 
+  background: linear-gradient(135deg, #c0c0c0 0%, #a0a0a0 100%);
+}
+
+.iconButton[data-icon='🥇'],
+.badgeIcon[data-icon='🥇'] { 
+  background: linear-gradient(135deg, #ffd700 0%, #ffa500 100%);
+}
+
+.iconButton[data-icon='🥈'],
+.badgeIcon[data-icon='🥈'] { 
+  background: linear-gradient(135deg, #c0c0c0 0%, #a0a0a0 100%);
+}
+
+.iconButton[data-icon='🥉'],
+.badgeIcon[data-icon='🥉'] { 
+  background: linear-gradient(135deg, #cd7f32 0%, #a0522d 100%);
+}
+
+.iconButton[data-icon='🏆'],
+.badgeIcon[data-icon='🏆'] { 
+  background: linear-gradient(135deg, #ffd700 0%, #ffa500 100%);
+}
+
+.iconButton[data-icon='🌟'],
+.badgeIcon[data-icon='🌟'] { 
+  background: linear-gradient(135deg, #ffdf00 0%, #ffd700 100%);
+}
+
+.iconButton[data-icon='💪'],
+.badgeIcon[data-icon='💪'] { 
+  background: linear-gradient(135deg, #ff6b6b 0%, #ee5253 100%);
+}
+
+.iconButton[data-icon='🏊‍♂️'],
+.badgeIcon[data-icon='🏊‍♂️'] { 
+  background: linear-gradient(135deg, #4a90e2 0%, #357abd 100%);
+}
+
+.iconButton[data-icon='🏊‍♀️'],
+.badgeIcon[data-icon='🏊‍♀️'] { 
+  background: linear-gradient(135deg, #4a90e2 0%, #357abd 100%);
+}
+
+/* Create Button */
+.createButton {
+  width: 100%;
+  padding: 1rem;
+  border-radius: 12px;
+  border: none;
+  background: #3b82f6;
+  color: white;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.createButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.createButton:not(:disabled):hover {
+  background: #2563eb;
+  transform: translateY(-2px);
+}
+
+/* Error States */
+.errorContainer {
+  padding: 1rem;
+  background: #fee2e2;
+  border-radius: 12px;
+  margin: 1rem 0;
+  text-align: center;
+  color: #dc2626;
+}
+
+/* Tablet Breakpoint */
+@media (min-width: 640px) {
+  .container {
+    padding: 1.5rem;
   }
-  
-  .pageTitle {
-    color: #ffffff;
-    text-align: center;
-    margin-bottom: 30px;
-    font-size: 24px;
-  }
-  
-  .sectionTitle {
-    color: #f87171;
-    font-size: 20px;
-    margin-bottom: 20px;
-  }
-  
-  .createBadgeSection {
-    background-color: white;
-    padding: 20px;
-    border-radius: 8px;
-    margin-bottom: 30px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-  }
-  
-  .input {
-    width: 100%;
-    padding: 12px;
-    margin-bottom: 15px;
-    border: 1px solid #e0e0e0;
-    border-radius: 6px;
-    font-size: 16px;
-  }
-  
-  .iconSelector {
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 10px;
-    margin-bottom: 20px;
-  }
-  
-  .iconButton {
-    font-size: 28px;
-    aspect-ratio: 16 / 9;
-    border: 1px solid #e0e0e0;
-    border-radius: 6px;
-    background-color: #4285f4;
-    color: white;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  
-  .iconButton:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  }
-  
-  .selectedIcon {
-    border: 2px solid #333;
-    box-shadow: 0 0 0 2px white inset;
-  }
-  
-  .createButton {
-    width: 100%;
-    padding: 12px;
-    background-color: #4285f4;
-    color: white;
-    border: none;
-    border-radius: 6px;
-    font-size: 16px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-  }
-  
-  .createButton:hover:not(:disabled) {
-    background-color: #3367d6;
-  }
-  
-  .createButton:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
-  
-  .badgePreview {
-    background-color: #f8f8f8;
-    border: 1px solid #e0e0e0;
-    border-radius: 6px;
-    padding: 15px;
-    margin-bottom: 20px;
-    text-align: center;
-  }
-  
-  .previewContent {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-  }
-  
-  .previewIcon {
-    font-size: 36px;
-  }
-  
-  .previewName {
-    font-size: 18px;
-    font-weight: 500;
-  }
-  
-  .existingBadgesSection {
-    margin-top: 30px;
-    padding: 20px;
- 
-    position: relative;
-    overflow: hidden;
-  }
-  
-  .existingBadgesSection::before {
-    content: '';
-    position: absolute;
-    top: -50%;
-    left: -50%;
-    width: 200%;
-    height: 200%;
-    background: linear-gradient(
-      to bottom right,
-      rgba(255, 255, 255, 0.3) 0%,
-      rgba(255, 255, 255, 0.1) 50%,
-      transparent 100%
-    );
-    transform: rotate(30deg);
-    pointer-events: none;
-  }
-  
+
   .badgeList {
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 1.25rem;
+  }
+
+  .iconSelector {
+    gap: 0.75rem;
+  }
+
+  .iconButton {
+    font-size: 1.75rem;
+  }
+}
+
+/* Desktop Breakpoint */
+@media (min-width: 1024px) {
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+  }
+
+  .createBadgeSection {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 20px;
-    position: relative;
-    z-index: 1;
+    grid-template-columns: 2fr 1fr;
+    gap: 2rem;
   }
-  
-  .badgeItem {
-    background-color: white;
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    transition: all 0.3s ease;
-    display: flex;
-    flex-direction: column;
+
+  .badgePreview {
+    margin: 0;
   }
-  
+
+  .createButton {
+    grid-column: span 2;
+  }
+
+  .badgeList {
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 1.5rem;
+  }
+
+  /* Hover Effects */
   .badgeItem:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    transform: translateY(-4px);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
   }
-  
-  .badgeIcon {
-    font-size: 48px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    aspect-ratio: 16 / 9;
-    color: white;
+
+  .iconButton:hover:not(.selectedIcon) {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   }
-  
-  .badgeName {
-    font-size: 16px;
-    color: #333;
-    font-weight: 500;
-    padding: 12px;
-    text-align: center;
-    background-color: white;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
   }
-  
-  /* Icon-specific colors */
-  .iconButton[data-icon='🏅'],
-  .badgeIcon[data-icon='🏅'] { background-color: #ffd700; }
-  
-  .iconButton[data-icon='🎖️'],
-  .badgeIcon[data-icon='🎖️'] { background-color: #c0c0c0; }
-  
-  .iconButton[data-icon='🥇'],
-  .badgeIcon[data-icon='🥇'] { background-color: #ffd700; }
-  
-  .iconButton[data-icon='🥈'],
-  .badgeIcon[data-icon='🥈'] { background-color: #c0c0c0; }
-  
-  .iconButton[data-icon='🥉'],
-  .badgeIcon[data-icon='🥉'] { background-color: #cd7f32; }
-  
-  .iconButton[data-icon='🏆'],
-  .badgeIcon[data-icon='🏆'] { background-color: #ffd700; }
-  
-  .iconButton[data-icon='🌟'],
-  .badgeIcon[data-icon='🌟'] { background-color: #ffdf00; }
-  
-  .iconButton[data-icon='💪'],
-  .badgeIcon[data-icon='💪'] { background-color: #ff6b6b; }
-  
-  .iconButton[data-icon='🏊‍♂️'],
-  .badgeIcon[data-icon='🏊‍♂️'] { background-color: #4a90e2; }
-  
-  .iconButton[data-icon='🏊‍♀️'],
-  .badgeIcon[data-icon='🏊‍♀️'] { background-color: #4a90e2; }
-  
-  @media (max-width: 600px) {
-    .container {
-      padding: 15px;
-    }
-  
-    .iconSelector {
-      grid-template-columns: repeat(5, 1fr);
-    }
-  
-    .badgeList {
-      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-    }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
+}
+
+.badgeItem {
+  animation: fadeIn 0.3s ease-out forwards;
+}
+
+/* Loading State */
+.loading {
+  text-align: center;
+  padding: 2rem;
+  color: #64748b;
+}

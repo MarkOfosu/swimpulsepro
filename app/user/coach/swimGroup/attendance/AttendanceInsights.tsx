@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useState, useEffect, useCallback } from 'react';
 import { createClient } from '@/utils/supabase/client';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
@@ -15,6 +17,8 @@ interface SwimmerAttendance {
 interface GroupAttendance {
   date: string;
   attendancePercentage: number;
+  totalPresent: number;
+  totalSwimmers: number;
 }
 
 interface AttendanceInsightsProps {
@@ -26,12 +30,17 @@ const AttendanceInsights: React.FC<AttendanceInsightsProps> = ({ groupId }) => {
   const [groupAttendance, setGroupAttendance] = useState<GroupAttendance[]>([]);
   const [selectedSwimmer, setSelectedSwimmer] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
   const [groupName, setGroupName] = useState<string>('');
+  
   const supabase = createClient();
 
   const fetchAttendanceData = useCallback(async () => {
     try {
-      // Fetch group name
+      setLoading(true);
+      setError(null);
+
+      // Fetch group details
       const { data: groupData, error: groupError } = await supabase
         .from('swim_groups')
         .select('name')
@@ -41,12 +50,15 @@ const AttendanceInsights: React.FC<AttendanceInsightsProps> = ({ groupId }) => {
       if (groupError) throw groupError;
       setGroupName(groupData.name);
 
-      // Fetch swimmers with their profile information
+      // Fetch swimmers with their profiles
       const { data: swimmers, error: swimmersError } = await supabase
         .from('swimmers')
         .select(`
           id,
-          profiles(first_name, last_name)
+          profiles (
+            first_name,
+            last_name
+          )
         `)
         .eq('group_id', groupId);
 
@@ -55,15 +67,18 @@ const AttendanceInsights: React.FC<AttendanceInsightsProps> = ({ groupId }) => {
       // Fetch attendance records
       const { data: attendance, error: attendanceError } = await supabase
         .from('attendance')
-        .select('swimmer_id, date, is_present')
-        .eq('swim_group_id', groupId);
+        .select('*')
+        .eq('swim_group_id', groupId)
+        .order('date', { ascending: true });
 
       if (attendanceError) throw attendanceError;
 
+      // Process individual swimmer attendance
       const swimmerStats = swimmers.map((swimmer: any) => {
-        const swimmerAttendance = attendance.filter(record => record.swimmer_id === swimmer.id);
-        const totalSessions = swimmerAttendance.length;
-        const attendedSessions = swimmerAttendance.filter(record => record.is_present).length;
+        const swimmerRecords = attendance.filter(record => record.swimmer_id === swimmer.id);
+        const totalSessions = swimmerRecords.length;
+        const attendedSessions = swimmerRecords.filter(record => record.is_present).length;
+
         return {
           id: swimmer.id,
           firstName: swimmer.profiles.first_name,
@@ -74,37 +89,100 @@ const AttendanceInsights: React.FC<AttendanceInsightsProps> = ({ groupId }) => {
         };
       });
 
-      setSwimmerAttendance(swimmerStats);
+      const groupedByDate = attendance.reduce((acc: any, record) => {
+        const date = new Date(record.date).toLocaleDateString('en-US', {
+          month: 'short',
+          day: 'numeric'
+        });
 
-      const groupStats = attendance.reduce<Record<string, { total: number; present: number }>>((acc, record) => {
-        const date = record.date;
         if (!acc[date]) {
-          acc[date] = { total: 0, present: 0 };
+          acc[date] = {
+            totalSwimmers: 0,
+            totalPresent: 0
+          };
         }
-        acc[date].total++;
+
+        acc[date].totalSwimmers++;
         if (record.is_present) {
-          acc[date].present++;
+          acc[date].totalPresent++;
         }
+
         return acc;
       }, {});
 
-      const groupAttendanceData = Object.entries(groupStats).map(([date, stats]) => ({
+      const groupStats = Object.entries(groupedByDate).map(([date, stats]: [string, any]) => ({
         date,
-        attendancePercentage: (stats.present / stats.total) * 100
+        totalPresent: stats.totalPresent,
+        totalSwimmers: stats.totalSwimmers,
+        attendancePercentage: (stats.totalPresent / stats.totalSwimmers) * 100
       }));
 
-      setGroupAttendance(groupAttendanceData);
-      setError(null);
+      setSwimmerAttendance(swimmerStats);
+      setGroupAttendance(groupStats);
 
     } catch (error) {
       console.error('Error fetching attendance data:', error);
       setError('Failed to fetch attendance data. Please try again later.');
+    } finally {
+      setLoading(false);
     }
   }, [groupId, supabase]);
 
   useEffect(() => {
     fetchAttendanceData();
   }, [fetchAttendanceData]);
+
+  const getAttendanceClass = (percentage: number) => {
+    if (percentage >= 80) return styles.highAttendance;
+    if (percentage >= 60) return styles.mediumAttendance;
+    return styles.lowAttendance;
+  };
+
+  const renderGroupChart = () => (
+    <div className={styles.chartWrapper}>
+      <ResponsiveContainer width="100%" height={300}>
+        <BarChart data={groupAttendance} margin={{ top: 20, right: 30, left: 20, bottom: 30 }}>
+          <CartesianGrid strokeDasharray="3 3" className={styles.chartGrid} />
+          <XAxis 
+            dataKey="date" 
+            angle={-45}
+            textAnchor="end"
+            height={60}
+            tick={{ fontSize: 12 }}
+          />
+          <YAxis 
+            domain={[0, 100]}
+            tickFormatter={(value) => `${value}%`}
+          />
+          <Tooltip
+            content={({ active, payload, label }) => {
+              if (active && payload && payload.length) {
+                const data = payload[0].payload;
+                return (
+                  <div className={styles.tooltipContent}>
+                    <p className={styles.tooltipLabel}>{label}</p>
+                    <p className={styles.tooltipData}>
+                      Attendance: {data.attendancePercentage.toFixed(1)}%
+                      <br />
+                      Present: {data.totalPresent}/{data.totalSwimmers}
+                    </p>
+                  </div>
+                );
+              }
+              return null;
+            }}
+          />
+          <Legend />
+          <Bar 
+            dataKey="attendancePercentage" 
+            name="Attendance %" 
+            radius={[4, 4, 0, 0]}
+            fill="#05857b"
+          />
+        </BarChart>
+      </ResponsiveContainer>
+    </div>
+  );
 
   const renderSwimmerChart = () => {
     if (!selectedSwimmer) return null;
@@ -113,26 +191,58 @@ const AttendanceInsights: React.FC<AttendanceInsightsProps> = ({ groupId }) => {
     if (!swimmer) return null;
 
     const data = [
-      { name: 'Attended', value: swimmer.attendedSessions },
-      { name: 'Missed', value: swimmer.totalSessions - swimmer.attendedSessions }
+      { name: 'Present', value: swimmer.attendedSessions },
+      { name: 'Absent', value: swimmer.totalSessions - swimmer.attendedSessions }
     ];
 
     return (
-      <div className={styles.chart}>
-        <h3>{`${swimmer.firstName} ${swimmer.lastName}'s Attendance`}</h3>
-        <ResponsiveContainer width="100%" height={300}>
-          <BarChart data={data}>
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="name" />
-            <YAxis />
-            <Tooltip />
-            <Legend />
-            <Bar dataKey="value" fill="#8884d8" />
-          </BarChart>
-        </ResponsiveContainer>
+      <div className={styles.swimmerChartContainer}>
+        <h3>
+          <span className={styles.swimmerName}>
+            {`${swimmer.firstName} ${swimmer.lastName}`}
+          </span>
+          <span className={`${styles.percentage} ${getAttendanceClass(swimmer.attendancePercentage)}`}>
+            {swimmer.attendancePercentage.toFixed(1)}%
+          </span>
+        </h3>
+        <div className={styles.chartWrapper}>
+          <ResponsiveContainer width="100%" height={300}>
+            <BarChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 20 }}>
+              <CartesianGrid strokeDasharray="3 3" className={styles.chartGrid} />
+              <XAxis dataKey="name" />
+              <YAxis />
+              <Tooltip
+                content={({ active, payload, label }) => {
+                  if (active && payload && payload.length) {
+                    return (
+                      <div className={styles.tooltipContent}>
+                        <p className={styles.tooltipLabel}>{label}</p>
+                        <p className={styles.tooltipData}>
+                          {`Sessions: ${payload[0].value}`}
+                        </p>
+                      </div>
+                    );
+                  }
+                  return null;
+                }}
+              />
+              <Legend />
+              <Bar 
+                dataKey="value" 
+                name="Sessions" 
+                radius={[4, 4, 0, 0]}
+                fill="#05857b"
+              />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
       </div>
     );
   };
+
+  if (loading) {
+    return <div className={styles.loading}>Loading attendance data...</div>;
+  }
 
   if (error) {
     return <div className={styles.error}>{error}</div>;
@@ -144,46 +254,57 @@ const AttendanceInsights: React.FC<AttendanceInsightsProps> = ({ groupId }) => {
       <div className={styles.statsContainer}>
         <div className={styles.overallStats}>
           <h3>Overall Group Attendance</h3>
-          {groupAttendance.length > 0 ? (
-            <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={groupAttendance}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="date" />
-                <YAxis />
-                <Tooltip />
-                <Legend />
-                <Bar dataKey="attendancePercentage" fill="#82ca9d" name="Attendance %" />
-              </BarChart>
-            </ResponsiveContainer>
-          ) : (
-            <p>No attendance data available for this group.</p>
+          {groupAttendance.length > 0 ? renderGroupChart() : (
+            <p className={styles.noData}>No attendance data available for this group.</p>
           )}
         </div>
+        
         <div className={styles.swimmerStats}>
-          <h3>Swimmer Attendance</h3>
+          <h3>Individual Attendance</h3>
           {swimmerAttendance.length > 0 ? (
-            <table className={styles.table}>
-              <thead>
-                <tr>
-                  <th>Name</th>
-                  <th>Total Sessions</th>
-                  <th>Attended</th>
-                  <th>Attendance %</th>
-                </tr>
-              </thead>
-              <tbody>
-                {swimmerAttendance.map(swimmer => (
-                  <tr key={swimmer.id} onClick={() => setSelectedSwimmer(swimmer.id)}>
-                    <td>{`${swimmer.firstName} ${swimmer.lastName}`}</td>
-                    <td>{swimmer.totalSessions}</td>
-                    <td>{swimmer.attendedSessions}</td>
-                    <td>{swimmer.attendancePercentage.toFixed(2)}%</td>
+            <div className={styles.tableWrapper}>
+              <table className={styles.table}>
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Total</th>
+                    <th>Present</th>
+                    <th>Rate</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {swimmerAttendance
+                    .sort((a, b) => b.attendancePercentage - a.attendancePercentage)
+                    .map(swimmer => (
+                      <tr 
+                        key={swimmer.id} 
+                        onClick={() => setSelectedSwimmer(swimmer.id)}
+                        className={`
+                          ${styles.swimmerRow} 
+                          ${swimmer.id === selectedSwimmer ? styles.selectedRow : ''}
+                        `}
+                      >
+                        <td data-label="Name">
+                          {`${swimmer.firstName} ${swimmer.lastName}`}
+                        </td>
+                        <td data-label="Total">
+                          {swimmer.totalSessions}
+                        </td>
+                        <td data-label="Present">
+                          {swimmer.attendedSessions}
+                        </td>
+                        <td data-label="Rate">
+                          <span className={`${styles.percentage} ${getAttendanceClass(swimmer.attendancePercentage)}`}>
+                            {swimmer.attendancePercentage.toFixed(1)}%
+                          </span>
+                        </td>
+                      </tr>
+                    ))}
+                </tbody>
+              </table>
+            </div>
           ) : (
-            <p>No swimmers found in this group.</p>
+            <p className={styles.noData}>No swimmers found in this group.</p>
           )}
         </div>
       </div>
