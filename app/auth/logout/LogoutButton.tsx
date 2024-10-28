@@ -4,7 +4,7 @@
 import React, { useState } from 'react';
 import { FaSignOutAlt } from 'react-icons/fa';
 import { useRouter } from 'next/navigation';
-import { logout } from './action';
+import { logout } from './actions';
 import { useToast } from '@components/elements/toasts/Toast';
 import style from '../../styles/LogoutButton.module.css';
 import { createClient } from '@/utils/supabase/client';
@@ -43,7 +43,7 @@ export default function LogoutButton() {
         if (user?.role === 'swimmer') {
           // For swimmers, do a full page reload to clear any cached states
           // window.location.href = '/login';
-          router.push('/login');
+          router.push('/auth/login');
           router.refresh();
         } else {
           // For coaches, use the Next.js router
