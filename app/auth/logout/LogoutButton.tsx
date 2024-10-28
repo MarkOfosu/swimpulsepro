@@ -4,7 +4,7 @@
 import React, { useState } from 'react';
 import { FaSignOutAlt } from 'react-icons/fa';
 import { useRouter } from 'next/navigation';
-import { logout } from './actions';
+import { logout } from './action';
 import { useToast } from '@components/elements/toasts/Toast';
 import style from '../../styles/LogoutButton.module.css';
 import { createClient } from '@/utils/supabase/client';
@@ -47,7 +47,7 @@ export default function LogoutButton() {
           router.refresh();
         } else {
           // For coaches, use the Next.js router
-          router.push('/login');
+          router.push('/auth/login');
           router.refresh();
         }
       } else {

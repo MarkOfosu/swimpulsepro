@@ -24,12 +24,12 @@ const GetStartedPage = () => {
             {/* Coach Card */}
             <div 
               className={styles.roleCard}
-              onClick={() => router.push('/signup/coach')}
+              onClick={() => router.push('/auth/signup/coach')}
               role="button"
               tabIndex={0}
               onKeyDown={(e) => {
                 if (e.key === 'Enter' || e.key === ' ') {
-                  router.push('/signup/coach');
+                  router.push('/auth/signup/coach');
                 }
               }}
             >
@@ -54,12 +54,12 @@ const GetStartedPage = () => {
             {/* Swimmer Card */}
             <div 
               className={styles.roleCard}
-              onClick={() => router.push('/signup/swimmer')}
+              onClick={() => router.push('/auth/signup/swimmer')}
               role="button"
               tabIndex={0}
               onKeyDown={(e) => {
                 if (e.key === 'Enter' || e.key === ' ') {
-                  router.push('/signup/swimmer');
+                  router.push('/auth/signup/swimmer');
                 }
               }}
             >
