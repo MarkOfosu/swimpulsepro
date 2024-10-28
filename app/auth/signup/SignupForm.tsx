@@ -7,6 +7,8 @@ import Loader from '../../../components/elements/Loader';
 import { useRouter } from 'next/navigation';
 import { useUser } from '@app/context/UserContext';
 import Footer from '@components/elements/Footer';
+import { VerificationModal } from '@components/elements/verificationModal/VerificationModal';
+
 
 interface Team {
   id: string;
@@ -33,6 +35,8 @@ const SignupForm: React.FC<{ role: 'coach' | 'swimmer' }> = ({ role }) => {
   const [teams, setTeams] = useState<Team[]>([]);
   const [selectedTeam, setSelectedTeam] = useState<Team | null>(null);
   const [showSuggestions, setShowSuggestions] = useState(false);
+  const [showVerificationModal, setShowVerificationModal] = useState(false);
+  const [verificationEmail, setVerificationEmail] = useState('');
   const [formData, setFormData] = useState<FormData>({
     firstName: '',
     lastName: '',
@@ -285,12 +289,44 @@ const SignupForm: React.FC<{ role: 'coach' | 'swimmer' }> = ({ role }) => {
         refreshUser();
         router.push(role === 'coach' ? '/user/coach/swimGroup' : '/user/swimmer/dashboard');
       } else {
-        setError('Signup successful. Please check your email to confirm your account.');
+        setVerificationEmail(email);
+        setShowVerificationModal(true);
+        // Reset form
+        // setFormData({
+        //   firstName: '',
+        //   lastName: '',
+        //   email: '',
+        //   gender: '',
+        //   swimTeam: '',
+        //   city: '',
+        //   country: '',
+        //   password: '',
+        //   confirmPassword: '',
+        //   dateOfBirth: role === 'swimmer' ? '' : undefined
+        // });
       }
     } catch (error) {
       setError(error instanceof Error ? error.message : 'An unexpected error occurred');
     } finally {
       setLoading(false);
+    }
+  };
+
+
+  const handleResendVerification = async () => {
+    try {
+      const { error } = await supabase.auth.resend({
+        type: 'signup',
+        email: verificationEmail,
+        options: {
+          emailRedirectTo: 'https://swimpulsepro.com/auth/login',
+        },
+      });
+
+      if (error) throw error;
+    } catch (error) {
+      console.error('Error resending verification:', error);
+      setError(error instanceof Error ? error.message : 'Failed to resend verification email');
     }
   };
 
@@ -482,6 +518,14 @@ const SignupForm: React.FC<{ role: 'coach' | 'swimmer' }> = ({ role }) => {
           )}
         </div>
       </div>
+      
+      {showVerificationModal && (
+        <VerificationModal
+          email={verificationEmail}
+          role={role}
+          onResendEmail={handleResendVerification}
+        />
+      )}
       <Footer />
     </>
   );
