@@ -54,7 +54,6 @@ const WelcomeNavbar = () => {
         <Link href="/getStarted">
           <button className={styles.signupButton}>Sign up</button>
         </Link>
-        <Link href="/auth/confirm"> Confirm Email</Link>
       </div>
     </nav>
   );
