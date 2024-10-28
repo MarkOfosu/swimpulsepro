@@ -1,4 +1,4 @@
-'use server'
+'use server';
 
 import { redirect } from 'next/navigation';
 import { createClient } from '@/utils/supabase/server';
@@ -9,7 +9,7 @@ export async function logout() {
   // const router = useRouter();
   const supabase = createClient();
   await supabase.auth.signOut();
-  return { success: true, message: 'Logged out successfully' }; 
-  // router.push('/login');
+  return { success: true, message: 'Logged out successfully' };
+  redirect('/auth/login');
 }
 

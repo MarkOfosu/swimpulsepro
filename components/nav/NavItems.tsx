@@ -2,7 +2,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { FaHome, FaUsers, FaChalkboardTeacher, FaUser, FaSignOutAlt } from 'react-icons/fa';
-import { logout } from '@app/auth/logout/actions';
+import { logout } from '../../app/auth/logout/actions';
 
 interface NavItemsProps {
   userRole: 'coach' | 'swimmer';
@@ -42,7 +42,7 @@ const NavItems: React.FC<NavItemsProps> = ({ userRole, isAdmin, userEmail, style
         <Link href="/" className={styles.pureMenuLink}>
           <FaUser className={styles.icon} /> <span className={styles.text}>{userEmail.split('@')[0]}</span>
         </Link>
-        <Link href="/login" onClick={() => logout()} className={styles.pureMenuLink}>
+        <Link href="/auth/login" onClick={() => logout()} className={styles.pureMenuLink}>
           <FaSignOutAlt className={styles.icon} /> <span className={styles.text}>Logout</span>
         </Link>
       </div>

@@ -7,7 +7,7 @@ import Image from 'next/image';
 import { FaHome, FaUsers, FaUser, FaChalkboardTeacher, FaSignOutAlt } from 'react-icons/fa';
 import logo from '../../public/image/logo.png';
 import styles from '../styles/SideBar.module.css'
-import { logout } from '@app/auth/logout/actions';
+import { logout } from '../../app/auth/logout/actions';
 
 interface SidebarProps {
   userRole: 'coach' | 'swimmer';
@@ -63,7 +63,7 @@ const Sidebar: React.FC<SidebarProps> = ({ userRole, isAdmin, userEmail }) => {
         <Link href="" className={styles.pureMenuLink}>
           <FaUser className={styles.icon} /> <span className={styles.text}>{userEmail.split('@')[0]}</span>
         </Link>
-        <Link href="/login" onClick={() => logout()} className={styles.pureMenuLink}>
+        <Link href="/auth/login" onClick={() => logout()} className={styles.pureMenuLink}>
           <FaSignOutAlt className={styles.icon} /> <span className={styles.text}>Logout</span>
         </Link>
       </div>
