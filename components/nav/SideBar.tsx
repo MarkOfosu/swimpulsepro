@@ -7,7 +7,7 @@ import Image from 'next/image';
 import { FaHome, FaUsers, FaUser, FaChalkboardTeacher, FaSignOutAlt } from 'react-icons/fa';
 import logo from '../../public/image/logo.png';
 import styles from '../styles/SideBar.module.css'
-import { logout } from '@app/(auth)/logout/actions';
+import { logout } from '@app/auth/logout/actions';
 
 interface SidebarProps {
   userRole: 'coach' | 'swimmer';

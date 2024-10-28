@@ -2,7 +2,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { FaHome, FaUsers, FaChalkboardTeacher, FaUser, FaSignOutAlt } from 'react-icons/fa';
-import { logout } from '@app/(auth)/logout/actions';
+import { logout } from '@app/auth/logout/actions';
 
 interface NavItemsProps {
   userRole: 'coach' | 'swimmer';
