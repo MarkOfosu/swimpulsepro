@@ -8,6 +8,7 @@ import { useUser } from '../context/UserContext';
 import styles from '../styles/ContentRootLayout.module.css';
 import ContentRootLayoutLoading from './ContentRootLayoutLoading';
 import Footer from '../../components/elements/Footer';
+import { useRouter } from 'next/navigation';
 
 interface ContentRootLayoutProps {
   links: { href: string; label: string }[];
@@ -16,6 +17,7 @@ interface ContentRootLayoutProps {
 
 const ContentRootLayout: React.FC<ContentRootLayoutProps> = ({ links, children }) => {
   const { user, loading, error } = useUser();
+  const Router = useRouter();
 
   if (loading) {
     return (
@@ -30,7 +32,9 @@ const ContentRootLayout: React.FC<ContentRootLayoutProps> = ({ links, children }
   }
 
   if (!user) {
-    return <div className="error-message">Unable to load user profile</div>;
+    // Redirect to login page if no user
+    Router.push('/auth/login');
+    return null;
   }
 
   return (
