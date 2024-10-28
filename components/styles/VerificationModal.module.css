@@ -1,0 +1,163 @@
+/* VerificationModal.module.css */
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(3, 150, 255, 0.2);
+  backdrop-filter: blur(8px);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.modal {
+  background: white;
+  border-radius: 24px;
+  padding: 40px;
+  max-width: 500px;
+  width: 100%;
+  position: relative;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  animation: floatIn 0.6s ease-out;
+}
+
+.emailIcon {
+  width: 120px;
+  height: 120px;
+  margin: 0 auto 24px;
+  position: relative;
+  animation: swim 3s ease-in-out infinite;
+}
+
+.title {
+  font-size: 28px;
+  color: #0D47A1;
+  text-align: center;
+  margin-bottom: 16px;
+  font-weight: 700;
+}
+
+.message {
+  color: #666;
+  text-align: center;
+  margin-bottom: 24px;
+  line-height: 1.6;
+}
+
+.email {
+  background: #E3F2FD;
+  padding: 12px 20px;
+  border-radius: 12px;
+  color: #0D47A1;
+  font-weight: 500;
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.steps {
+  background: #F5F9FF;
+  border-radius: 16px;
+  padding: 20px;
+  margin-bottom: 24px;
+}
+
+.step {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+  color: #444;
+}
+
+.step:last-child {
+  margin-bottom: 0;
+}
+
+.stepNumber {
+  background: #0396FF;
+  color: white;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.button {
+  width: 100%;
+  padding: 14px;
+  border-radius: 12px;
+  border: none;
+  background: #0396FF;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.button:hover {
+  background: #0277BD;
+  transform: translateY(-2px);
+}
+
+.resendLink {
+  text-align: center;
+  margin-top: 16px;
+  color: #0396FF;
+  cursor: pointer;
+}
+
+@keyframes floatIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes swim {
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-15px);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+.bubbles {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.bubble {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(3, 150, 255, 0.1);
+  animation: rise 3s infinite ease-in;
+}
+
+@keyframes rise {
+  0% {
+    transform: translateY(100%) scale(0);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-100%) scale(1);
+    opacity: 0;
+  }
+}
