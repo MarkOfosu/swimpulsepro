@@ -4,7 +4,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { FaBars, FaTimes, FaHome, FaChalkboardTeacher, FaUsers, FaUser, FaSignOutAlt } from 'react-icons/fa';
 import styles from '../styles/CollapsibleNav.module.css';
-import { logout } from '@app/(auth)/logout/actions';
+import { logout } from '@app/auth/logout/actions';
 
 interface CollapsibleNavProps {
   userRole: 'coach' | 'swimmer';
