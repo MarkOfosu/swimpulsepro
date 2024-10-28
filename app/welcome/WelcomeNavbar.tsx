@@ -48,7 +48,7 @@ const WelcomeNavbar = () => {
       </div> */}
 
       <div className={styles.authButtons}>
-        <Link href="/login">
+        <Link href="/auth/login">
           <button className={styles.loginButton}>Login</button>
         </Link>
         <Link href="/getStarted">

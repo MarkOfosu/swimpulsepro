@@ -269,7 +269,11 @@ const SignupForm: React.FC<{ role: 'coach' | 'swimmer' }> = ({ role }) => {
         password,
         options: {
           data: userData,
+          shouldCreateUser: false,
+          emailRedirectTo: 'https://swimpulsepro.com/auth/confirm',
         },
+        
+     
       });
 
       if (signUpError) throw signUpError;
