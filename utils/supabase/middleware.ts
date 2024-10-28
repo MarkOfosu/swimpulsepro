@@ -45,7 +45,7 @@ export async function updateSession(request: NextRequest) {
       // If user is not logged in and is accessing a protected route, redirect to login
       if (request.nextUrl.pathname.startsWith('/user')) {
         const url = request.nextUrl.clone()
-        url.pathname = '/login'
+        url.pathname = '/auth/login'
         return NextResponse.redirect(url)
       }
     } else {
@@ -55,7 +55,7 @@ export async function updateSession(request: NextRequest) {
       if (role === 'coach' && !request.nextUrl.pathname.startsWith('/user/coach')) {
         // Coaches can only access /user/coach/...
         const url = request.nextUrl.clone()
-          url.pathname = '/user/coach/dashboard'
+          url.pathname = '/user/coach/swimGroup'
         return NextResponse.redirect(url)
       } else if (role === 'swimmer' && !request.nextUrl.pathname.startsWith('/user/swimmer')) {
         // Swimmers can only access /user/swimmer/...
