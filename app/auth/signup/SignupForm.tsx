@@ -269,8 +269,8 @@ const SignupForm: React.FC<{ role: 'coach' | 'swimmer' }> = ({ role }) => {
         password,
         options: {
           data: userData,
-          shouldCreateUser: false,
-          emailRedirectTo: 'https://swimpulsepro.com/auth/confirm',
+
+          emailRedirectTo: 'https://swimpulsepro.com/auth/login',
         },
         
      
