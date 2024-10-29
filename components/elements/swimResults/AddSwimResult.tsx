@@ -2,7 +2,7 @@
 'use client';
 import React, { useState, useEffect } from 'react';
 import { SwimEvent, SwimResult } from '../../../app/lib/types';
-import { getSwimEventsForSwimmer } from '../../../app/lib/swimUtils';
+import { getSwimEventsForSwimmer } from '../../../app/api/swimUtils';
 import styles from '../../styles/AddSwimResult.module.css';
 
 interface AddSwimResultProps {
@@ -54,7 +54,7 @@ export const AddSwimResult: React.FC<AddSwimResultProps> = ({ swimmerId, onSubmi
         <h2 className={styles.title}>Add New Result</h2>
         <div className={styles.infoCards}>
           <div className={styles.infoCard}>
-            <h3>🏆 Track Your Progress</h3>
+            <h3> Track Your Progress</h3>
             <p>Every time counts! Record your race times to track your improvement and celebrate your achievements.</p>
           </div>
           <div className={styles.infoCard}>
@@ -78,7 +78,7 @@ export const AddSwimResult: React.FC<AddSwimResultProps> = ({ swimmerId, onSubmi
             type="text"
             value={meetName}
             onChange={(e) => setMeetName(e.target.value)}
-            placeholder="Meet Name (e.g., Summer Championships 2024)"
+            placeholder="Meet Name (e.g.,Long Course Summer Championships 2024)"
             required
             className={styles.input}
           />
@@ -105,7 +105,7 @@ export const AddSwimResult: React.FC<AddSwimResultProps> = ({ swimmerId, onSubmi
             type="text"
             value={time}
             onChange={(e) => setTime(e.target.value)}
-            placeholder="Your Time (MM:SS.ss)"
+            placeholder="Your Time (HH:MM:SS.ss)"
             pattern="^(?:(?:([01]?\d|2[0-3]):)?([0-5]?\d):)?([0-5]?\d)(\.\d{1,2})?$"
             required
             className={styles.input}

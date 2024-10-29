@@ -7,7 +7,7 @@ import styles from '../../styles/LoginPage.module.css';
 import WelcomeNavbar from '@app/welcome/WelcomeNavbar';
 import Loader from '../../../components/elements/Loader';
 import { useUser } from '../../context/UserContext';
-import { getUserDetails } from '@app/lib/getUserDetails';
+import { getUserDetails } from '@app/api/getUserDetails';
 import { Mail, Lock, ArrowRight } from 'lucide-react';
 import Footer from '@components/elements/Footer';
 

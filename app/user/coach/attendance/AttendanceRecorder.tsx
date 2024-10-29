@@ -4,7 +4,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { createClient } from '@/utils/supabase/client';
 import { SwimGroupSelector } from '../swimGroup/attendance/SwimGroupSelector';
 import { AttendanceList } from './AttendanceList';
-import { getUserDetails, UserData } from '../../../lib/getUserDetails';
+import { getUserDetails, UserData } from '../../../api/getUserDetails';
 import { useToast } from '../../../../components/elements/toasts/Toast';
 import AttendanceInsights from './AttendanceInsights';
 import styles from '../../../styles/AttendanceRecorder.module.css';

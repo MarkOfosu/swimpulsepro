@@ -2,7 +2,7 @@
 "use client";
 
 import React, { useEffect, useState } from 'react';
-import { getUserDetails } from '../../lib/getUserDetails';
+import { getUserDetails } from '../../api/getUserDetails';
 import LoginForm from './LoginForm';
 import { useRouter } from 'next/navigation';
 import Loader from '../../../components/elements/Loader';

@@ -2,7 +2,7 @@
 import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import { SwimResult, SwimStandard, SwimEvent } from '../../../app/lib/types';
 import { createClient } from '@/utils/supabase/client';
-import { getSwimEventsForSwimmer } from '../../../app/lib/swimUtils';
+import { getSwimEventsForSwimmer } from '../../../app/api/swimUtils';
 import styles from '../../styles/SwimmerStandardsProgress.module.css';
 import Link from 'next/link';
 

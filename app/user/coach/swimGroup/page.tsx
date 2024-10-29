@@ -8,7 +8,7 @@ import Loader from '@components/elements/Loader';
 import { useToast } from '@components/elements/toasts/Toast';
 import { ActivityFeed } from '@components/elements/dashboard/ActivityFeed';
 import { UpcomingActivities } from '@components/elements/dashboard/UpcomingActivities';
-import { DashboardUtils } from '@/utils/dashboard/dashboardUtils';
+import { DashboardUtils } from '@app/api/dashboard/dashboardUtils';
 import { 
   Activity, Users, Award, 
   Calendar, Plus, User

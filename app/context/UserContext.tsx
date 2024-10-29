@@ -57,7 +57,7 @@
 'use client';
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { getUserDetails, UserData } from '../lib/getUserDetails';
+import { getUserDetails, UserData } from '../api/getUserDetails';
 import { createClient } from '@utils/supabase/client';
 
 // Extend UserData interface to include verification status
