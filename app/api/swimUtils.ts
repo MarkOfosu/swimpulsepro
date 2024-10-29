@@ -2,7 +2,7 @@
 
 // utils/swimUtils.ts
 import { createClient } from '@/utils/supabase/client';
-import { SwimEvent } from '../../app/lib/types';
+import { SwimEvent } from '../lib/types';
 
 export async function getSwimEventsForSwimmer(swimmerId: string): Promise<SwimEvent[]> {
   const supabase = createClient();

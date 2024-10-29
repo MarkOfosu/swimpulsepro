@@ -1,11 +1,14 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Card, CardContent } from "@components/elements/Card";
 import { Trophy, Target, Zap, Flame, Droplet, Wind, Award, Star, Medal, Crown } from 'lucide-react';
 import styles from '../../../../styles/AchievementCard.module.css';
-import { Achievement } from '../../functions/goalFunctions';
+import { Achievement } from '../../../../api/goalFunctions';
+import { SwimEvent } from '../../../../lib/types';
+import { getSwimEventsForSwimmer } from '../../../../api/swimUtils';
 
 interface AchievementCardProps {
   achievement: Achievement;
+  swimmerId?: string;
 }
 
 const funnyNames = [
@@ -30,19 +33,33 @@ const icons = [
 
 const getRandomElement = <T,>(array: T[]): T => array[Math.floor(Math.random() * array.length)];
 
-const AchievementCard: React.FC<AchievementCardProps> = ({ achievement }) => {
+const AchievementCard: React.FC<AchievementCardProps> = ({ achievement, swimmerId }) => {
+  const [events, setEvents] = useState<SwimEvent[]>([]);
   const { icon: Icon, color: iconColor } = getRandomElement(icons);
   const funnyName = getRandomElement(funnyNames);
 
-  const formatEvent = (event: string) => {
-    return event.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+  useEffect(() => {
+    const fetchEvents = async () => {
+      if (swimmerId) {
+        const fetchedEvents = await getSwimEventsForSwimmer(swimmerId);
+        setEvents(fetchedEvents);
+      }
+    };
+
+    fetchEvents();
+  }, [swimmerId]);
+
+  const getEventName = (eventId: string | number): string => {
+    const event = events.find(e => e.id === eventId);
+    return event ? `${event.name} (${event.course})` : eventId.toString();
   };
 
   const renderTargetInfo = () => {
     if (achievement.goal_type === 'Time Improvement' && achievement.target_time) {
+      const eventName = achievement.event ? getEventName(achievement.event) : '';
       return (
         <>
-          <p className={styles.eventName}>{formatEvent(achievement.event || '')}</p>
+          <p className={styles.eventName}>{eventName}</p>
           <p className={styles.targetInfo}>
             <span className={styles.highlightedTime}>{achievement.target_time}</span>
           </p>

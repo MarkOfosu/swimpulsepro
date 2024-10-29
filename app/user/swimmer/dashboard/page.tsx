@@ -13,7 +13,7 @@ import { SwimResult, UpcomingActivity } from '@/app/lib/types';
 import { createClient } from '@/utils/supabase/client';
 import SwimmerStandardsProgress from '@/components/elements/swimResults/SwimmerStandardsProgress';
 import { useUser } from '../../../context/UserContext';
-import { DashboardUtils } from '@/utils/dashboard/dashboardUtils';
+import { DashboardUtils } from '@app/api/dashboard/dashboardUtils';
 
 const SwimmerDashboard: React.FC = () => {
   const { user, loading, error } = useUser();
