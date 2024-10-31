@@ -15,6 +15,7 @@ const SwimPageLayout: React.FC<SwimPageLayoutProps> = ({ children }) => {
     { href: '/user/swimmer/dashboard', label: 'Dashboard' },
     { href: '/user/swimmer/goalsAchievements', label: 'Goals & Achievements' },
     { href: '/user/swimmer/standards', label: 'Standards' },
+    { href: '/user/swimmer/activities', label: 'Activities' },
   ];
 
   // Add swim team link if the user has a group

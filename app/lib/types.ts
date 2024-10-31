@@ -225,6 +225,14 @@ export interface SwimMeet {
   course: 'SCY' | 'SCM' | 'LCM';
 }
 
+export interface DashboardMetrics {
+  totalSwimmers: number;
+  totalGroups: number;
+  activeSwimmers: number;
+  totalBadgesAwarded: number;
+  attendanceRate: number;
+}
+
 export interface SwimEvent {
   id: string;
   name: string;
@@ -268,35 +276,124 @@ export interface SwimStandard {
   updated_at: string;
 }
 
-// Types for activities and events
-export interface UpcomingActivity {
+
+export type ActivityType = 
+  | 'practice'
+  | 'meet'
+  | 'event'
+  | 'time_trial'
+  | 'clinic'
+  | 'social';
+
+export type ActivitySkillLevel = 
+  | 'all'
+  | 'beginner'
+  | 'intermediate'
+  | 'advanced'
+  | 'B'
+  | 'BB'
+  | 'A'
+  | 'AA'
+  | 'AAA'
+  | 'AAAA';
+
+export type ActivityResponseStatus = 'attending' | 'interested' | 'not_attending';
+
+// Group Interface
+export interface SwimGroup {
   id: string;
+  name: string;
+  description?: string;
+  group_code?: string;
+  coach_id?: string;
+  swimmers?: { count: number }[];
+  swimmerCount?: number;
+}
+
+// Response Interfaces
+export interface ActivityResponse {
+  id?: string;
+  activity_id?: string;
+  swimmer_id?: string;
+  status: ActivityResponseStatus;
+  count?: number;
+  additional_info?: string;
+  created_at?: string;
+  updated_at?: string;
+}
+
+// Additional Details Interfaces
+export interface ActivityAdditionalDetails {
+  equipment_needed: string | null;
+  preparation_notes: string | null;
+  capacity_limit: string | null;
+  skill_level: ActivitySkillLevel;
+  virtual_link: string | null;
+  minimum_standard: string | null;
+  recommended_standard: string | null;
+}
+
+// Form specific interface for additional details
+export interface ActivityFormAdditionalDetails {
+  equipment_needed: string;
+  preparation_notes: string;
+  capacity_limit: string;
+  skill_level: ActivitySkillLevel;
+  virtual_link: string;
+  minimum_standard: string;
+  recommended_standard: string;
+}
+
+// Form Data Interface
+export interface ActivityFormData {
   title: string;
   description: string;
-  activity_type: 'meet' | 'practice' | 'event';
+  activity_type: ActivityType;
   start_date: string;
-  end_date?: string;
+  end_date: string | null;
   location: string;
-  coach_id: string;
-  groups: {
-    id: string;
-    name: string;
-  }[];
-  responses?: {
-    count: number;
-    status: 'attending' | 'interested' | 'not_attending';
-  }[];
+  groups: SwimGroup[];
+  additional_details: ActivityFormAdditionalDetails;
 }
 
-export interface ActivityResponse {
-  id: string;
-  activity_id: string;
-  swimmer_id: string;
-  response_status: 'attending' | 'interested' | 'not_attending';
-  created_at: string;
-  updated_at: string;
+// Complete Activity Interface
+// export interface UpcomingActivity {
+//   id: string;
+//   title: string;
+//   description: string;
+//   activity_type: ActivityType;
+//   start_date: string;
+//   end_date: string | null;
+//   location: string;
+//   groups: SwimGroup[];
+//   responses?: ActivityResponse[];
+//   additional_details: ActivityAdditionalDetails;
+//   coach_id?: string;
+//   created_at?: string;
+//   updated_at?: string;
+// }
+
+// Validation Interface
+export interface ActivityValidationError {
+  title?: string;
+  description?: string;
+  activity_type?: string;
+  start_date?: string;
+  end_date?: string;
+  location?: string;
+  groups?: string;
+  additional_details?: {
+    equipment_needed?: string;
+    preparation_notes?: string;
+    capacity_limit?: string;
+    skill_level?: string;
+    virtual_link?: string;
+    minimum_standard?: string;
+    recommended_standard?: string;
+  };
 }
 
+// Feed Item Interface
 export interface ActivityFeedItem {
   id: string;
   swimmer_id: string;
@@ -316,22 +413,83 @@ export interface ActivityFeedItem {
   };
 }
 
-export interface DashboardMetrics {
-  totalSwimmers: number;
-  totalGroups: number;
-  activeSwimmers: number;
-  totalBadgesAwarded: number;
-  attendanceRate: number;
-}
+// Conversion Utilities
+export const convertFormDataToActivity = (
+  formData: ActivityFormData
+): Partial<UpcomingActivity> => {
+  return {
+    ...formData,
+    additional_details: {
+      equipment_needed: formData.additional_details.equipment_needed || null,
+      preparation_notes: formData.additional_details.preparation_notes || null,
+      capacity_limit: formData.additional_details.capacity_limit || null,
+      skill_level: formData.additional_details.skill_level,
+      virtual_link: formData.additional_details.virtual_link || null,
+      minimum_standard: formData.additional_details.minimum_standard || null,
+      recommended_standard: formData.additional_details.recommended_standard || null,
+    }
+  };
+};
 
-// Shared interfaces
-export interface SwimGroup {
-  id: string;
-  name: string;
+// types/activities.ts
+export interface ActivityFormData {
+  title: string;
   description: string;
-  group_code: string;
-  coach_id?: string;
-  swimmers?: { count: number }[];
-  swimmerCount?: number; // New property
+  activity_type: ActivityType;
+  start_date: string;
+  end_date: string | null;
+  location: string;
+  groups: SwimGroup[];
+  additional_details: {
+    equipment_needed: string;
+    preparation_notes: string;
+    capacity_limit: string;
+    skill_level: ActivitySkillLevel;
+    virtual_link: string;
+    minimum_standard: string;
+    recommended_standard: string;
+  };
 }
 
+export interface UpcomingActivity {
+  id: string;
+  title: string;
+  description: string;
+  activity_type: ActivityType;
+  start_date: string;
+  end_date: string | null;
+  location: string;
+  groups: SwimGroup[];
+  responses?: ActivityResponse[];
+  additional_details: {
+    equipment_needed: string | null;
+    preparation_notes: string | null;
+    capacity_limit: string | null;
+    skill_level: ActivitySkillLevel;
+    virtual_link: string | null;
+    minimum_standard: string | null;
+    recommended_standard: string | null;
+  };
+  coach_id?: string;
+  created_at?: string;
+  updated_at?: string;
+}
+
+export interface SwimmerActivitiesListProps {
+  activities: UpcomingActivity[];
+  onRespond: (
+    activityId: string, 
+    status: ActivityResponseStatus,
+    additionalInfo?: string
+  ) => Promise<void>;
+  isLoading?: boolean;
+  currentResponse?: {
+    activityId: string;
+    status: ActivityResponseStatus;
+  }[];
+}
+
+export interface ActivityResponse {
+  activityId: string;
+  status: ActivityResponseStatus;
+}

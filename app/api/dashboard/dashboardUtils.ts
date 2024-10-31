@@ -124,71 +124,208 @@ export class DashboardUtils {
       };
     }
   }
+  
 
+  // async fetchUpcomingActivities({ limit = 3 }: FetchOptions = {}) {
+  //   try {
+  //     // Fetch activities
+  //     const { data: eventsData, error: eventsError } = await supabase
+  //       .from('upcoming_activities')
+  //       .select(`
+  //         id,
+  //         title,
+  //         description,
+  //         start_date,
+  //         end_date,
+  //         location,
+  //         coach_id,
+  //         groups:activity_groups (
+  //           group_id,
+  //           swim_groups (
+  //             id,
+  //             name
+  //           )
+  //         )
+  //       `)
+  //       .eq('coach_id', this.userId)
+  //       .gt('start_date', new Date().toISOString())
+  //       .order('start_date', { ascending: true })
+  //       .limit(limit);
+
+  //     if (eventsError) throw eventsError;
+
+  //     // For each activity, get response counts using a stored function
+  //     const activityIds = eventsData?.map(event => event.id) || [];
+  //     const responseCounts: ActivityResponse[] = [];
+
+  //     if (activityIds.length > 0) {
+  //       const { data: responses } = await supabase
+  //         .rpc('get_activity_response_counts', { activity_ids: activityIds });
+        
+  //       if (responses) {
+  //         responseCounts.push(...responses);
+  //       }
+  //     }
+
+  //     // Transform the data
+  //     const activities = eventsData?.map(event => {
+  //       const eventResponses = responseCounts
+  //         .filter(r => r.activity_id === event.id)
+  //         .map(r => ({
+  //           status: r.response_status,
+  //           count: r.count
+  //         }));
+
+  //       return {
+  //         ...event,
+  //         groups: event.groups?.map(g => ({
+  //           id: g.swim_groups[0]?.id,
+  //           name: g.swim_groups[0]?.name
+  //         })) || [],
+  //         responses: eventResponses
+  //       };
+  //     }) || [];
+
+  //     return {
+  //       data: activities,
+  //       metadata: {
+  //         hasMore: (activities.length) === limit
+  //       }
+  //     };
+  //   } catch (error) {
+  //     console.error('Error fetching upcoming activities:', error);
+  //     return {
+  //       data: [],
+  //       metadata: {
+  //         hasMore: false
+  //       }
+  //     };
+  //   }
+  // }
   async fetchUpcomingActivities({ limit = 3 }: FetchOptions = {}) {
     try {
-      // Fetch activities
-      const { data: eventsData, error: eventsError } = await supabase
-        .from('upcoming_activities')
-        .select(`
-          id,
-          title,
-          description,
-          start_date,
-          end_date,
-          location,
-          coach_id,
-          groups:activity_groups (
-            group_id,
-            swim_groups (
-              id,
-              name
+      let activitiesData;
+      let activitiesError;
+  
+      // Different queries based on user role
+      if (this.userRole === 'coach') {
+        // For coaches, fetch activities they created
+        const response = await supabase
+          .from('upcoming_activities')
+          .select(`
+            *,
+            groups:activity_groups(
+              group:swim_groups(
+                id,
+                name
+              )
             )
-          )
-        `)
-        .eq('coach_id', this.userId)
-        .gt('start_date', new Date().toISOString())
-        .order('start_date', { ascending: true })
-        .limit(limit);
-
-      if (eventsError) throw eventsError;
-
-      // For each activity, get response counts using a stored function
-      const activityIds = eventsData?.map(event => event.id) || [];
-      const responseCounts: ActivityResponse[] = [];
-
-      if (activityIds.length > 0) {
-        const { data: responses } = await supabase
-          .rpc('get_activity_response_counts', { activity_ids: activityIds });
-        
-        if (responses) {
-          responseCounts.push(...responses);
+          `)
+          .eq('coach_id', this.userId)
+          .order('start_date', { ascending: true });
+  
+        activitiesData = response.data;
+        activitiesError = response.error;
+      } else {
+        // For swimmers, first get their group
+        const { data: swimmerData } = await supabase
+          .from('swimmers')
+          .select('group_id')
+          .eq('id', this.userId)
+          .single();
+  
+        if (!swimmerData?.group_id) {
+          return { data: [], metadata: { hasMore: false } };
         }
+  
+        // Then fetch activities for their group
+        const response = await supabase
+          .from('upcoming_activities')
+          .select(`
+            *,
+            groups:activity_groups(
+              group:swim_groups(
+                id,
+                name
+              )
+            )
+          `)
+          .order('start_date', { ascending: true });
+  
+        // Filter activities for swimmer's group
+        activitiesData = response.data?.filter(activity => {
+          const groupIds = activity.groups
+            ?.map((g: any) => g.group?.id)
+            .filter(Boolean);
+          return groupIds?.includes(swimmerData.group_id);
+        });
+        activitiesError = response.error;
       }
-
-      // Transform the data
-      const activities = eventsData?.map(event => {
-        const eventResponses = responseCounts
-          .filter(r => r.activity_id === event.id)
-          .map(r => ({
-            status: r.response_status,
-            count: r.count
-          }));
-
+  
+      if (activitiesError) throw activitiesError;
+  
+      // Transform the activities data
+      const activities = activitiesData?.map(activity => {
+        const groups = activity.groups
+          ?.map((g: any) => g.group)
+          .filter((g: any) => g && g.id && g.name) || [];
+  
         return {
-          ...event,
-          groups: event.groups?.map(g => ({
-            id: g.swim_groups[0]?.id,
-            name: g.swim_groups[0]?.name
-          })) || [],
-          responses: eventResponses
+          ...activity,
+          groups,
+          additional_details: activity.additional_details || {}
         };
       }) || [];
-
+  
+      // Fetch response counts
+      const activityIds = activities.map(a => a.id);
+      let responseCounts = [];
+      let userResponses: any[] = [];
+  
+      if (activityIds.length > 0) {
+        // Get response counts for all activities
+        const responseCountsResult = await supabase
+          .rpc('get_activity_response_counts', { activity_ids: activityIds });
+        
+        if (responseCountsResult.data) {
+          responseCounts = responseCountsResult.data;
+        }
+  
+        // If swimmer, get their own responses
+        if (this.userRole === 'swimmer') {
+          const swimmerResponsesResult = await supabase
+            .from('activity_responses')
+            .select('activity_id, response_status')
+            .eq('swimmer_id', this.userId)
+            .in('activity_id', activityIds);
+  
+          if (swimmerResponsesResult.data) {
+            userResponses = swimmerResponsesResult.data;
+          }
+        }
+      }
+  
+      // Add response counts and user responses to activities
+      const activitiesWithResponses = activities.map(activity => ({
+        ...activity,
+        responses: (responseCounts || [])
+          .filter((r: any) => r.activity_id === activity.id)
+          .map((r: any) => ({
+            status: r.response_status,
+            count: r.count
+          })),
+        // Only include swimmer response if user is a swimmer
+        ...(this.userRole === 'swimmer' && {
+          swimmerResponse: userResponses.find(
+            r => r.activity_id === activity.id
+          )?.response_status
+        })
+      }));
+  
       return {
-        data: activities,
+        data: activitiesWithResponses,
         metadata: {
-          hasMore: (activities.length) === limit
+          hasMore: activities.length === limit
         }
       };
     } catch (error) {
@@ -201,6 +338,8 @@ export class DashboardUtils {
       };
     }
   }
+
+
 
   async fetchDashboardMetrics(): Promise<DashboardMetrics> {
     try {

@@ -51,7 +51,7 @@ export const AddSwimResult: React.FC<AddSwimResultProps> = ({ swimmerId, onSubmi
   return (
     <div className={styles.container}>
       <div className={styles.infoSection}>
-        <h2 className={styles.title}>Add New Result</h2>
+        {/* <h2 className={styles.title}>Add New Result</h2> */}
         <div className={styles.infoCards}>
           <div className={styles.infoCard}>
             <h3> Track Your Progress</h3>
@@ -110,7 +110,7 @@ export const AddSwimResult: React.FC<AddSwimResultProps> = ({ swimmerId, onSubmi
             required
             className={styles.input}
           />
-          <span className={styles.inputHint}>Example: 1:23.45</span>
+          <span className={styles.inputHint}>Example: 00:1:23.45</span>
         </div>
 
         <div className={styles.inputGroup}>

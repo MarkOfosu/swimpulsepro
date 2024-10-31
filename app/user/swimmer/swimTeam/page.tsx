@@ -12,6 +12,7 @@ import SwimmerAttendanceInsights from '../SwimmerAttendanceInsights';
 import { SupabaseClient } from '@supabase/supabase-js';
 import styles from '../../../styles/SwimTeam.module.css';
 import { useUser } from '../../../context/UserContext'; // Import the useUser hook
+import { fetchUpcomingActivities } from '../activities/upcomingActivityFetch';
 
 const SwimTeamPage: React.FC = () => {
   const { user, loading: userLoading, error: userError, refreshUser } = useUser(); // Use the useUser hook

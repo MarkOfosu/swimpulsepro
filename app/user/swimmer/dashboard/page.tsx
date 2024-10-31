@@ -9,35 +9,61 @@ import { Button } from '@/components/elements/Button';
 import { SwimmerResultsHistory } from '@/components/elements/swimResults/SwimmerResultsHistory';
 import { PersonalBestsComparison } from '@/components/elements/swimResults/PersonalBestsComparison';
 import { ProgressChart } from '@/components/elements/swimResults/ProgressChart';
-import { SwimResult, UpcomingActivity } from '@/app/lib/types';
+import { ActivityResponseStatus, SwimResult, UpcomingActivity } from '@/app/lib/types';
 import { createClient } from '@/utils/supabase/client';
 import SwimmerStandardsProgress from '@/components/elements/swimResults/SwimmerStandardsProgress';
 import { useUser } from '../../../context/UserContext';
 import { DashboardUtils } from '@app/api/dashboard/dashboardUtils';
+import SwimmerActivitiesList  from '../activities/SwimmerActivityList';
+import { Calendar } from 'lucide-react';
+import toast from 'react-hot-toast';
 
 const SwimmerDashboard: React.FC = () => {
   const { user, loading, error } = useUser();
   const [dashboardUtils, setDashboardUtils] = useState<DashboardUtils | null>(null);
   const [upcomingActivities, setUpcomingActivities] = useState<UpcomingActivity[]>([]);
+  const [activitiesLoading, setActivitiesLoading] = useState(true);
+  const [currentResponse, setCurrentResponse] = useState<{
+      activityId: string;
+      status: ActivityResponseStatus;
+    } | undefined>(undefined);
 
+  // Initialize DashboardUtils for swimmer
   useEffect(() => {
     if (user?.id) {
       setDashboardUtils(new DashboardUtils(user.id, 'swimmer'));
     }
   }, [user?.id]);
 
+  // Fetch upcoming activities
   const fetchUpcomingActivities = useCallback(async () => {
     if (!dashboardUtils) return;
+    setActivitiesLoading(true);
 
     try {
-      const upcomingResponse = await dashboardUtils.fetchUpcomingActivities();
-      const activitiesWithTypes = upcomingResponse.data.map((activity: any) => ({
-        ...activity,
-        activity_type: activity.activity_type || 'default_type', // Provide a default value if necessary
-      }));
-      setUpcomingActivities(activitiesWithTypes);
+      const response = await dashboardUtils.fetchUpcomingActivities();
+      
+      // Filter for upcoming activities and map them with proper types
+      const now = new Date();
+      const upcomingActivities = response.data
+        .filter(activity => {
+          const activityDate = new Date(activity.start_date);
+          return activityDate >= now;
+        })
+        .map(activity => ({
+          ...activity,
+          activity_type: activity.activity_type || 'practice',
+          additional_details: activity.additional_details || {},
+          groups: activity.groups || [],
+          responses: activity.responses || []
+        }));
+
+      setUpcomingActivities(upcomingActivities);
     } catch (err) {
       console.error('Error fetching upcoming activities:', err);
+      toast.error('Failed to load activities');
+    } finally {
+      setActivitiesLoading(false);
     }
   }, [dashboardUtils]);
 
@@ -45,19 +71,55 @@ const SwimmerDashboard: React.FC = () => {
     fetchUpcomingActivities();
   }, [fetchUpcomingActivities]);
 
+  // Handle swim result submission
   const handleAddResult = async (newResult: Omit<SwimResult, 'id' | 'is_personal_best'>) => {
     try {
       const supabase = createClient();
       const resultWithPersonalBest = { ...newResult, is_personal_best: false };
-      const { data, error } = await supabase
+      const { error } = await supabase
         .from('swim_results')
         .insert([resultWithPersonalBest])
         .select()
         .single();
 
       if (error) throw error;
+      toast.success('Result added successfully');
     } catch (error) {
       console.error('Error adding result:', error);
+      toast.error('Failed to add result');
+    }
+  };
+
+  // Handle activity response
+  const handleActivityResponse = async (
+    activityId: string,
+    status: ActivityResponseStatus,
+    additionalInfo?: string
+  ) => {
+    if (!user?.id) return;
+    
+    try {
+      const supabase = createClient();
+      const { error } = await supabase.rpc('respond_to_activity', {
+        p_activity_id: activityId,
+        p_swimmer_id: user.id,
+        p_status: status,
+        p_additional_info: additionalInfo
+      });
+
+      if (error) throw error;
+      
+      // Update current response
+      setCurrentResponse({
+        activityId,
+        status
+      });
+      
+      await fetchUpcomingActivities();
+      toast.success('Response submitted successfully');
+    } catch (err) {
+      console.error('Error responding to activity:', err);
+      toast.error('Failed to submit response');
     }
   };
 
@@ -66,7 +128,7 @@ const SwimmerDashboard: React.FC = () => {
       <SwimmerPageLayout>
         <Loader />
       </SwimmerPageLayout>
-    )
+    );
   }
 
   if (error) {
@@ -130,8 +192,8 @@ const SwimmerDashboard: React.FC = () => {
           <PersonalBestsComparison swimmerId={user.id} />
         </section>
 
-         {/* Add New Result */}
-         <section className={styles.addResult}>
+        {/* Add New Result */}
+        <section className={styles.addResult}>
           <h2>Add New Result</h2>
           <AddSwimResult
             swimmerId={user.id}
@@ -145,51 +207,38 @@ const SwimmerDashboard: React.FC = () => {
           <SwimmerStandardsProgress swimmerId={user.id} displayCount={5} />
         </section>
 
-
         {/* Upcoming Activities */}
         <section className={styles.upcomingActivities}>
-          <h2>Upcoming Swim Activities</h2>
-          {upcomingActivities.length > 0 ? (
-            <div className={styles.activityList}>
-              {upcomingActivities.map((activity) => (
-                <div key={activity.id} className={styles.activityCard}>
-                  <div className={styles.activityHeader}>
-                    <h3>{activity.title}</h3>
-                  </div>
-                  <div className={styles.activityBody}>
-                    <p>{activity.description}</p>
-                    <p>
-                      <strong>Date:</strong> {new Date(activity.start_date).toLocaleDateString()}
-                    </p>
-                    <p>
-                      <strong>Location:</strong> {activity.location}
-                    </p>
-                    <p>
-                      <strong>Groups:</strong>{' '}
-                      {activity.groups?.map((group) => group.name).join(', ')}
-                    </p>
-                    <p>
-                      <strong>Responses:</strong>{' '}
-                      {activity.responses?.map((response) => (
-                        <span
-                          key={response.status}
-                          className={`${styles.responseStatus} ${styles[response.status]}`}
-                        >
-                          {response.status} ({response.count})
-                        </span>
-                      ))}
-                    </p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <p>No upcoming activities at the moment.</p>
-          )}
-        </section>
+        <div className={styles.sectionHeader}>
+          <h2>Upcoming Activities</h2>
+          <Link href="/user/swimmer/activities" className={styles.viewAllLink}>
+            View All Activities
+          </Link>
+        </div>
 
-         {/* Recent Activities */}
-         <section className={styles.recentActivities}>
+        {activitiesLoading ? (
+          <div className={styles.loaderContainer}>
+            <Loader />
+          </div>
+        ) : upcomingActivities.length === 0 ? (
+          <div className={styles.emptyState}>
+            <Calendar size={48} />
+            <h3>No Upcoming Activities</h3>
+            <p>There are no activities scheduled at the moment.</p>
+          </div>
+        ) : (
+          <SwimmerActivitiesList
+            activities={upcomingActivities}
+            onRespond={handleActivityResponse}
+            isLoading={activitiesLoading}
+            currentResponse={currentResponse}
+            responses={upcomingActivities.flatMap(activity => activity.responses || [])}
+          />
+        )}
+      </section>
+
+        {/* Recent Activities */}
+        <section className={styles.recentActivities}>
           <h2>Recent Activities</h2>
           <SwimmerResultsHistory swimmerId={user.id} />
         </section>
@@ -197,8 +246,16 @@ const SwimmerDashboard: React.FC = () => {
         {/* Quick Actions */}
         <section className={styles.quickActions}>
           <h2>Quick Actions</h2>
-          <Button className={styles.actionButton}>View Detailed Performance</Button>
-          {user.group_id && <Button className={styles.actionButton}>Connect with Coach</Button>}
+          <div className={styles.actionButtons}>
+            <Link href="/user/swimmer/performance">
+              <Button className={styles.actionButton}>View Detailed Performance</Button>
+            </Link>
+            {user.group_id && (
+              <Link href="/user/swimmer/communication">
+                <Button className={styles.actionButton}>Connect with Coach</Button>
+              </Link>
+            )}
+          </div>
         </section>
       </div>
     </SwimmerPageLayout>

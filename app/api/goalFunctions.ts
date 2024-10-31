@@ -10,6 +10,7 @@ export interface GoalType {
 }
 
 export interface SwimmerGoal {
+  newAchievement: any;
   id: string;
   swimmer_id: string;
   goal_type_id: string;
