@@ -11,6 +11,13 @@ import { DashboardUtils } from '@/app/api/dashboard/dashboardUtils';
 import SwimmerActivitiesList from './SwimmerActivityList';
 import { toast } from 'react-hot-toast';
 
+
+  interface ActivityResponse {
+    activity_id: string;
+    response_status: ActivityResponseStatus;
+    count: number;
+  }
+
 const ActivitiesPage = () => {
   const { user } = useUser();
   const [activities, setActivities] = useState<UpcomingActivity[]>([]);
@@ -29,34 +36,52 @@ const ActivitiesPage = () => {
   const fetchActivities = useCallback(async () => {
     if (!dashboardUtils || !user?.id) return;
     setLoading(true);
-
+  
     try {
-      const [activitiesResponse, responsesData] = await Promise.all([
+      // Fetch activities and responses in parallel
+      const [activitiesResponse, userResponses] = await Promise.all([
         dashboardUtils.fetchUpcomingActivities(),
         fetchUserResponses(user.id)
       ]);
-
+  
       const now = new Date();
-      const filteredActivities = (activitiesResponse.data as UpcomingActivity[])
-        .filter((activity: UpcomingActivity) => {
-          const activityDate = new Date(activity.start_date);
-          switch (selectedFilter) {
-            case 'upcoming':
-              return activityDate >= now;
-            case 'past':
-              return activityDate < now;
-            default:
-              return true;
-          }
-        })
-        .map((activity: any) => ({
-          ...activity,
-          activity_type: activity.activity_type || '',
-          additional_details: activity.additional_details || ''
-        }));
-
+      
+      // Process activities
+      const filteredActivities = await Promise.all(
+        activitiesResponse.data
+          .filter((activity: UpcomingActivity) => {
+            const activityDate = new Date(activity.start_date);
+            switch (selectedFilter) {
+              case 'upcoming':
+                return activityDate >= now;
+              case 'past':
+                return activityDate < now;
+              default:
+                return true;
+            }
+          })
+          .map(async (activity: any) => {
+            // Fetch response counts for each activity
+            const supabase = createClient();
+            const { data: responseCounts, error } = await supabase
+              .rpc('get_activity_response_counts', {
+                p_activity_id: activity.id  // Changed from activity_ids array to single ID
+              });
+  
+            return {
+              ...activity,
+              activity_type: activity.activity_type || '',
+              additional_details: activity.additional_details || {},
+              responses: error ? [] : responseCounts.map((r: any) => ({
+                status: r.response_status,
+                count: parseInt(r.count)
+              }))
+            };
+          })
+      );
+  
       setActivities(filteredActivities);
-      setMyResponses(responsesData);
+      setMyResponses(userResponses);
     } catch (err) {
       console.error('Error fetching activities:', err);
       toast.error('Failed to load activities');
@@ -92,13 +117,13 @@ const ActivitiesPage = () => {
     
     try {
       const supabase = createClient();
-      const { error } = await supabase.rpc('respond_to_activity', {
+      const { data, error } = await supabase.rpc('respond_to_activity', {
         p_activity_id: activityId,
         p_swimmer_id: user.id,
         p_status: status,
         p_additional_info: additionalInfo
       });
-
+  
       if (error) throw error;
       
       // Update local state
@@ -107,6 +132,7 @@ const ActivitiesPage = () => {
         { activityId, status }
       ]);
       
+      // Refresh activities to get updated response counts
       await fetchActivities();
       toast.success('Response submitted successfully');
     } catch (err) {
@@ -114,6 +140,8 @@ const ActivitiesPage = () => {
       toast.error('Failed to submit response');
     }
   };
+  
+
 
   useEffect(() => {
     fetchActivities();
