@@ -1,0 +1,358 @@
+/* activies section */
+.activityList {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-top: 1rem;
+    width: 100%;
+    max-width: 100%;
+    padding: 0.5rem;
+  }
+  
+  .activityCard {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    border: 1px solid #eee;
+    transition: all 0.2s ease-in-out;
+    width: 100%;
+    color: #093353;
+  }
+  
+  .activityCard:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  }
+  
+  .activityCard::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 100px;
+    height: 100px;
+    background: linear-gradient(135deg, transparent 0%, rgba(5, 133, 123, 0.05) 100%);
+    border-radius: 0 12px 0 100%;
+  }
+  
+  .activityHeader {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+  }
+  
+  .activityTitle {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .activityTitle h3 {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: #111827;
+    margin: 0;
+    word-break: break-word;
+  }
+  
+  .activityType,
+  .skillLevel {
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    white-space: nowrap;
+    display: inline-block;
+  }
+  
+  .activityType {
+    background-color: #f3f4f6;
+    color: #4b5563;
+    text-transform: capitalize;
+  }
+  
+  .skillLevel {
+    background-color: #e0f2fe;
+    color: #0369a1;
+  }
+  
+  .activityBody {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .description {
+    font-size: 0.875rem;
+    color: #4b5563;
+    line-height: 1.5;
+  }
+  
+  .activityDetails {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  
+  .detailItem {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    color: #6b7280;
+  }
+  
+  .icon {
+    color: #6b7280;
+  }
+  
+  .additionalInfo {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid #f3f4f6;
+  }
+  
+  .infoItem {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    color: #6b7280;
+  }
+  
+  /* Response elements */
+  .responseButtons {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-top: 1rem;
+  }
+  
+  .responseButton {
+    padding: 0.5rem 1rem;
+    border-radius: 0.375rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+  
+  .responseStatus {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.35rem 0.75rem;
+    border-radius: 20px;
+    margin: 0.25rem;
+    font-size: 0.85rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+  }
+  
+  .accepted { 
+    background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+    color: #1e88e5;
+  }
+  
+  .declined { 
+    background: linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%);
+    color: #ef5350;
+  }
+  
+  .pending { 
+    background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);
+    color: #ff9800;
+  }
+  
+  .attending {
+    background-color: #dcfce7;
+    color: #166534;
+  }
+  
+  .attending:hover {
+    background-color: #bbf7d0;
+  }
+  
+  .interested {
+    background-color: #fef9c3;
+    color: #854d0e;
+  }
+  
+  .interested:hover {
+    background-color: #fef08a;
+  }
+  
+  .notAttending {
+    background-color: #fee2e2;
+    color: #991b1b;
+  }
+  
+  .notAttending:hover {
+    background-color: #fecaca;
+  }
+  
+  /* Loading and empty states */
+  .loading,
+  .emptyState {
+    text-align: center;
+    padding: 2rem;
+    color: #6b7280;
+  }
+  
+  .emptyState {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+  }
+  
+  .emptyIcon {
+    color: #9ca3af;
+  }
+  
+  /* Media Queries */
+  @media (min-width: 640px) {
+    .activityHeader {
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+  
+    .activityTitle {
+      flex-direction: row;
+      align-items: center;
+      gap: 0.75rem;
+    }
+  
+    .activityTitle h3 {
+      font-size: 1.25rem;
+    }
+  
+    .activityDetails {
+      flex-direction: row;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+    }
+  
+    .responseButtons {
+      flex-direction: row;
+    }
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .activityCard {
+      background-color: #1a1a1a;
+      border-color: #2d3748;
+      color: #f3f4f6;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+  
+    .activityCard:hover {
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+      background-color: #262626;
+    }
+  
+    .activityCard::after {
+      background: linear-gradient(135deg, transparent 0%, rgba(255, 255, 255, 0.03) 100%);
+    }
+  
+    .activityTitle h3 {
+      color: #f3f4f6;
+    }
+  
+    .activityType {
+      background-color: #374151;
+      color: #d1d5db;
+    }
+  
+    .skillLevel {
+      background-color: #1e40af;
+      color: #93c5fd;
+    }
+  
+    .description {
+      color: #d1d5db;
+    }
+  
+    .detailItem {
+      color: #9ca3af;
+    }
+  
+    .icon {
+      color: #9ca3af;
+    }
+  
+    .additionalInfo {
+      border-top-color: #374151;
+    }
+  
+    .infoItem {
+      color: #9ca3af;
+    }
+  
+    /* Response status dark mode */
+    .accepted { 
+      background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);
+      color: #bfdbfe;
+    }
+  
+    .declined { 
+      background: linear-gradient(135deg, #7f1d1d 0%, #dc2626 100%);
+      color: #fecaca;
+    }
+  
+    .pending { 
+      background: linear-gradient(135deg, #854d0e 0%, #d97706 100%);
+      color: #fef3c7;
+    }
+  
+    .attending {
+      background-color: #065f46;
+      color: #d1fae5;
+    }
+  
+    .attending:hover {
+      background-color: #047857;
+    }
+  
+    .interested {
+      background-color: #854d0e;
+      color: #fef3c7;
+    }
+  
+    .interested:hover {
+      background-color: #a16207;
+    }
+  
+    .notAttending {
+      background-color: #991b1b;
+      color: #fee2e2;
+    }
+  
+    .notAttending:hover {
+      background-color: #b91c1c;
+    }
+  
+    .loading,
+    .emptyState {
+      color: #9ca3af;
+    }
+  
+    .emptyIcon {
+      color: #07338a;
+    }
+  
+    .responseButton {
+      background-color: #6a7587;
+      color: #f3f4f6;
+    }
+  
+    .responseButton:hover {
+      background-color: #4b5563;
+    }
+
+  }

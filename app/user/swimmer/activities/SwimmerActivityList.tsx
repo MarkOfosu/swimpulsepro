@@ -1,5 +1,5 @@
 // components/elements/activities/SwimmerActivitiesList.tsx
-import styles from '../../../styles/SwimmerDashboard.module.css';
+import styles from '../../../styles/SwimmerActivityList.module.css';
 import React, { useState } from 'react';
 import { Calendar, MapPin, Users, Clock, Info } from 'lucide-react';
 import { Button } from '@/components/elements/Button';
