@@ -1,12 +1,12 @@
-// app/user/coach/activity/page.tsx
+// app/user/coach/activity/[id]/page.tsx
 'use client';
-import React from 'react';
-import CoachPageLayout from '../CoachPageLayout';
-import Activities from './Activities';
-import { useUser } from '../../../context/UserContext';
-import Loader from '@/components/elements/Loader';
 
-export default function CoachActivitiesPage() {
+import ActivityDetails from './ActivityDetails';
+import { useUser } from '../../../../../app/context/UserContext';
+import Loader from '@/components/elements/Loader';
+import CoachPageLayout from '../../CoachPageLayout';
+
+export default function ActivityDetailPage() {
   const { user, loading, error } = useUser();
 
   if (loading) {
@@ -27,10 +27,9 @@ export default function CoachActivitiesPage() {
     );
   }
 
-
   return (
     <CoachPageLayout>
-      <Activities />
+      <ActivityDetails />
     </CoachPageLayout>
   );
 }

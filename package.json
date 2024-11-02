@@ -30,6 +30,7 @@
     "@types/jspdf": "^2.0.0",
     "@types/react-beautiful-dnd": "^13.1.8",
     "@types/recharts": "^1.8.29",
+    "date-fns": "^4.1.0",
     "jspdf": "^2.5.2",
     "langchain": "^0.2.16",
     "langsmith": "^0.1.41",
@@ -50,6 +51,7 @@
     "supabase": "^1.192.5"
   },
   "devDependencies": {
+    "@types/date-fns": "^2.6.3",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",

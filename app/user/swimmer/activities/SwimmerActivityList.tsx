@@ -32,22 +32,19 @@ const SwimmerActivitiesList: React.FC<SwimmerActivitiesListProps> = ({
   const [isResponseModalOpen, setIsResponseModalOpen] = useState(false);
   const [responseLoading, setResponseLoading] = useState<string | null>(null);
 
-  const handleResponse = async (
-    activityId: string,
-    status: ActivityResponseStatus,
-    additionalInfo?: string
-  ) => {
-    try {
-      setResponseLoading(activityId);
-      await onRespond(activityId, status, additionalInfo);
-      setIsResponseModalOpen(false);
-      setSelectedActivity(null);
-    } catch (error) {
-      console.error('Error responding to activity:', error);
-    } finally {
-      setResponseLoading(null);
-    }
-  };
+   const handleResponse = async (
+        activityId: string,
+        status: ActivityResponseStatus,
+        additionalInfo?: string
+    ) => {
+        try {
+        await onRespond(activityId, status, additionalInfo);
+        setIsResponseModalOpen(false);
+        setSelectedActivity(null);
+        } catch (error) {
+        console.error('Error responding to activity:', error);
+        }
+   };
 
   const formatDateTime = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {

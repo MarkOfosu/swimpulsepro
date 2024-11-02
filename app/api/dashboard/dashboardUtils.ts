@@ -4,6 +4,37 @@ import { createClient } from '@/utils/supabase/client';
 
 const supabase = createClient();
 
+export type ActivityResponseStatus = 'attending' | 'interested' | 'not_attending';
+
+export interface ActivityResponseDetails {
+  swimmer_id: string;
+  first_name: string;
+  last_name: string;
+  response_status: ActivityResponseStatus;
+  additional_info?: string;
+  status_updated_at: string;
+}
+
+export interface ActivityResponseSummary {
+  summary: {
+    total_responses: number;
+    status_counts: {
+      attending?: number;
+      interested?: number;
+      not_attending?: number;
+    };
+    attending_swimmers: Array<{
+      id?: string;  // Only for coaches
+      name: string;
+    }>;
+  };
+  user_response?: {
+    status: ActivityResponseStatus;
+    additional_info?: string;
+    updated_at: string;
+  };
+}
+
 export interface FetchOptions {
   page?: number;
   limit?: number;
@@ -32,9 +63,18 @@ export interface UpcomingActivity {
   coach_id: string;
   groups?: { id: string; name: string }[];
   responses?: {
-    status: 'attending' | 'interested' | 'not_attending';
+    status: ActivityResponseStatus;
     count: number;
   }[];
+  additional_details?: {
+    equipment_needed?: string;
+    preparation_notes?: string;
+    capacity_limit?: string;
+    skill_level?: string;
+    virtual_link?: string;
+    minimum_standard?: string;
+    recommended_standard?: string;
+  };
 }
 
 export interface DashboardMetrics {
@@ -55,12 +95,6 @@ export interface SwimGroup {
   swimmerCount: number;
 }
 
-export interface ActivityResponse {
-  activity_id: string;
-  response_status: 'attending' | 'interested' | 'not_attending';
-  count: number;
-}
-
 export class DashboardUtils {
   private userId: string;
   private userRole: 'coach' | 'swimmer';
@@ -68,6 +102,80 @@ export class DashboardUtils {
   constructor(userId: string, userRole: 'coach' | 'swimmer') {
     this.userId = userId;
     this.userRole = userRole;
+  }
+
+  async getActivityResponses(activityId: string): Promise<ActivityResponseDetails[]> {
+    try {
+      const { data, error } = await supabase
+        .rpc('get_activity_responses_detailed', {
+          p_activity_id: activityId,
+          p_user_id: this.userId,
+          p_user_role: this.userRole
+        });
+
+      if (error) throw error;
+
+      return data || [];
+    } catch (error) {
+      console.error('Error fetching activity responses:', error);
+      return [];
+    }
+  }
+
+  async getActivityResponseSummary(activityId: string): Promise<ActivityResponseSummary> {
+    try {
+      const { data, error } = await supabase
+        .rpc('get_activity_response_summary', {
+          p_activity_id: activityId,
+          p_user_id: this.userId,
+          p_user_role: this.userRole
+        });
+
+      if (error) throw error;
+
+      return {
+        summary: {
+          total_responses: data?.summary?.total_responses || 0,
+          status_counts: data?.summary?.status_counts || {},
+          attending_swimmers: data?.summary?.attending_swimmers || []
+        },
+        user_response: data?.user_response
+      };
+    } catch (error) {
+      console.error('Error fetching activity response summary:', error);
+      return {
+        summary: {
+          total_responses: 0,
+          status_counts: {},
+          attending_swimmers: []
+        }
+      };
+    }
+  }
+
+  async respondToActivity(
+    activityId: string, 
+    status: ActivityResponseStatus,
+    additionalInfo?: string
+  ): Promise<void> {
+    if (this.userRole !== 'swimmer') {
+      throw new Error('Only swimmers can respond to activities');
+    }
+
+    try {
+      const { error } = await supabase
+        .rpc('respond_to_activity', {
+          p_activity_id: activityId,
+          p_swimmer_id: this.userId,
+          p_status: status,
+          p_additional_info: additionalInfo
+        });
+
+      if (error) throw error;
+    } catch (error) {
+      console.error('Error responding to activity:', error);
+      throw error;
+    }
   }
 
   async fetchActivityFeed({ page = 1, limit = 5 }: FetchOptions = {}) {
@@ -124,84 +232,7 @@ export class DashboardUtils {
       };
     }
   }
-  
 
-  // async fetchUpcomingActivities({ limit = 3 }: FetchOptions = {}) {
-  //   try {
-  //     // Fetch activities
-  //     const { data: eventsData, error: eventsError } = await supabase
-  //       .from('upcoming_activities')
-  //       .select(`
-  //         id,
-  //         title,
-  //         description,
-  //         start_date,
-  //         end_date,
-  //         location,
-  //         coach_id,
-  //         groups:activity_groups (
-  //           group_id,
-  //           swim_groups (
-  //             id,
-  //             name
-  //           )
-  //         )
-  //       `)
-  //       .eq('coach_id', this.userId)
-  //       .gt('start_date', new Date().toISOString())
-  //       .order('start_date', { ascending: true })
-  //       .limit(limit);
-
-  //     if (eventsError) throw eventsError;
-
-  //     // For each activity, get response counts using a stored function
-  //     const activityIds = eventsData?.map(event => event.id) || [];
-  //     const responseCounts: ActivityResponse[] = [];
-
-  //     if (activityIds.length > 0) {
-  //       const { data: responses } = await supabase
-  //         .rpc('get_activity_response_counts', { activity_ids: activityIds });
-        
-  //       if (responses) {
-  //         responseCounts.push(...responses);
-  //       }
-  //     }
-
-  //     // Transform the data
-  //     const activities = eventsData?.map(event => {
-  //       const eventResponses = responseCounts
-  //         .filter(r => r.activity_id === event.id)
-  //         .map(r => ({
-  //           status: r.response_status,
-  //           count: r.count
-  //         }));
-
-  //       return {
-  //         ...event,
-  //         groups: event.groups?.map(g => ({
-  //           id: g.swim_groups[0]?.id,
-  //           name: g.swim_groups[0]?.name
-  //         })) || [],
-  //         responses: eventResponses
-  //       };
-  //     }) || [];
-
-  //     return {
-  //       data: activities,
-  //       metadata: {
-  //         hasMore: (activities.length) === limit
-  //       }
-  //     };
-  //   } catch (error) {
-  //     console.error('Error fetching upcoming activities:', error);
-  //     return {
-  //       data: [],
-  //       metadata: {
-  //         hasMore: false
-  //       }
-  //     };
-  //   }
-  // }
   async fetchUpcomingActivities({ limit = 3 }: FetchOptions = {}) {
     try {
       let activitiesData;
@@ -209,7 +240,6 @@ export class DashboardUtils {
   
       // Different queries based on user role
       if (this.userRole === 'coach') {
-        // For coaches, fetch activities they created
         const response = await supabase
           .from('upcoming_activities')
           .select(`
@@ -227,7 +257,6 @@ export class DashboardUtils {
         activitiesData = response.data;
         activitiesError = response.error;
       } else {
-        // For swimmers, first get their group
         const { data: swimmerData } = await supabase
           .from('swimmers')
           .select('group_id')
@@ -238,7 +267,6 @@ export class DashboardUtils {
           return { data: [], metadata: { hasMore: false } };
         }
   
-        // Then fetch activities for their group
         const response = await supabase
           .from('upcoming_activities')
           .select(`
@@ -252,7 +280,6 @@ export class DashboardUtils {
           `)
           .order('start_date', { ascending: true });
   
-        // Filter activities for swimmer's group
         activitiesData = response.data?.filter(activity => {
           const groupIds = activity.groups
             ?.map((g: any) => g.group?.id)
@@ -264,7 +291,6 @@ export class DashboardUtils {
   
       if (activitiesError) throw activitiesError;
   
-      // Transform the activities data
       const activities = activitiesData?.map(activity => {
         const groups = activity.groups
           ?.map((g: any) => g.group)
@@ -277,21 +303,18 @@ export class DashboardUtils {
         };
       }) || [];
   
-      // Fetch response counts
       const activityIds = activities.map(a => a.id);
       let responseCounts = [];
       let userResponses: any[] = [];
   
       if (activityIds.length > 0) {
-        // Get response counts for all activities
         const responseCountsResult = await supabase
-          .rpc('get_activity_response_counts', { activity_ids: activityIds });
+          .rpc('get_activity_response_counts', { p_activity_id: activityIds[0] });
         
         if (responseCountsResult.data) {
           responseCounts = responseCountsResult.data;
         }
   
-        // If swimmer, get their own responses
         if (this.userRole === 'swimmer') {
           const swimmerResponsesResult = await supabase
             .from('activity_responses')
@@ -305,7 +328,6 @@ export class DashboardUtils {
         }
       }
   
-      // Add response counts and user responses to activities
       const activitiesWithResponses = activities.map(activity => ({
         ...activity,
         responses: (responseCounts || [])
@@ -314,7 +336,6 @@ export class DashboardUtils {
             status: r.response_status,
             count: r.count
           })),
-        // Only include swimmer response if user is a swimmer
         ...(this.userRole === 'swimmer' && {
           swimmerResponse: userResponses.find(
             r => r.activity_id === activity.id
@@ -339,11 +360,8 @@ export class DashboardUtils {
     }
   }
 
-
-
   async fetchDashboardMetrics(): Promise<DashboardMetrics> {
     try {
-      // Call a stored function to get metrics
       const { data: metrics } = await supabase
         .rpc('get_dashboard_metrics', { 
           p_user_id: this.userId,
@@ -366,53 +384,6 @@ export class DashboardUtils {
         totalBadgesAwarded: 0,
         attendanceRate: 0
       };
-    }
-  }
-
-  async createActivity(activityData: Omit<UpcomingActivity, 'id' | 'coach_id'>) {
-    if (this.userRole !== 'coach') {
-      throw new Error('Only coaches can create activities');
-    }
-
-    const { groups, ...activity } = activityData;
-
-    try {
-      // Start a transaction
-      const { data, error } = await supabase.rpc('create_activity', {
-        activity_data: activity,
-        coach_id: this.userId,
-        group_ids: groups?.map(g => g.id) || []
-      });
-
-      if (error) throw error;
-      return data;
-    } catch (error) {
-      console.error('Error creating activity:', error);
-      throw error;
-    }
-  }
-
-  async respondToActivity(
-    activityId: string, 
-    status: 'attending' | 'interested' | 'not_attending'
-  ) {
-    if (this.userRole !== 'swimmer') {
-      throw new Error('Only swimmers can respond to activities');
-    }
-
-    try {
-      const { data, error } = await supabase
-        .rpc('respond_to_activity', {
-          p_activity_id: activityId,
-          p_swimmer_id: this.userId,
-          p_status: status
-        });
-
-      if (error) throw error;
-      return data;
-    } catch (error) {
-      console.error('Error responding to activity:', error);
-      throw error;
     }
   }
 

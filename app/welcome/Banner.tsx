@@ -1,6 +1,6 @@
 import styles from '../styles/Banner.module.css';
 import Image from 'next/image';
-import bannerImage from '../../public/image/banner4.png';
+import bannerImage from '../../public/image/HomeImage1.png';
 import Link from 'next/link';
 
 const Banner = () => {

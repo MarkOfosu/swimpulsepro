@@ -313,8 +313,8 @@ export interface SwimGroup {
 // Response Interfaces
 export interface ActivityResponse {
   id?: string;
-  activity_id?: string;
-  swimmer_id?: string;
+  activity_id: string;
+  swimmer_id: string;
   status: ActivityResponseStatus;
   count?: number;
   additional_info?: string;
@@ -396,7 +396,7 @@ export interface ActivityValidationError {
 // Feed Item Interface
 export interface ActivityFeedItem {
   id: string;
-  swimmer_id: string;
+  swimmer_id?: string;
   group_id: string;
   coach_id: string;
   activity_type: 'achievement' | 'swim_result' | 'badge_earned' | 'attendance';
@@ -490,6 +490,70 @@ export interface SwimmerActivitiesListProps {
 }
 
 export interface ActivityResponse {
-  activityId: string;
+  activity_id: string;
   status: ActivityResponseStatus;
+}
+
+
+
+export interface ActivityResponseDetails {
+  swimmer_id: string;
+  first_name: string;
+  last_name: string;
+  response_status: ActivityResponseStatus;
+  additional_info?: string;
+  status_updated_at: string;
+}
+
+export interface ActivityResponseSummary {
+  summary: {
+    total_responses: number;
+    status_counts: {
+      attending?: number;
+      interested?: number;
+      not_attending?: number;
+    };
+    attending_swimmers: Array<{
+      id?: string;  // Only for coaches
+      name: string;
+    }>;
+  };
+  user_response?: {
+    status: ActivityResponseStatus;
+    additional_info?: string;
+    updated_at: string;
+  };
+}
+
+export interface ActivityResponse {
+  activity_id: string;
+  swimmer_id: string;
+  response_status: ActivityResponseStatus;
+  additional_info?: string;
+  status_updated_at: string;
+}
+
+export interface ActivityResponsesProps {
+  activityId: string;
+  showDetailedView?: boolean;
+  onResponseUpdate?: () => void;
+}
+
+export interface ResponseModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onSubmit: (status: ActivityResponseStatus, additionalInfo?: string) => Promise<void>;
+  activity: UpcomingActivity;
+  initialStatus?: ActivityResponseStatus;
+  initialInfo?: string;
+}
+
+export interface ResponseSummaryProps {
+  summary: ActivityResponseSummary;
+  isCoach: boolean;
+}
+
+export interface DetailedResponsesProps {
+  responses: ActivityResponseDetails[];
+  onResponseUpdate?: () => void;
 }

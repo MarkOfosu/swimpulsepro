@@ -232,7 +232,12 @@ const SwimmerDashboard: React.FC = () => {
             onRespond={handleActivityResponse}
             isLoading={activitiesLoading}
             currentResponse={currentResponse}
-            responses={upcomingActivities.flatMap(activity => activity.responses || [])}
+            responses={upcomingActivities.flatMap(activity => 
+              (activity.responses || []).map(response => ({
+                ...response,
+                activityId: activity.id
+              }))
+            )}
           />
         )}
       </section>
