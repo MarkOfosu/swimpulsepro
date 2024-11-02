@@ -1,6 +1,6 @@
 // components/Footer.tsx
 import React from 'react';
-import { Instagram, Facebook, Twitter, Linkedin } from 'lucide-react';
+import { Instagram, Facebook, Linkedin } from 'lucide-react';
 import styles from '../styles/Footer.module.css';
 
 const Footer: React.FC = () => {
@@ -47,12 +47,12 @@ const Footer: React.FC = () => {
               <a href="#" className={styles.socialLink} aria-label="Facebook">
                 <Facebook size={20} />
               </a>
-              <a href="#" className={styles.socialLink} aria-label="Twitter">
-                <Twitter size={20} />
-              </a>
-              <a href="#" className={styles.socialLink} aria-label="LinkedIn">
+              {/* <a href="#" className={styles.socialLink} aria-label="Twitter">
+                <XIcon size={20} />
+              </a> */}
+              {/* <a href="#" className={styles.socialLink} aria-label="LinkedIn">
                 <Linkedin size={20} />
-              </a>
+              </a> */}
             </div>
           </div>
         </div>

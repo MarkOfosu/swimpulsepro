@@ -101,6 +101,10 @@
   display: flex;
   gap: 1rem;
   margin-top: 1rem;
+  /* center items */
+  justify-content: center;
+  
+
 }
 
 .socialLink {
