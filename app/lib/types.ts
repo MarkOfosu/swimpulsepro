@@ -557,3 +557,35 @@ export interface DetailedResponsesProps {
   responses: ActivityResponseDetails[];
   onResponseUpdate?: () => void;
 }
+
+
+export type SettingsSection = 'profile' | 'account' | 'preferences' | 'delete' | null;
+
+export interface UserProfile {
+  name: string;
+  email: string;
+  phone: string;
+  role: 'coach' | 'swimmer';
+}
+
+export interface SettingsProps {
+  onClose: () => void;
+  onSave?: () => void;
+  isLoading?: boolean;
+}
+
+export type AccountStatus = 'active' | 'deleted' | 'recovered';
+
+export interface SoftDeleteFields {
+  deleted_at: Date | null;
+  status: AccountStatus;
+  is_active: boolean;
+  recovery_token: string | null;  // Used for account recovery
+  deletion_reason?: string;       // Optional field for deletion reason
+}
+
+export interface DeleteAccountResult {
+  success: boolean;
+  error: string | null;
+  recoveryToken?: string;
+}

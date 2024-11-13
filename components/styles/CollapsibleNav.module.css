@@ -80,6 +80,72 @@
   color: var(--text-light);
 }
 
+
+
+.settingsButton {
+  width: 100%;
+  text-align: left;
+  background: none;
+  border: none;
+  font-size: inherit;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.settingsWrapper {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(3, 9, 69, 0.95);
+  z-index: 1002;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  animation: fadeIn 0.3s ease;
+}
+
+.settingsWrapper :global(.dropdownModal) {
+  position: relative;
+  top: 0;
+  right: 0;
+  width: 90%;
+  max-width: 600px;
+  max-height: 90vh;
+  margin: 20px;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Modify your existing media query */
+@media screen and (max-width: 768px) {
+  .collapsibleMenuContainer {
+    display: block;
+  }
+
+  .content-navbar {
+    margin-top: 60px;
+  }
+
+  .collapsibleMenuList {
+    animation: slideIn 0.3s ease forwards;
+  }
+
+  /* Adjust settings presentation for mobile */
+  .settingsWrapper :global(.dropdownModal) {
+    margin: 10px;
+    max-height: 80vh;
+  }
+}
+
 /* Show collapsible menu on small screens */
 @media screen and (max-width: 768px) {
   .collapsibleMenuContainer {

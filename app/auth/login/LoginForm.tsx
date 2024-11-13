@@ -147,7 +147,7 @@ const LoginForm: React.FC = () => {
                 </div>
 
                 <div className={styles.forgotPassword}>
-                  <a href="/login">Forgot password?</a>
+                  <a href="/auth/forgotPassword">Forgot password?</a>
                 </div>
 
                 {error && (

@@ -13,6 +13,9 @@
   width: 100vw;
   max-width: 100%;
   margin-left: calc(-50vw + 50%);
+  display: flex; /* Added to support the settings dropdown */
+  align-items: center; /* Added to vertically center items */
+  justify-content: space-between; /* Added to position items */
 }
 
 .contentNavbar ul {
@@ -22,7 +25,7 @@
   display: flex;
   justify-content: center;
   flex-wrap: wrap;
-  width: 100%;
+  flex-grow: 1; /* Added to allow the list to take available space */
 }
 
 .contentNavbar ul li {

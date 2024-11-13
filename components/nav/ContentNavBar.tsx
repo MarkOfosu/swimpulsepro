@@ -1,7 +1,8 @@
-// ContentNavBar.tsx
+'use client';
 import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import SettingsDropdown from '../elements/settings/SettingsDropdown';
 import styles from '../styles/ContentNavBar.module.css';
 
 interface ContentNavBarProps {
@@ -10,11 +11,12 @@ interface ContentNavBarProps {
 
 const ContentNavBar: React.FC<ContentNavBarProps> = ({ links }) => {
   const pathname = usePathname();
+  const navigationLinks = links.filter(link => link.label !== 'Settings');
 
   return (
     <nav className={styles.contentNavbar}>
       <ul>
-        {links.map((link) => (
+        {navigationLinks.map((link) => (
           <li key={link.href}>
             <Link 
               href={link.href} 
@@ -25,6 +27,7 @@ const ContentNavBar: React.FC<ContentNavBarProps> = ({ links }) => {
           </li>
         ))}
       </ul>
+      <SettingsDropdown />
     </nav>
   );
 };
