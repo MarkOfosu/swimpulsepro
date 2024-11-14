@@ -75,7 +75,7 @@ export default function AccountSettings({ onClose }: Readonly<SettingsProps>) {
     try {
       await accountService.resetPasswordForEmail(
         email,
-        `${window.location.origin}/auth/reset-password`
+        `${window.location.origin}/auth/resetPassword`
       );
 
       toast.success('Password reset email sent. Please check your inbox.');

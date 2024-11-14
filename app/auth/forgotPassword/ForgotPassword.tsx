@@ -40,7 +40,7 @@ export default function ForgotPassword() {
     try {
       await accountService.forgotPassword({
         email,
-        redirectUrl: `${window.location.origin}/auth/reset-password`
+        redirectUrl: `${window.location.origin}/auth/resetPassword`
       });
 
       toast.success('Password reset instructions sent to your email', { 
