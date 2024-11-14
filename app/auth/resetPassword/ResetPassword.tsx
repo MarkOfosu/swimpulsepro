@@ -11,22 +11,44 @@ export default function ResetPassword() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
+  const [isValidating, setIsValidating] = useState(true);
   
   const router = useRouter();
   const supabase = createClient();
 
-  // Check if user is authenticated via the magic link
   useEffect(() => {
+    let timeoutId: NodeJS.Timeout;
+
     const checkSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      
-      if (!session) {
-        toast.error('Please use the reset link from your email');
-        router.push('/auth/forgotPassword');
+      try {
+        // Wait a bit for Supabase to establish the session
+        await new Promise(resolve => setTimeout(resolve, 1000));
+
+        const { data: { session } } = await supabase.auth.getSession();
+        
+        if (!session) {
+          throw new Error('No valid session found');
+        }
+
+        setIsValidating(false);
+
+      } catch (error) {
+        console.error('Session check error:', error);
+        toast.error('Please use the reset link from your email', {
+          duration: 3000
+        });
+
+        timeoutId = setTimeout(() => {
+          router.push('/auth/forgotPassword');
+        }, 3000);
       }
     };
 
     checkSession();
+
+    return () => {
+      if (timeoutId) clearTimeout(timeoutId);
+    };
   }, [router, supabase.auth]);
 
   const validatePassword = (password: string): string => {
@@ -66,7 +88,13 @@ export default function ResetPassword() {
     const toastId = toast.loading('Updating password...');
 
     try {
-      // Simply update the password
+      // Verify session is still valid
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        throw new Error('Your session has expired. Please request a new reset link.');
+      }
+
+      // Update password
       const { error: updateError } = await supabase.auth.updateUser({
         password: newPassword
       });
@@ -78,13 +106,14 @@ export default function ResetPassword() {
         duration: 3000
       });
 
-      // Sign out after successful password change
+      // Sign out
       await supabase.auth.signOut();
 
       // Redirect to login
       setTimeout(() => {
         router.push('/auth/login');
       }, 3000);
+
     } catch (err) {
       console.error('Password update error:', err);
       const errorMessage = err instanceof Error 
@@ -100,6 +129,23 @@ export default function ResetPassword() {
       setIsLoading(false);
     }
   };
+
+  // Show loading state while checking session
+  if (isValidating) {
+    return (
+      <div className={styles.pageWrapper}>
+        <div className={styles.container}>
+          <h2 className={styles.title}>Verifying Reset Link</h2>
+          <div className={styles.loadingWrapper}>
+            <div className={styles.spinnerLarge} />
+            <p className={styles.subtitle}>
+              Please wait while we verify your reset link...
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className={styles.pageWrapper}>
