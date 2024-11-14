@@ -1,8 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { accountService } from '../../services/accountService';
+import { useRouter } from 'next/navigation';
 import { createClient } from '@utils/supabase/client';
 import { toast } from 'react-hot-toast';
 import styles from '../styles/Auth.module.css';
@@ -12,68 +11,12 @@ export default function ResetPassword() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
-  const [isValidating, setIsValidating] = useState(true);
   
   const router = useRouter();
-  const searchParams = useSearchParams();
   const supabase = createClient();
 
-  useEffect(() => {
-    const validateResetToken = async () => {
-      try {
-        // Get hash fragment from URL if it exists (Supabase sometimes puts tokens here)
-        const hashParams = new URLSearchParams(window.location.hash.substring(1));
-        
-        // Try to get tokens from both query params and hash
-        const access_token = searchParams?.get('access_token') || hashParams.get('access_token');
-        const refresh_token = searchParams?.get('refresh_token') || hashParams.get('refresh_token');
-        const type = searchParams?.get('type') || hashParams.get('type');
-
-        // Debug logging
-        console.log('Tokens found:', { access_token: !!access_token, refresh_token: !!refresh_token, type });
-
-        if (!access_token || !type) {
-          console.log('No tokens found in URL');
-          throw new Error('Invalid reset link');
-        }
-
-        // Set the session with Supabase
-        const { data, error: sessionError } = await supabase.auth.setSession({
-          access_token,
-          refresh_token: refresh_token || '' // refresh token is optional
-        });
-
-        if (sessionError) {
-          console.log('Session error:', sessionError);
-          throw sessionError;
-        }
-
-        // Verify we have a valid session after setting it
-        const { data: { session }, error: verifyError } = await supabase.auth.getSession();
-        
-        if (verifyError || !session) {
-          console.log('Session verification failed:', verifyError);
-          throw new Error('Invalid session');
-        }
-
-        // Success - token is valid
-        setIsValidating(false);
-      } catch (err) {
-        console.error('Reset token validation failed:', err);
-        toast.error('Invalid or expired reset link. Please request a new one.', {
-          duration: 5000,
-        });
-        
-        // Add a small delay before redirecting
-        setTimeout(() => {
-          router.push('/auth/forgotPassword');
-        }, 5000);
-      }
-    };
-
-    // Run validation
-    validateResetToken();
-  }, [router, searchParams, supabase.auth]);
+  // No token validation needed - Supabase handles this automatically
+  // The magic link automatically logs the user in
 
   const validatePassword = (password: string): string => {
     if (password.length < 6) {
@@ -95,6 +38,7 @@ export default function ResetPassword() {
     e.preventDefault();
     setError('');
 
+    // Validate password
     const passwordError = validatePassword(newPassword);
     if (passwordError) {
       setError(passwordError);
@@ -110,14 +54,7 @@ export default function ResetPassword() {
     const toastId = toast.loading('Updating password...');
 
     try {
-      // Verify session is still valid
-      const { data: { session } } = await supabase.auth.getSession();
-      
-      if (!session) {
-        throw new Error('Your session has expired. Please request a new reset link.');
-      }
-
-      // Update password using session
+      // Update the user's password
       const { error: updateError } = await supabase.auth.updateUser({
         password: newPassword
       });
@@ -129,18 +66,15 @@ export default function ResetPassword() {
         duration: 3000
       });
       
-      // Sign out and clear session
+      // Sign out after password update
       await supabase.auth.signOut();
-      
-      // Clear form
-      setNewPassword('');
-      setConfirmPassword('');
       
       // Redirect to login
       setTimeout(() => {
         router.push('/auth/login');
       }, 3000);
     } catch (err) {
+      console.error('Password update error:', err);
       const errorMessage = err instanceof Error 
         ? err.message 
         : 'Failed to update password. Please try again.';
@@ -154,22 +88,6 @@ export default function ResetPassword() {
       setIsLoading(false);
     }
   };
-
-  if (isValidating) {
-    return (
-      <div className={styles.pageWrapper}>
-        <div className={styles.container}>
-          <h2 className={styles.title}>Validating Reset Link</h2>
-          <div className={styles.loadingWrapper}>
-            <div className={styles.spinnerLarge} />
-            <p className={styles.subtitle}>
-              Please wait while we validate your reset link...
-            </p>
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className={styles.pageWrapper}>

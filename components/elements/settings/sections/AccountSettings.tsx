@@ -31,6 +31,21 @@ export default function AccountSettings({ onClose }: Readonly<SettingsProps>) {
       return false;
     }
 
+    if (!/[A-Z]/.test(newPassword)) {
+      toast.error('Password must contain at least one uppercase letter');
+      return false;
+    }
+
+    if (!/[a-z]/.test(newPassword)) {
+      toast.error('Password must contain at least one lowercase letter');
+      return false;
+    }
+
+    if (!/[0-9]/.test(newPassword)) {
+      toast.error('Password must contain at least one number');
+      return false;
+    }
+
     return true;
   };
 
@@ -55,6 +70,7 @@ export default function AccountSettings({ onClose }: Readonly<SettingsProps>) {
       // Close the modal
       onClose();
     } catch (err) {
+      console.error('Password change error:', err);
       const errorMessage = err instanceof Error ? err.message : 'Failed to update password';
       toast.error(errorMessage);
       setError(errorMessage);
@@ -69,21 +85,30 @@ export default function AccountSettings({ onClose }: Readonly<SettingsProps>) {
       return;
     }
 
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      toast.error('Please enter a valid email address');
+      return;
+    }
+
     setIsLoading(true);
     setError('');
 
     try {
-      await accountService.resetPasswordForEmail(
+      await accountService.forgotPassword({
         email,
-        `${window.location.origin}/auth/resetPassword`
-      );
+        redirectUrl: `${window.location.origin}/auth/resetPassword`
+      });
 
-      toast.success('Password reset email sent. Please check your inbox.');
+      // Always show success message for security
+      toast.success('If an account exists, reset instructions will be sent to your email');
       setIsForgotPassword(false);
+      onClose(); // Close the settings modal
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to send reset email';
-      toast.error(errorMessage);
-      setError(errorMessage);
+      // Still show success message for security
+      toast.success('If an account exists, reset instructions will be sent to your email');
+      setIsForgotPassword(false);
+      onClose(); // Close the settings modal
     } finally {
       setIsLoading(false);
     }
@@ -97,6 +122,8 @@ export default function AccountSettings({ onClose }: Readonly<SettingsProps>) {
         <div className={styles.formSection}>
           <p className={styles.info}>
             Enter your email and we'll send you instructions to reset your password.
+            <br /><br />
+            You'll receive an email with a secure link to reset your password.
           </p>
           
           <div className={styles.formGroup}>
@@ -107,6 +134,8 @@ export default function AccountSettings({ onClose }: Readonly<SettingsProps>) {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className={styles.input}
+              placeholder="Enter your email"
+              autoComplete="email"
             />
           </div>
 
@@ -148,6 +177,7 @@ export default function AccountSettings({ onClose }: Readonly<SettingsProps>) {
             value={currentPassword}
             onChange={(e) => setCurrentPassword(e.target.value)}
             className={styles.input}
+            autoComplete="current-password"
           />
         </div>
 
@@ -159,6 +189,7 @@ export default function AccountSettings({ onClose }: Readonly<SettingsProps>) {
             value={newPassword}
             onChange={(e) => setNewPassword(e.target.value)}
             className={styles.input}
+            autoComplete="new-password"
           />
         </div>
 
@@ -170,7 +201,18 @@ export default function AccountSettings({ onClose }: Readonly<SettingsProps>) {
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
             className={styles.input}
+            autoComplete="new-password"
           />
+        </div>
+
+        <div className={styles.requirements}>
+          <p>Password must:</p>
+          <ul>
+            <li>Be at least 6 characters long</li>
+            <li>Include an uppercase letter</li>
+            <li>Include a lowercase letter</li>
+            <li>Include a number</li>
+          </ul>
         </div>
 
         <button

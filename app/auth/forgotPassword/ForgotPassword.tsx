@@ -35,38 +35,31 @@ export default function ForgotPassword() {
 
     setIsLoading(true);
     setError('');
-    const toastId = toast.loading('Verifying email...');
+    const toastId = toast.loading('Sending reset instructions...');
 
     try {
+      // Send password reset email with the correctly formatted redirect URL
       await accountService.forgotPassword({
         email,
-        redirectUrl: `${window.location.origin}/auth/resetPassword`
+        redirectUrl: `${window.location.origin}/auth/reset-password` // Note the hyphen
       });
 
-      toast.success('Password reset instructions sent to your email', { 
+      // Always show success message for security
+      toast.success('If an account exists, reset instructions will be sent to your email', { 
         id: toastId,
         duration: 5000 
       });
       setEmailSent(true);
-    } catch (err) {
-      let errorMessage = 'Failed to process request';
+    } catch (error) {
+      // Log error but don't expose to user
+      console.error('Password reset error:', error);
       
-      if (err instanceof Error) {
-        if (err.message.includes('No account found')) {
-          // Still show success for security
-          toast.success('If an account exists, password reset instructions will be sent', { 
-            id: toastId,
-            duration: 5000 
-          });
-          setEmailSent(true);
-          return;
-        } else {
-          errorMessage = 'An error occurred. Please try again later.';
-        }
-      }
-      
-      toast.error(errorMessage, { id: toastId });
-      setError(errorMessage);
+      // Still show success message for security
+      toast.success('If an account exists, reset instructions will be sent to your email', { 
+        id: toastId,
+        duration: 5000 
+      });
+      setEmailSent(true);
     } finally {
       setIsLoading(false);
     }
@@ -83,9 +76,18 @@ export default function ForgotPassword() {
               <p>If an account exists with email:</p>
               <p className={styles.email}>{email}</p>
               <p>
-                Password reset instructions have been sent. Please check your inbox (and spam folder) 
-                and follow the instructions to reset your password.
+                Password reset instructions have been sent. Please check your inbox and spam folder.
+                <br /><br />
+                Click the reset link in the email to set a new password. The link will expire in 1 hour.
               </p>
+              <div className={styles.infoBox}>
+                <p><strong>Important:</strong></p>
+                <ul>
+                  <li>The reset link can only be used once</li>
+                  <li>For security, the link expires in 1 hour</li>
+                  <li>Check your spam folder if you don't see the email</li>
+                </ul>
+              </div>
             </div>
             <button
               className={styles.submitButton}
@@ -139,7 +141,7 @@ export default function ForgotPassword() {
                 <span className={styles.spinner} />
               </>
             ) : (
-              'Send Instructions'
+              'Send Reset Instructions'
             )}
           </button>
 

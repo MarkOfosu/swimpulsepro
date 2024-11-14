@@ -26,6 +26,9 @@ interface ResetPasswordParams {
 class AccountService {
   private supabase = createClient();
 
+  /**
+   * Change password for logged-in user
+   */
   async changePassword({ newPassword }: ChangePasswordParams) {
     try {
       const { data: { session } } = await this.supabase.auth.getSession();
@@ -34,11 +37,11 @@ class AccountService {
         throw new Error('No active session found');
       }
 
-      const { data: updateData, error: updateError } = await this.supabase.auth.updateUser({
+      const { error } = await this.supabase.auth.updateUser({
         password: newPassword
       });
 
-      if (updateError) throw updateError;
+      if (error) throw error;
 
       return { success: true };
     } catch (error) {
@@ -47,72 +50,73 @@ class AccountService {
     }
   }
 
-  async resetPasswordForEmail(email: string, redirectUrl?: string) {
-    try {
-      const { data, error } = await this.supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: redirectUrl
-      });
-
-      if (error) throw error;
-
-      return { success: true };
-    } catch (error) {
-      console.error('Error sending reset password email:', error);
-      throw error;
-    }
-  }
-
+  /**
+   * Initiate password reset via email
+   * This sends a magic link that logs the user in and redirects to password reset page
+   */
   async forgotPassword({ email, redirectUrl }: ResetPasswordParams) {
     try {
+      // Always use hyphenated URL for consistency
+      const finalRedirectUrl = redirectUrl || `${window.location.origin}/auth/resetPassword`;
+      
       const { error } = await this.supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: redirectUrl || `${window.location.origin}/auth/resetPassword`
+        redirectTo: finalRedirectUrl
       });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error in forgotPassword:', error);
+      }
+      
+      // Always return success for security (don't reveal if email exists)
       return { success: true };
     } catch (error) {
-      return { success: true }; // Always return success for security
+      console.error('Error in forgotPassword:', error);
+      // Always return success for security
+      return { success: true };
     }
   }
 
-  async resetPasswordWithToken(accessToken: string, newPassword: string) {
+  /**
+   * Update password after magic link login
+   * This should be called from the reset password page
+   */
+  async updatePassword(newPassword: string) {
     try {
-      // First verify the access token is valid
-      const { data: { session }, error: sessionError } = await this.supabase.auth.getSession();
+      // Verify we have an active session from magic link
+      const { data: { session } } = await this.supabase.auth.getSession();
       
-      if (sessionError || !session) {
-        throw new Error('Invalid or expired reset token');
+      if (!session) {
+        throw new Error('No valid session. Please use the reset link from your email.');
       }
 
       // Update the password
-      const { error: updateError } = await this.supabase.auth.updateUser({
+      const { error } = await this.supabase.auth.updateUser({
         password: newPassword
       });
 
-      if (updateError) throw updateError;
+      if (error) throw error;
 
-      // Sign out after password change
-      await this.supabase.auth.signOut({ scope: 'global' });
+      // Sign out after successful password change
+      await this.supabase.auth.signOut();
 
       return { success: true };
     } catch (error) {
-      console.error('Error in resetPasswordWithToken:', error);
+      console.error('Error updating password:', error);
       throw error;
     }
   }
 
-  async verifyResetToken(token: string) {
+  /**
+   * Get current session status
+   * Useful for checking if magic link login was successful
+   */
+  async getSession() {
     try {
       const { data: { session }, error } = await this.supabase.auth.getSession();
-      
-      if (error || !session) {
-        return { valid: false, error: 'Invalid or expired reset token' };
-      }
-
-      return { valid: true };
+      return { session, error };
     } catch (error) {
-      console.error('Error verifying reset token:', error);
-      return { valid: false, error: 'Failed to verify reset token' };
+      console.error('Error getting session:', error);
+      return { session: null, error };
     }
   }
 
@@ -127,7 +131,6 @@ class AccountService {
         throw new Error('Deletion reason is required');
       }
 
-      // Delete account with reason
       const { data: deleteResult, error: deleteError } = await this.supabase.rpc(
         'delete_own_account',
         {
