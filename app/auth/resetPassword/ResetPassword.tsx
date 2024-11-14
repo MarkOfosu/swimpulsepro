@@ -11,65 +11,22 @@ export default function ResetPassword() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
-  const [isValidating, setIsValidating] = useState(true);
   
   const router = useRouter();
   const supabase = createClient();
 
+  // Check if user is authenticated via the magic link
   useEffect(() => {
-    const handleHashFragment = async () => {
-      try {
-        // Get the full URL hash fragment
-        const hashFragment = window.location.hash;
-        
-        // If there's a hash, it might contain the access token
-        if (hashFragment) {
-          const decodedHash = decodeURIComponent(hashFragment.substring(1));
-          const params = new URLSearchParams(decodedHash);
-          
-          // Extract tokens from the hash
-          const access_token = params.get('access_token');
-          const refresh_token = params.get('refresh_token');
-          const type = params.get('type');
-
-          console.log('Hash params:', { type, hasAccessToken: !!access_token });
-
-          if (access_token && type === 'recovery') {
-            // Set the session
-            const { error } = await supabase.auth.setSession({
-              access_token,
-              refresh_token: refresh_token || '',
-            });
-
-            if (error) throw error;
-            
-            setIsValidating(false);
-            return;
-          }
-        }
-
-        // If we get here, check if we already have a valid session
-        const { data: { session } } = await supabase.auth.getSession();
-        if (session?.user) {
-          setIsValidating(false);
-          return;
-        }
-
-        throw new Error('No valid session found');
-      } catch (err) {
-        console.error('Session validation error:', err);
-        toast.error('Invalid or expired reset link. Please request a new one.', {
-          duration: 5000
-        });
-        
-        // Redirect after a delay
-        setTimeout(() => {
-          router.push('/auth/forgot-password');
-        }, 3000);
+    const checkSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      if (!session) {
+        toast.error('Please use the reset link from your email');
+        router.push('/auth/forgotPassword');
       }
     };
 
-    handleHashFragment();
+    checkSession();
   }, [router, supabase.auth]);
 
   const validatePassword = (password: string): string => {
@@ -109,13 +66,7 @@ export default function ResetPassword() {
     const toastId = toast.loading('Updating password...');
 
     try {
-      // Verify session before updating password
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) {
-        throw new Error('Your session has expired. Please request a new reset link.');
-      }
-
-      // Update password
+      // Simply update the password
       const { error: updateError } = await supabase.auth.updateUser({
         password: newPassword
       });
@@ -127,7 +78,7 @@ export default function ResetPassword() {
         duration: 3000
       });
 
-      // Sign out the user
+      // Sign out after successful password change
       await supabase.auth.signOut();
 
       // Redirect to login
@@ -149,23 +100,6 @@ export default function ResetPassword() {
       setIsLoading(false);
     }
   };
-
-  // Show loading state while validating session
-  if (isValidating) {
-    return (
-      <div className={styles.pageWrapper}>
-        <div className={styles.container}>
-          <h2 className={styles.title}>Verifying Reset Link</h2>
-          <div className={styles.loadingWrapper}>
-            <div className={styles.spinnerLarge} />
-            <p className={styles.subtitle}>
-              Please wait while we verify your reset link...
-            </p>
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className={styles.pageWrapper}>
