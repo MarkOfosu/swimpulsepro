@@ -28,6 +28,12 @@ class AccountService {
 
   async changePassword({ newPassword }: ChangePasswordParams) {
     try {
+      const { data: { session } } = await this.supabase.auth.getSession();
+      
+      if (!session) {
+        throw new Error('No active session found');
+      }
+
       const { data: updateData, error: updateError } = await this.supabase.auth.updateUser({
         password: newPassword
       });
@@ -40,8 +46,6 @@ class AccountService {
       throw error;
     }
   }
-
-  
 
   async resetPasswordForEmail(email: string, redirectUrl?: string) {
     try {
@@ -71,22 +75,46 @@ class AccountService {
     }
   }
 
-  async resetPassword(newPassword: string) {
+  async resetPasswordWithToken(accessToken: string, newPassword: string) {
     try {
-      const { error } = await this.supabase.auth.updateUser({
+      // First verify the access token is valid
+      const { data: { session }, error: sessionError } = await this.supabase.auth.getSession();
+      
+      if (sessionError || !session) {
+        throw new Error('Invalid or expired reset token');
+      }
+
+      // Update the password
+      const { error: updateError } = await this.supabase.auth.updateUser({
         password: newPassword
       });
 
-      if (error) throw error;
+      if (updateError) throw updateError;
+
+      // Sign out after password change
+      await this.supabase.auth.signOut({ scope: 'global' });
 
       return { success: true };
     } catch (error) {
-      console.error('Error in resetPassword:', error);
+      console.error('Error in resetPasswordWithToken:', error);
       throw error;
     }
   }
 
+  async verifyResetToken(token: string) {
+    try {
+      const { data: { session }, error } = await this.supabase.auth.getSession();
+      
+      if (error || !session) {
+        return { valid: false, error: 'Invalid or expired reset token' };
+      }
 
+      return { valid: true };
+    } catch (error) {
+      console.error('Error verifying reset token:', error);
+      return { valid: false, error: 'Failed to verify reset token' };
+    }
+  }
 
   async deleteAccount({
     userId,

@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { accountService } from '../../services/accountService';
+import { createClient } from '@utils/supabase/client';
 import { toast } from 'react-hot-toast';
 import styles from '../styles/Auth.module.css';
 
@@ -15,50 +16,71 @@ export default function ResetPassword() {
   
   const router = useRouter();
   const searchParams = useSearchParams();
+  const supabase = createClient();
 
   useEffect(() => {
     let redirectTimer: NodeJS.Timeout;
     let mounted = true;
 
     const validateResetToken = async () => {
-      const access_token = searchParams?.get('access_token');
-      const type = searchParams?.get('type');
+      try {
+        // Get all possible token parameters
+        const access_token = searchParams?.get('access_token');
+        const refresh_token = searchParams?.get('refresh_token');
+        const type = searchParams?.get('type');
 
-      // Wait a bit to ensure the component is mounted
-      await new Promise(resolve => setTimeout(resolve, 1000));
+        // If we have tokens, try to set the session
+        if (access_token && refresh_token) {
+          const { error: sessionError } = await supabase.auth.setSession({
+            access_token,
+            refresh_token
+          });
 
-      if (!access_token || type !== 'recovery') {
+          if (sessionError) throw sessionError;
+        }
+
+        // Verify the session is valid
+        const { data: { session }, error: verifyError } = await supabase.auth.getSession();
+
+        if (verifyError || !session) {
+          throw new Error('Invalid session');
+        }
+
+        // Additional type check for recovery
+        if (type !== 'recovery') {
+          throw new Error('Invalid reset type');
+        }
+
         if (mounted) {
-          // Show error toast
+          setIsValidating(false);
+        }
+      } catch (err) {
+        console.error('Token validation error:', err);
+        
+        if (mounted) {
           toast.error('Invalid or expired reset link', {
             duration: 3000,
             position: 'top-center',
           });
 
-          // Set longer timeout for redirect
           redirectTimer = setTimeout(() => {
             if (mounted) {
               router.push('/auth/forgotPassword');
             }
           }, 3000);
         }
-      } else {
-        if (mounted) {
-          setIsValidating(false);
-        }
       }
     };
 
     validateResetToken();
 
-    // Cleanup function
     return () => {
       mounted = false;
       if (redirectTimer) {
         clearTimeout(redirectTimer);
       }
     };
-  }, [searchParams, router]);
+  }, [searchParams, router, supabase.auth]);
 
   const validatePassword = (password: string): string => {
     if (password.length < 6) {
@@ -80,7 +102,6 @@ export default function ResetPassword() {
     e.preventDefault();
     setError('');
 
-    // Validate passwords
     const passwordError = validatePassword(newPassword);
     if (passwordError) {
       setError(passwordError);
@@ -96,13 +117,24 @@ export default function ResetPassword() {
     const toastId = toast.loading('Updating password...');
 
     try {
-      const { success } = await accountService.changePassword({
-        newPassword
+      // Get current session to verify token is still valid
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      if (!session) {
+        throw new Error('Reset session has expired');
+      }
+
+      // Update password
+      const { error: updateError } = await supabase.auth.updateUser({
+        password: newPassword
       });
 
-      if (!success) throw new Error('Failed to update password');
+      if (updateError) throw updateError;
 
-      toast.success('Password updated successfully. Redirecting to login...', { 
+      // Sign out after successful password change
+      await supabase.auth.signOut();
+
+      toast.success('Password updated successfully. Please log in with your new password.', { 
         id: toastId,
         duration: 3000
       });
@@ -130,7 +162,6 @@ export default function ResetPassword() {
     }
   };
 
-  // Show loading state while validating token
   if (isValidating) {
     return (
       <div className={styles.pageWrapper}>
