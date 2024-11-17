@@ -131,21 +131,21 @@ export default function ResetPassword() {
   };
 
   // Show loading state while checking session
-  if (isValidating) {
-    return (
-      <div className={styles.pageWrapper}>
-        <div className={styles.container}>
-          <h2 className={styles.title}>Verifying Reset Link</h2>
-          <div className={styles.loadingWrapper}>
-            <div className={styles.spinnerLarge} />
-            <p className={styles.subtitle}>
-              Please wait while we verify your reset link...
-            </p>
-          </div>
-        </div>
-      </div>
-    );
-  }
+  // if (isValidating) {
+  //   return (
+  //     <div className={styles.pageWrapper}>
+  //       <div className={styles.container}>
+  //         <h2 className={styles.title}>Verifying Reset Link</h2>
+  //         <div className={styles.loadingWrapper}>
+  //           <div className={styles.spinnerLarge} />
+  //           <p className={styles.subtitle}>
+  //             Please wait while we verify your reset link...
+  //           </p>
+  //         </div>
+  //       </div>
+  //     </div>
+  //   );
+  // }
 
   return (
     <div className={styles.pageWrapper}>
