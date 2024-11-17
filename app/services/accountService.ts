@@ -57,7 +57,7 @@ class AccountService {
   async forgotPassword({ email, redirectUrl }: ResetPasswordParams) {
     try {
       // Always use hyphenated URL for consistency
-      const finalRedirectUrl = redirectUrl || `${window.location.origin}/auth/resetPassword`;
+      const finalRedirectUrl = redirectUrl || `/auth/resetPassword`;
       
       const { error } = await this.supabase.auth.resetPasswordForEmail(email, {
         redirectTo: finalRedirectUrl
@@ -83,11 +83,11 @@ class AccountService {
   async updatePassword(newPassword: string) {
     try {
       // Verify we have an active session from magic link
-      const { data: { session } } = await this.supabase.auth.getSession();
+    //   const { data: { session } } = await this.supabase.auth.getSession();
       
-      if (!session) {
-        throw new Error('No valid session. Please use the reset link from your email.');
-      }
+    //   if (!session) {
+    //     throw new Error('No valid session. Please use the reset link from your email.');
+    //   }
 
       // Update the password
       const { error } = await this.supabase.auth.updateUser({
@@ -97,12 +97,12 @@ class AccountService {
       if (error) throw error;
 
       // Sign out after successful password change
-      await this.supabase.auth.signOut();
+    //   await this.supabase.auth.signOut();
 
       return { success: true };
     } catch (error) {
       console.error('Error updating password:', error);
-      throw error;
+    //   throw error;
     }
   }
 

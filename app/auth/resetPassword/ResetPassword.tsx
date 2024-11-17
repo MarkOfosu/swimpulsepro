@@ -16,40 +16,40 @@ export default function ResetPassword() {
   const router = useRouter();
   const supabase = createClient();
 
-  useEffect(() => {
-    let timeoutId: NodeJS.Timeout;
+  // useEffect(() => {
+  //   let timeoutId: NodeJS.Timeout;
 
-    const checkSession = async () => {
-      try {
-        // Wait a bit for Supabase to establish the session
-        await new Promise(resolve => setTimeout(resolve, 1000));
+  //   const checkSession = async () => {
+  //     try {
+  //       // Wait a bit for Supabase to establish the session
+  //       await new Promise(resolve => setTimeout(resolve, 1000));
 
-        const { data: { session } } = await supabase.auth.getSession();
+  //       const { data: { session } } = await supabase.auth.getSession();
         
-        if (!session) {
-          throw new Error('No valid session found');
-        }
+  //       if (!session) {
+  //         throw new Error('No valid session found');
+  //       }
 
-        setIsValidating(false);
+  //       setIsValidating(false);
 
-      } catch (error) {
-        console.error('Session check error:', error);
-        toast.error('Please use the reset link from your email', {
-          duration: 3000
-        });
+  //     } catch (error) {
+  //       console.error('Session check error:', error);
+  //       toast.error('Please use the reset link from your email', {
+  //         duration: 3000
+  //       });
 
-        timeoutId = setTimeout(() => {
-          router.push('/auth/forgotPassword');
-        }, 3000);
-      }
-    };
+  //       timeoutId = setTimeout(() => {
+  //         router.push('/auth/forgotPassword');
+  //       }, 3000);
+  //     }
+  //   };
 
-    checkSession();
+  //   checkSession();
 
-    return () => {
-      if (timeoutId) clearTimeout(timeoutId);
-    };
-  }, [router, supabase.auth]);
+  //   return () => {
+  //     if (timeoutId) clearTimeout(timeoutId);
+  //   };
+  // }, [router, supabase.auth]);
 
   const validatePassword = (password: string): string => {
     if (!password) return 'Password is required';
@@ -90,9 +90,9 @@ export default function ResetPassword() {
     try {
       // Verify session is still valid
       const { data: { session } } = await supabase.auth.getSession();
-      if (!session) {
-        throw new Error('Your session has expired. Please request a new reset link.');
-      }
+      // if (!session) {
+      //   throw new Error('Your session has expired. Please request a new reset link.');
+      // }
 
       // Update password
       const { error: updateError } = await supabase.auth.updateUser({
@@ -107,7 +107,7 @@ export default function ResetPassword() {
       });
 
       // Sign out
-      await supabase.auth.signOut();
+      // await supabase.auth.signOut();
 
       // Redirect to login
       setTimeout(() => {

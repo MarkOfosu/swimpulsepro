@@ -41,7 +41,7 @@ export default function ForgotPassword() {
       // Send password reset email with the correctly formatted redirect URL
       await accountService.forgotPassword({
         email,
-        redirectUrl: `${window.location.origin}/auth/resetPassword` // Note the hyphen
+        redirectUrl: `${window.location.origin}/auth/resetPassword` 
       });
 
       // Always show success message for security
