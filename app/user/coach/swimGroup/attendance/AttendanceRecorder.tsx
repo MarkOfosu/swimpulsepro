@@ -6,7 +6,6 @@ import { SwimGroupSelector } from './SwimGroupSelector';
 import { AttendanceList } from './AttendanceList';
 import { getUserDetails, UserData } from '../../../../api/getUserDetails';
 import { useToast } from '../../../../../components/elements/toasts/Toast';
-import AttendanceInsights from './AttendanceInsights';
 import styles from '../../../../styles/AttendanceRecorder.module.css';
 
 interface SwimGroup {
@@ -28,6 +27,7 @@ interface AttendanceRecord {
 
 interface AttendanceRecorderProps {
   groupId?: string;
+  onGroupSelect?: (groupId: string) => void;
 }
 
 interface SwimmerResponse {
@@ -38,7 +38,10 @@ interface SwimmerResponse {
   };
 }
 
-const AttendanceRecorder: React.FC<AttendanceRecorderProps> = ({ groupId }) => {
+const AttendanceRecorder: React.FC<AttendanceRecorderProps> = ({ 
+  groupId,
+  onGroupSelect 
+}) => {
   const [swimGroups, setSwimGroups] = useState<SwimGroup[]>([]);
   const [selectedGroupId, setSelectedGroupId] = useState<string | null>(groupId || null);
   const [attendanceDate, setAttendanceDate] = useState<string>('');
@@ -46,7 +49,6 @@ const AttendanceRecorder: React.FC<AttendanceRecorderProps> = ({ groupId }) => {
   const [attendanceRecords, setAttendanceRecords] = useState<AttendanceRecord[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [userData, setUserData] = useState<UserData | null>(null);
-  const [activeTab, setActiveTab] = useState<'record' | 'insights'>('record');
 
   const supabase = createClient();
   const { showToast, ToastContainer } = useToast();
@@ -72,10 +74,12 @@ const AttendanceRecorder: React.FC<AttendanceRecorderProps> = ({ groupId }) => {
     } else {
       setSwimGroups(data || []);
       if (!selectedGroupId && data && data.length > 0) {
-        setSelectedGroupId(data[0].id);
+        const firstGroupId = data[0].id;
+        setSelectedGroupId(firstGroupId);
+        onGroupSelect?.(firstGroupId);
       }
     }
-  }, [userData, supabase, selectedGroupId]);
+  }, [userData, supabase, selectedGroupId, onGroupSelect]);
 
   const fetchSwimmers = useCallback(async () => {
     if (!selectedGroupId) return;
@@ -155,8 +159,9 @@ const AttendanceRecorder: React.FC<AttendanceRecorderProps> = ({ groupId }) => {
 
   const handleGroupSelect = useCallback((groupId: string) => {
     setSelectedGroupId(groupId);
+    onGroupSelect?.(groupId);
     setCurrentDate();
-  }, [setCurrentDate]);
+  }, [setCurrentDate, onGroupSelect]);
 
   const handleDateChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
     setAttendanceDate(event.target.value);
@@ -165,7 +170,7 @@ const AttendanceRecorder: React.FC<AttendanceRecorderProps> = ({ groupId }) => {
   const handleAttendanceSubmit = useCallback(async (records: AttendanceRecord[]) => {
     if (!selectedGroupId || !userData) return;
 
-    const { data, error } = await supabase
+    const { error } = await supabase
       .from('attendance')
       .upsert(
         records.map(record => ({
@@ -205,52 +210,42 @@ const AttendanceRecorder: React.FC<AttendanceRecorderProps> = ({ groupId }) => {
 
   return (
     <div className={styles.container}>
-      <h1 className={styles.title}>Attendance Management</h1>
-      <p>Coach: {userData.first_name} {userData.last_name}</p>
-      {userData.team_name && <p>Team: {userData.team_name}, {userData.team_location}</p>}
-      {!groupId && (
-        <SwimGroupSelector groups={swimGroups} onSelect={handleGroupSelect} />
-      )}
-      
-      <div className={styles.tabContainer}>
-        <button 
-          className={`${styles.tabButton} ${activeTab === 'record' ? styles.active : ''}`}
-          onClick={() => setActiveTab('record')}
-        >
-          Record Attendance
-        </button>
-        <button 
-          className={`${styles.tabButton} ${activeTab === 'insights' ? styles.active : ''}`}
-          onClick={() => setActiveTab('insights')}
-        >
-          Attendance Insights
-        </button>
+      <div className={styles.header}>
+        <div className={styles.coachInfo}>
+          <p className={styles.coachName}>Coach: {userData.first_name} {userData.last_name}</p>
+          {userData.team_name && (
+            <p className={styles.teamInfo}>Team: {userData.team_name}, {userData.team_location}</p>
+          )}
+        </div>
+        
+        {!groupId && (
+          <SwimGroupSelector 
+            groups={swimGroups} 
+            onSelect={handleGroupSelect}
+            selectedGroupId={selectedGroupId}
+          />
+        )}
       </div>
 
-      {activeTab === 'record' && (
-        <>
-          <div className={styles.dateContainer}>
-            <label htmlFor="attendanceDate" className={styles.dateLabel}>Attendance Date:</label>
-            <input
-              id="attendanceDate"
-              type="date"
-              value={attendanceDate}
-              onChange={handleDateChange}
-              className={styles.dateInput}
-            />
-          </div>
-          {selectedGroupId && (
-            <AttendanceList
-              swimmers={swimmers}
-              attendanceRecords={attendanceRecords}
-              onSubmit={handleAttendanceSubmit}
-            />
-          )}
-        </>
-      )}
+      <div className={styles.dateContainer}>
+        <label htmlFor="attendanceDate" className={styles.dateLabel}>
+          Attendance Date:
+        </label>
+        <input
+          id="attendanceDate"
+          type="date"
+          value={attendanceDate}
+          onChange={handleDateChange}
+          className={styles.dateInput}
+        />
+      </div>
 
-      {activeTab === 'insights' && selectedGroupId && (
-        <AttendanceInsights groupId={selectedGroupId} />
+      {selectedGroupId && (
+        <AttendanceList
+          swimmers={swimmers}
+          attendanceRecords={attendanceRecords}
+          onSubmit={handleAttendanceSubmit}
+        />
       )}
 
       <ToastContainer />

@@ -20,6 +20,7 @@ interface Swimmer {
 interface SwimGroupSelectorProps {
   groups: SwimGroup[];
   onSelect: (groupId: string) => void;
+  selectedGroupId: string | null;
 }
 
 export const SwimGroupSelector: React.FC<SwimGroupSelectorProps> = ({ groups, onSelect }) => {

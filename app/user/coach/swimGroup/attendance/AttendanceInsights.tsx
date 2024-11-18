@@ -186,15 +186,35 @@ const AttendanceInsights: React.FC<AttendanceInsightsProps> = ({ groupId }) => {
 
   const renderSwimmerChart = () => {
     if (!selectedSwimmer) return null;
-
+  
     const swimmer = swimmerAttendance.find(s => s.id === selectedSwimmer);
     if (!swimmer) return null;
-
+  
     const data = [
-      { name: 'Present', value: swimmer.attendedSessions },
-      { name: 'Absent', value: swimmer.totalSessions - swimmer.attendedSessions }
+      { 
+        name: 'Present', 
+        value: swimmer.attendedSessions,
+        type: 'present'
+      },
+      { 
+        name: 'Absent', 
+        value: swimmer.totalSessions - swimmer.attendedSessions,
+        type: 'absent'
+      }
     ];
-
+  
+    const colors = {
+      present: '#22C55E', // Green for present
+      absent: '#EF4444'   // Red for absent
+    };
+  
+    const CustomBar = (props: any) => {
+      const { x, y, width, height, payload } = props;
+      const fill = colors[payload.type as keyof typeof colors];
+  
+      return <rect x={x} y={y} width={width} height={height} fill={fill} rx={4} ry={4} />;
+    };
+  
     return (
       <div className={styles.swimmerChartContainer}>
         <h3>
@@ -214,11 +234,12 @@ const AttendanceInsights: React.FC<AttendanceInsightsProps> = ({ groupId }) => {
               <Tooltip
                 content={({ active, payload, label }) => {
                   if (active && payload && payload.length) {
+                    const dataPoint = payload[0].payload;
                     return (
                       <div className={styles.tooltipContent}>
                         <p className={styles.tooltipLabel}>{label}</p>
                         <p className={styles.tooltipData}>
-                          {`Sessions: ${payload[0].value}`}
+                          {`Sessions: ${dataPoint.value}`}
                         </p>
                       </div>
                     );
@@ -230,8 +251,8 @@ const AttendanceInsights: React.FC<AttendanceInsightsProps> = ({ groupId }) => {
               <Bar 
                 dataKey="value" 
                 name="Sessions" 
-                radius={[4, 4, 0, 0]}
-                fill="#05857b"
+                shape={<CustomBar />}
+                fill="#000000" // This won't be used but is required
               />
             </BarChart>
           </ResponsiveContainer>

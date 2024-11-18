@@ -11,6 +11,7 @@ import BadgeManagementPage from './badgeSection/BadgeManagement';
 import AttendanceInsights from '../attendance/AttendanceInsights';
 import SwimmerDetails from './swimmerDetails/SwimmerDetails';
 
+
 // Core Interfaces
 interface SwimGroup {
   id: string;
@@ -177,10 +178,12 @@ const SwimGroupPage: React.FC = () => {
       });
 
       // Update state with fetched data
-      setSwimmers(swimmersResponse.data as SwimmerWithDetails[]);
+
+
+      setSwimmers(swimmersResponse.data as any);
       setInvitations(invitationsResponse.data || []);
-      setBadges(badgesResponse.data.map(item => item.badges).flat());
-      setSwimmerBadges(swimmerBadgesResponse.data);
+      setBadges((badgesResponse.data || []).map(item => item.badges).flat());
+      setSwimmerBadges(swimmerBadgesResponse.data || []);
 
     } catch (err) {
       console.error('Error fetching swim group data:', err);
@@ -214,7 +217,7 @@ const SwimGroupPage: React.FC = () => {
       if (checkError) throw checkError;
 
       if (existingInvitations?.length > 0) {
-        showToast('An invitation is already pending for this email', 'info');
+        showToast('An invitation is already pending for this email', 'default');
         return;
       }
 
