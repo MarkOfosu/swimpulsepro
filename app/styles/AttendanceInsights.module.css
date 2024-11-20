@@ -2,125 +2,92 @@
 .container {
   width: 100%;
   max-width: 100%;
-  padding: 1.5rem;
   background: #ffffff;
   box-sizing: border-box;
-  overflow: hidden; /* Add overflow control */
-  position: relative; /* Ensure proper stacking context */
-  min-width: 0; /* Allow flex shrinking */
+  overflow: hidden;
 }
 
+/* Main Header */
 .container h2 {
   font-size: 1.25rem;
   color: #1e293b;
-  margin: 0 0 1.25rem;
-  padding-bottom: 0.75rem;
-  border-bottom: 2px solid #e2e8f0;
-  width: 100%;
-  box-sizing: border-box;
+  margin-bottom: 1.5rem;
+  font-weight: 600;
 }
 
-/* Stats Container Layout */
+/* Stats Grid Layout */
 .statsContainer {
-  display: flex;
-  flex-direction: column;
-  gap: 1.25rem;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
   width: 100%;
-  max-width: 100%;
   box-sizing: border-box;
-  min-width: 0; /* Allow flex shrinking */
 }
 
 /* Chart Sections */
 .overallStats,
 .swimmerStats,
 .swimmerChartContainer {
-  width: 100%;
-  max-width: 100%;
   background: white;
-  border-radius: 12px;
-  padding: 1.5rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  border: 1px solid #e2e8f0;
+  border-radius: 0.75rem;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  width: 100%;
   box-sizing: border-box;
-  overflow: hidden;
-  min-width: 0; /* Allow flex shrinking */
 }
 
 /* Section Headers */
 .overallStats h3,
 .swimmerStats h3,
 .swimmerChartContainer h3 {
-  font-size: 1.1rem;
+  padding: 1rem 1.25rem;
+  margin: 0;
+  font-size: 0.875rem;
+  font-weight: 600;
   color: #1e293b;
-  margin: 0 0 1rem;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  width: 100%;
-  box-sizing: border-box;
+  border-bottom: 1px solid #e5e7eb;
+  background: #f8fafc;
 }
 
 /* Chart Wrapper */
 .chartWrapper {
-  width: 100%;
+  padding: 1.25rem;
   height: 300px;
-  margin-bottom: 1rem;
+  width: 100%;
   box-sizing: border-box;
-  overflow: hidden;
-  min-width: 0; /* Allow recharts to resize properly */
-}
-
-/* Chart Customization */
-.chartGrid line {
-  stroke: #e2e8f0;
 }
 
 /* Table Styles */
 .tableWrapper {
+  padding: 1rem 0;
   width: 100%;
-  max-width: 100%;
-  overflow-x: auto;
-  box-sizing: border-box;
-  -webkit-overflow-scrolling: touch;
-  border-radius: 8px;
 }
 
 .table {
   width: 100%;
-  min-width: 600px; /* Minimum width for scrolling */
-  border-collapse: separate;
-  border-spacing: 0;
-  box-sizing: border-box;
-}
-
-.table th,
-.table td {
-  padding: 0.75rem;
-  box-sizing: border-box;
+  border-collapse: collapse;
 }
 
 .table th {
   background: #f8fafc;
-  font-weight: 600;
-  color: #1e293b;
+  padding: 0.75rem 1.25rem;
   text-align: left;
-  white-space: nowrap;
-  position: sticky;
-  top: 0;
-  z-index: 1;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #475569;
+  border-bottom: 1px solid #e5e7eb;
 }
 
 .table td {
-  color: #64748b;
+  padding: 0.75rem 1.25rem;
+  font-size: 0.875rem;
+  color: #1e293b;
+  border-bottom: 1px solid #e5e7eb;
 }
 
-/* Interactive Row Styles */
+/* Interactive Row */
 .swimmerRow {
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: background-color 0.15s;
 }
 
 .swimmerRow:hover {
@@ -128,19 +95,17 @@
 }
 
 .selectedRow {
-  background-color: #e0f2fe !important;
+  background-color: #f0f9ff;
 }
 
-/* Attendance Percentage Badges */
+/* Attendance Badge */
 .percentage {
   display: inline-flex;
   align-items: center;
   padding: 0.25rem 0.75rem;
-  border-radius: 20px;
-  font-size: 0.875rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
   font-weight: 500;
-  white-space: nowrap;
-  box-sizing: border-box;
 }
 
 .highAttendance {
@@ -161,49 +126,35 @@
 /* Chart Tooltip */
 .tooltipContent {
   background: white;
-  border: 1px solid #e2e8f0;
-  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem;
   padding: 0.75rem;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-  max-width: 300px;
-  box-sizing: border-box;
-  z-index: 10;
 }
 
 .tooltipLabel {
+  font-size: 0.75rem;
   font-weight: 600;
   color: #1e293b;
-  margin: 0 0 0.25rem;
-  font-size: 0.875rem;
+  margin-bottom: 0.25rem;
 }
 
 .tooltipData {
+  font-size: 0.75rem;
   color: #64748b;
-  margin: 0;
-  font-size: 0.875rem;
-  line-height: 1.4;
 }
 
 /* Loading & Error States */
 .loading,
 .error,
 .noData {
-  width: 100%;
+  padding: 3rem 1.5rem;
   text-align: center;
-  padding: 2rem 1rem;
-  border-radius: 12px;
-  margin: 1rem 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  font-size: 0.95rem;
-  box-sizing: border-box;
-}
-
-.loading {
   color: #64748b;
+  font-size: 0.875rem;
   background: #f8fafc;
+  border-radius: 0.75rem;
+  margin: 1rem 0;
 }
 
 .error {
@@ -211,95 +162,53 @@
   background: #fee2e2;
 }
 
-.noData {
-  color: #64748b;
-  background: #f8fafc;
-  font-style: italic;
-}
-
 /* Mobile Styles */
-@media (max-width: 640px) {
+@media (max-width: 768px) {
   .container {
-    padding: 1rem;
+    padding: 0;
+  }
+  
+  .statsContainer {
+    gap: 1rem;
   }
 
-  .tableWrapper {
-    margin: 0 -1rem;
-    width: calc(100% + 2rem);
-    border-radius: 0;
-  }
-
-  .table,
-  .table tbody,
-  .table tr,
   .table td {
+    padding: 0.75rem 1rem;
+  }
+
+  /* Convert table to cards */
+  .table, .table tbody, .table tr {
     display: block;
     width: 100%;
-    min-width: 0;
   }
 
   .table thead {
     display: none;
   }
 
-  .table tbody tr {
-    margin-bottom: 1rem;
-    background: #f8fafc;
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-  }
-
   .table td {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0.75rem 1rem;
-    border-bottom: 1px solid #e2e8f0;
+    font-size: 0.875rem;
   }
 
   .table td::before {
     content: attr(data-label);
-    font-weight: 600;
+    font-weight: 500;
     color: #64748b;
-  }
-
-  .table td:last-child {
-    border-bottom: none;
-  }
-
-  .chartWrapper {
-    height: 250px;
-    margin: 0 -1rem;
-    width: calc(100% + 2rem);
   }
 }
 
 /* Desktop Styles */
-@media (min-width: 768px) {
-  .container {
-    padding: 2rem;
-  }
-
-  .statsContainer {
-    gap: 2rem;
-  }
-
-  .chartWrapper {
-    height: 350px;
-  }
-}
-
 @media (min-width: 1024px) {
-  .statsContainer {
-    flex-direction: row;
+  .container {
+    padding: 0;
   }
 
-  .overallStats,
-  .swimmerStats {
-    flex: 1;
-    min-width: 0;
-    max-width: 50%;
+  .statsContainer {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem;
   }
 
   .chartWrapper {
@@ -313,6 +222,11 @@
     padding: 0;
   }
 
+  .chartWrapper {
+    height: 300px;
+    page-break-inside: avoid;
+  }
+
   .statsContainer {
     display: block;
   }
@@ -320,13 +234,7 @@
   .overallStats,
   .swimmerStats,
   .swimmerChartContainer {
-    page-break-inside: avoid;
-    break-inside: avoid;
     margin-bottom: 2rem;
-    box-shadow: none;
-  }
-
-  .chartWrapper {
-    height: 300px;
+    page-break-inside: avoid;
   }
 }
