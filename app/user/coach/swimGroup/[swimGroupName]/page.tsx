@@ -310,7 +310,7 @@ const SwimGroupPage: React.FC = () => {
  
   return (
     <CoachPageLayout>
-      <div className={styles.pageWrapper}>
+      <>
         <div className={styles.swimGroupContainer}>
           {/* Header Section */}
           <header className={styles.header}>
@@ -411,10 +411,8 @@ const SwimGroupPage: React.FC = () => {
                 <AttendanceInsights groupId={swimGroup?.id} />
               </div>
             </section>
-             {/* Badge and Invitation Management Grid */}
-             <div className={styles.managementGrid}>
-              {/* Badge Award Section */}
-              <section className={styles.managementSection}>
+             {/* Badge Award Section */}
+             <section className={styles.managementSection}>
                 <div className={styles.sectionHeader}>
                   <span className={styles.sectionIcon}>🏅</span>
                   <div>
@@ -471,7 +469,9 @@ const SwimGroupPage: React.FC = () => {
                   </button>
                 </div>
               </section>
-
+             {/* Badge and Invitation Management Grid */}
+             <div className={styles.managementGrid}>
+             
               {/* Invitations Section */}
               {/* <section className={styles.managementSection}>
                 <div className={styles.sectionHeader}>
@@ -524,7 +524,7 @@ const SwimGroupPage: React.FC = () => {
           </main>
         </div>
         <BadgeManagementPage />
-      </div>
+      </>
       <ToastContainer />
     </CoachPageLayout>
   );
