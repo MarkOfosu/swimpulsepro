@@ -395,9 +395,24 @@ const SwimGroupPage: React.FC = () => {
                 </div>
               </div>
             </section>
-
-            {/* Badge and Invitation Management Grid */}
-            <div className={styles.managementGrid}>
+            {/* Attendance Section */}
+            <section className={styles.managementSection}>
+              <div className={styles.sectionHeader}>
+                <span className={styles.sectionIcon}>📊</span>
+                <div>
+                  <h2 className={styles.sectionTitle}>Attendance Insights</h2>
+                  <p className={styles.sectionDescription}>
+                    Track and analyze attendance patterns
+                  </p>
+                </div>
+              </div>
+              
+              <div className={styles.sectionContent}>
+                <AttendanceInsights groupId={swimGroup?.id} />
+              </div>
+            </section>
+             {/* Badge and Invitation Management Grid */}
+             <div className={styles.managementGrid}>
               {/* Badge Award Section */}
               <section className={styles.managementSection}>
                 <div className={styles.sectionHeader}>
@@ -458,7 +473,7 @@ const SwimGroupPage: React.FC = () => {
               </section>
 
               {/* Invitations Section */}
-              <section className={styles.managementSection}>
+              {/* <section className={styles.managementSection}>
                 <div className={styles.sectionHeader}>
                   <span className={styles.sectionIcon}>✉️</span>
                   <div>
@@ -503,26 +518,9 @@ const SwimGroupPage: React.FC = () => {
                       Send Invitation
                     </button>
                   </form>
-                </div>
-              </section>
+                </div> */}
+              {/* </section> */}
             </div>
-
-            {/* Attendance Section */}
-            <section className={styles.managementSection}>
-              <div className={styles.sectionHeader}>
-                <span className={styles.sectionIcon}>📊</span>
-                <div>
-                  <h2 className={styles.sectionTitle}>Attendance Insights</h2>
-                  <p className={styles.sectionDescription}>
-                    Track and analyze attendance patterns
-                  </p>
-                </div>
-              </div>
-              
-              <div className={styles.sectionContent}>
-                <AttendanceInsights groupId={swimGroup?.id} />
-              </div>
-            </section>
           </main>
         </div>
         <BadgeManagementPage />

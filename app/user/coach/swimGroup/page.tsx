@@ -255,7 +255,7 @@ const CoachDashboard: React.FC = () => {
 
           {/* Side Content */}
           <div className={styles.sideContent}>
-            <section className={styles.recentActivities}>
+            {/* <section className={styles.recentActivities}>
               <div className={styles.sectionHeader}>
                 <h2>Recent Activities</h2>
               </div>
@@ -266,7 +266,7 @@ const CoachDashboard: React.FC = () => {
                 onLoadMore={handleLoadMoreActivities}
                 hasMore={hasMoreActivities}
               />
-            </section>
+            </section> */}
 
             <section className={styles.upcomingEvents}>
               <div className={styles.sectionHeader}>
