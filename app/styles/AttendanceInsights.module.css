@@ -1,8 +1,11 @@
-/* Mobile First Base Styles */
+/* Base Container */
 .container {
   width: 100%;
-  padding: 1rem;
+  max-width: 100%;
+  padding: 1.5rem;
   background: #ffffff;
+  box-sizing: border-box;
+  overflow-x: hidden;
 }
 
 .container h2 {
@@ -11,12 +14,17 @@
   margin: 0 0 1.25rem;
   padding-bottom: 0.75rem;
   border-bottom: 2px solid #e2e8f0;
+  width: 100%;
 }
 
+/* Stats Container Layout */
 .statsContainer {
   display: flex;
   flex-direction: column;
   gap: 1.25rem;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 /* Chart Sections */
@@ -25,9 +33,12 @@
 .swimmerChartContainer {
   background: white;
   border-radius: 12px;
-  padding: 1rem;
+  padding: 1.5rem;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   border: 1px solid #e2e8f0;
+  width: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
 }
 
 /* Section Headers */
@@ -42,6 +53,7 @@
   justify-content: space-between;
   flex-wrap: wrap;
   gap: 0.5rem;
+  width: 100%;
 }
 
 /* Chart Wrapper */
@@ -49,6 +61,7 @@
   width: 100%;
   height: 300px;
   margin-bottom: 1rem;
+  box-sizing: border-box;
 }
 
 /* Chart Customization */
@@ -56,9 +69,13 @@
   stroke: #e2e8f0;
 }
 
-/* Table Styles - Mobile First */
+/* Table Styles */
 .tableWrapper {
-  margin: 0 -1rem;
+  width: 100%;
+  overflow-x: auto;
+  box-sizing: border-box;
+  -webkit-overflow-scrolling: touch;
+  border-radius: 8px;
 }
 
 .table {
@@ -66,49 +83,9 @@
   min-width: 100%;
   border-collapse: separate;
   border-spacing: 0;
+  table-layout: fixed;
 }
 
-/* Convert table to cards on mobile */
-@media (max-width: 640px) {
-  .table,
-  .table tbody,
-  .table tr,
-  .table td {
-    display: block;
-  }
-
-  .table thead {
-    display: none;
-  }
-
-  .table tbody tr {
-    margin-bottom: 1rem;
-    background: #f8fafc;
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-  }
-
-  .table td {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0.75rem 1rem;
-    border-bottom: 1px solid #e2e8f0;
-  }
-
-  .table td::before {
-    content: attr(data-label);
-    font-weight: 600;
-    color: #64748b;
-  }
-
-  .table td:last-child {
-    border-bottom: none;
-  }
-}
-
-/* Regular Table Styles */
 .table th {
   background: #f8fafc;
   padding: 0.75rem;
@@ -170,6 +147,7 @@
   border-radius: 8px;
   padding: 0.75rem;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  max-width: 300px;
 }
 
 .tooltipLabel {
@@ -199,6 +177,8 @@
   justify-content: center;
   gap: 0.5rem;
   font-size: 0.95rem;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .loading {
@@ -217,51 +197,71 @@
   font-style: italic;
 }
 
-/* Break Points */
-/* Small tablets and large phones (640px and up) */
-@media (min-width: 640px) {
-  .container {
-    padding: 1.5rem;
-  }
-
-  .container h2 {
-    font-size: 1.5rem;
-  }
-
-  .tableWrapper {
-    margin: 0;
-    overflow-x: auto;
-    border-radius: 8px;
-  }
-
-  .table {
-    min-width: 600px;
-  }
-
-  .table th,
+/* Mobile Table Cards */
+@media (max-width: 640px) {
+  .table,
+  .table tbody,
+  .table tr,
   .table td {
+    display: block;
+    width: 100%;
+  }
+
+  .table thead {
+    display: none;
+  }
+
+  .table tbody tr {
+    margin-bottom: 1rem;
+    background: #f8fafc;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  }
+
+  .table td {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid #e2e8f0;
+    box-sizing: border-box;
+  }
+
+  .table td::before {
+    content: attr(data-label);
+    font-weight: 600;
+    color: #64748b;
+  }
+
+  .table td:last-child {
+    border-bottom: none;
+  }
+
+  .container {
     padding: 1rem;
   }
 }
 
-/* Tablets (768px and up) */
+/* Responsive Design */
 @media (min-width: 768px) {
-  .statsContainer {
-    gap: 1.5rem;
+  .container h2 {
+    font-size: 1.5rem;
   }
 
-  .overallStats,
-  .swimmerStats,
-  .swimmerChartContainer {
-    padding: 1.5rem;
+  .statsContainer {
+    gap: 1.5rem;
   }
 
   .chartWrapper {
     height: 350px;
   }
+
+  .table {
+    min-width: 600px;
+  }
 }
 
-/* Small laptops (1024px and up) */
 @media (min-width: 1024px) {
   .container {
     padding: 2rem;
@@ -270,12 +270,14 @@
   .statsContainer {
     flex-direction: row;
     gap: 2rem;
+    align-items: flex-start;
   }
 
   .overallStats,
   .swimmerStats {
     flex: 1;
     min-width: 0;
+    max-width: 50%;
   }
 
   .chartWrapper {
@@ -283,14 +285,8 @@
   }
 }
 
-/* Desktops (1280px and up) */
+/* Desktops */
 @media (min-width: 1280px) {
-  .container {
-    max-width: 1400px;
-    margin: 0 auto;
-  }
-
-  /* Enhanced Animations */
   .overallStats,
   .swimmerStats,
   .swimmerChartContainer {
@@ -330,6 +326,7 @@
     box-shadow: none;
     border: 1px solid #e2e8f0;
     margin-bottom: 2rem;
+    page-break-inside: avoid;
   }
 
   .chartWrapper {
