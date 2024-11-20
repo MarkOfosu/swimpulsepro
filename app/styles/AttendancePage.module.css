@@ -1,12 +1,12 @@
 /* AttendancePage.module.css */
-.pageContainer {
+
+  .pageContainer {
     width: 100%;
     max-width: 1400px;
     margin: 0 auto;
     padding: 2rem;
-    background: linear-gradient(135deg, #f0f7ff 0%, #ffffff 100%);
-    min-height: calc(100vh - var(--navbar-height));
     box-sizing: border-box;
+    overflow: hidden;
   }
   
   .header {
@@ -117,7 +117,9 @@
     }
   
     .content {
-      box-shadow: none;
-      border: none;
-    }
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
+        overflow: hidden;
+      }
   }
