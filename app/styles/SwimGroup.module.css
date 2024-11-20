@@ -1,22 +1,16 @@
-/* Base Layout */
 .pageWrapper {
   width: 100%;
   min-height: 100vh;
   background: #f8fafc;
   padding: 1rem;
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
 }
 
 .swimGroupContainer {
-  width: 100%;
   max-width: 1400px;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
-  box-sizing: border-box;
 }
 
 /* Header Styles */
@@ -113,8 +107,6 @@
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
-  width: 100%;
-  box-sizing: border-box;
 }
 
 /* Management Section Styles */
@@ -124,8 +116,6 @@
   border: 1px solid #e2e8f0;
   overflow: hidden;
   box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1);
-  width: 100%;
-  box-sizing: border-box;
 }
 
 .sectionHeader {
@@ -162,8 +152,6 @@
 
 .sectionContent {
   padding: 1rem;
-  width: 100%;
-  box-sizing: border-box;
 }
 
 /* Management Grid */
@@ -171,14 +159,11 @@
   display: grid;
   gap: 1.5rem;
   grid-template-columns: 1fr;
-  width: 100%;
-  box-sizing: border-box;
 }
 
 /* Form Styles */
 .formGroup {
   margin-bottom: 1rem;
-  width: 100%;
 }
 
 .inputLabel {
@@ -199,7 +184,6 @@
   color: #0f172a;
   background: white;
   transition: all 0.15s;
-  box-sizing: border-box;
 }
 
 .select {
@@ -223,7 +207,7 @@
   box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.1);
 }
 
-/* Button styles */
+/* Button styles continued */
 .button {
   display: inline-flex;
   align-items: center;
@@ -261,8 +245,6 @@
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-  width: 100%;
-  box-sizing: border-box;
 }
 
 .swimmerItem {
@@ -275,8 +257,6 @@
   cursor: pointer;
   transition: all 0.15s;
   background: white;
-  width: 100%;
-  box-sizing: border-box;
 }
 
 .swimmerItem:hover {
@@ -318,8 +298,6 @@
   border-radius: 6px;
   border: 1px solid #e2e8f0;
   min-height: 200px;
-  width: 100%;
-  box-sizing: border-box;
 }
 
 .detailsPlaceholder {
@@ -336,7 +314,6 @@
 /* Invitations List */
 .invitationsList {
   margin-bottom: 1rem;
-  width: 100%;
 }
 
 .invitationItem {
@@ -345,8 +322,6 @@
   align-items: center;
   padding: 0.75rem;
   border-bottom: 1px solid #e2e8f0;
-  width: 100%;
-  box-sizing: border-box;
 }
 
 .invitationEmail {
@@ -381,8 +356,6 @@
   display: flex;
   flex-direction: column;
   gap: 1rem;
-  width: 100%;
-  box-sizing: border-box;
 }
 
 /* Error States */
@@ -396,8 +369,6 @@
   gap: 0.5rem;
   margin: 1rem;
   font-size: 0.875rem;
-  width: calc(100% - 2rem);
-  box-sizing: border-box;
 }
 
 .errorIcon {
@@ -411,7 +382,6 @@
   justify-content: center;
   min-height: 200px;
   color: #64748b;
-  width: 100%;
 }
 
 /* Responsive Design */
@@ -498,25 +468,6 @@
 
   .mainContent {
     gap: 2.5rem;
-  }
-}
-
-/* Print styles */
-@media print {
-  .pageWrapper {
-    padding: 0;
-    background: white;
-  }
-
-  .swimGroupContainer {
-    gap: 1rem;
-  }
-
-  .managementSection {
-    break-inside: avoid;
-    box-shadow: none;
-    border: 1px solid #e2e8f0;
-    margin-bottom: 1rem;
   }
 }
 

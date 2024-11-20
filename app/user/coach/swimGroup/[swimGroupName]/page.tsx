@@ -340,16 +340,16 @@ const SwimGroupPage: React.FC = () => {
 
           {/* Main Content */}
           <main className={styles.mainContent}>
-            {/* Swimmers Management */}
+            {/* Swimmers Management
             <section className={styles.managementSection}>
               <div className={styles.sectionHeader}>
                 <span className={styles.sectionIcon}>👥</span>
                 <div>
                   <h2 className={styles.sectionTitle}>
-                    Swimmers Management
+                    Your Swimmers 
                   </h2>
                   <p className={styles.sectionDescription}>
-                    View and manage your group's swimmers
+                    View swimmers details here
                   </p>
                 </div>
               </div>
@@ -394,7 +394,7 @@ const SwimGroupPage: React.FC = () => {
                   )}
                 </div>
               </div>
-            </section>
+            </section> */}
 
             {/* Badge and Invitation Management Grid */}
             <div className={styles.managementGrid}>
