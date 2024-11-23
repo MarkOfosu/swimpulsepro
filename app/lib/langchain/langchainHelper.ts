@@ -5,7 +5,7 @@ import { ChatPromptTemplate, SystemMessagePromptTemplate, HumanMessagePromptTemp
 import { JsonOutputParser } from "@langchain/core/output_parsers";
 
 // Define environment variables and check for API key
-const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
+const OPENAI_API_KEY = process.env.NEXT_PUBLIC_OPENAI_API_KEY;
 
 if (!OPENAI_API_KEY) {
   throw new Error('OPENAI_API_KEY is not defined in the environment variables');
