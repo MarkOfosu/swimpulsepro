@@ -2,7 +2,7 @@ import React, { ReactNode } from 'react';
 import Sidebar from '../components/nav/SideBar';
 import BottomNav from '@components/nav/BottomNav';
 import Footer from '../components/elements/Footer';
-import './globals.css';
+import '../styles/global.css';
 import WelcomePage from './welcome/page';
 import { User } from 'lucide-react';
 import { UserProvider } from '../app/context/UserContext';

@@ -183,7 +183,7 @@ footer {
   }
 }
 
-/* Utility classes for spacing and layout */
+
 .full-width {
   width: 100%;
 }
@@ -203,7 +203,7 @@ footer {
   flex-direction: column;
 }
 
-/* Animation keyframes if needed */
+
 @keyframes fadeIn {
   from {
     opacity: 0;
