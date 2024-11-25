@@ -40,7 +40,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       to: email,
       subject: 'Verify your email address',
       html: `
-        <h2>Welcome back!</h2>
+        <h2>Welcome!</h2>
         <p>Click the link below to verify your email address:</p>
         <a href="${verificationUrl}">Verify Email</a>
         <p>This link will expire in 24 hours.</p>

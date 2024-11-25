@@ -104,7 +104,7 @@ const LoginForm: React.FC = () => {
         <div className={styles.loginContainer}>
           <div className={styles.formWrapper}>
             <div className={styles.headerSection}>
-              <h1 className={styles.title}>Welcome Back</h1>
+              <h1 className={styles.title}>Welcome</h1>
               <p className={styles.subtitle}>
                 Enter your credentials to access your account
               </p>
