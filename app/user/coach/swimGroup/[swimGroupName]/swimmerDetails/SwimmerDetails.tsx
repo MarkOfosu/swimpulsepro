@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { createClient } from '@/utils/supabase/client';
+import  Loader  from '@/components/elements/Loader';
 import styles from '../../../../../styles/SwimmerDetails.module.css';
 
 interface SwimmerDetailsProps {
@@ -37,8 +37,6 @@ const SwimmerDetails: React.FC<SwimmerDetailsProps> = ({ swimmerId }) => {
   const [expandedStandard, setExpandedStandard] = useState<number | null>(null);
   const [isMobileView, setIsMobileView] = useState(false);
 
-  const supabase = createClient();
-
   // Check for mobile view
   useEffect(() => {
     const checkMobileView = () => {
@@ -55,36 +53,17 @@ const SwimmerDetails: React.FC<SwimmerDetailsProps> = ({ swimmerId }) => {
     const fetchSwimmerDetails = async () => {
       try {
         setLoading(true);
-        
-        const { data: swimmerData, error: swimmerError } = await supabase
-          .from('swimmers')
-          .select(`
-            id,
-            profiles (first_name, last_name, gender),
-            age_group
-          `)
-          .eq('id', swimmerId)
-          .single();
+        setError(null);
 
-        if (swimmerError) throw swimmerError;
+        const response = await fetch(`/api/coach/swimmers/${swimmerId}`);
+        const data = await response.json();
 
-        setSwimmer({
-          id: swimmerData.id,
-          first_name: swimmerData.profiles.first_name,
-          last_name: swimmerData.profiles.last_name,
-          age_group: swimmerData.age_group,
-          gender: swimmerData.profiles.gender
-        });
+        if (!response.ok) {
+          throw new Error(data.error || 'Failed to fetch swimmer details');
+        }
 
-        const { data: standardsData, error: standardsError } = await supabase
-          .from('swimmer_standards')
-          .select('*')
-          .eq('swimmer_id', swimmerId);
-
-        if (standardsError) throw standardsError;
-
-        setStandards(standardsData);
-
+        setSwimmer(data.swimmer);
+        setStandards(data.standards);
       } catch (error) {
         console.error('Error fetching swimmer details:', error);
         setError('Failed to load swimmer details');
@@ -93,8 +72,10 @@ const SwimmerDetails: React.FC<SwimmerDetailsProps> = ({ swimmerId }) => {
       }
     };
 
-    fetchSwimmerDetails();
-  }, [swimmerId, supabase]);
+    if (swimmerId) {
+      fetchSwimmerDetails();
+    }
+  }, [swimmerId]);
 
   const getStandardClass = (standard: string) => {
     const standardMap: { [key: string]: string } = {

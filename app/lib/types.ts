@@ -1,4 +1,4 @@
-// app/lib/types.ts
+
 
 // Performance Indicator types
 export type PerformanceIndicatorType = 'Test Set' | 'Benchmark' | 'Skill Assessment' | 'Goal Achievement';
@@ -618,3 +618,5 @@ export interface DeleteAccountResult {
   error: string | null;
   recoveryToken?: string;
 }
+
+
