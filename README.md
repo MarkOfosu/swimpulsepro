@@ -3,7 +3,7 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
 
 
 This is a work in progress, 
-Checkout it out live at[https://www.swimpulsepro.com/](https://www.swimpulsepro.com/)
+Check it out live at [https://www.swimpulsepro.com/](https://www.swimpulsepro.com/)
 
 SwimPulsePro is a web application designed to bridge the gap between coaches and athletes using current technology. 
 The platform serves as an all-in-one solution for a swim team administration, workout management,attendance recording and tracking,  and performance tracking.
