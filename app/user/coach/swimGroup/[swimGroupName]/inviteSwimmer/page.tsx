@@ -1,101 +1,154 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
-import { createClient } from '@/utils/supabase/client';
 import CoachPageLayout from '../../../CoachPageLayout';
 import { useToast } from '@components/elements/toasts/Toast';
+import { useInviteSwimmer } from '@/app/hooks/useInviteSwimmer';
+import { useSwimGroups } from '@/app/hooks/useSwimGroups';
 import styles from '../../../../../styles/InviteSwimmer.module.css';
+import Loader from '@/components/elements/Loader';
 
 const InviteSwimmerPage: React.FC = () => {
+  // State
   const [email, setEmail] = useState('');
-  const [group, setGroup] = useState<{ id: string; name: string } | null>(null);
+  
+  // Hooks
   const router = useRouter();
   const params = useParams();
-  const swimGroupName = params.swimGroupName as string;
   const { showToast, ToastContainer } = useToast();
-  const supabase = createClient();
+  const swimGroupName = decodeURIComponent(params.swimGroupName as string);
+  
+  // Custom hooks
+  const { 
+    groups, 
+    isLoading: groupsLoading, 
+    error: groupsError,
+    getGroupByName 
+  } = useSwimGroups();
 
+  const group = getGroupByName(swimGroupName);
+  
+  const { 
+    sendInvitation, 
+    isLoading: inviteLoading, 
+    error: inviteError 
+  } = useInviteSwimmer({
+    groupId: group?.id || '',
+    onSuccess: () => {
+      showToast('Invitation sent successfully', 'success');
+      router.push(`/user/coach/swimGroup/${encodeURIComponent(swimGroupName)}`);
+    },
+    onError: (error) => {
+      showToast(error, 'error');
+    },
+  });
+
+  // Effects
   useEffect(() => {
-    const fetchGroup = async () => {
-      try {
-        const { data, error } = await supabase
-          .from('swim_groups')
-          .select('id, name')
-          .eq('name', decodeURIComponent(swimGroupName))
-          .single();
+    if (groupsError) {
+      showToast(groupsError, 'error');
+      router.push('/user/coach/swimGroup');
+    }
+  }, [groupsError, showToast, router]);
 
-        if (error) throw error;
-        setGroup(data);
-      } catch (error) {
-        console.error('Error fetching group:', error);
-        showToast('Failed to fetch group details', 'error');
-        router.push('/user/coach/swimGroup');
-      }
-    };
-
-    fetchGroup();
-  }, [swimGroupName, supabase, showToast, router]);
-
+  // Handlers
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
     if (!group) {
       showToast('Invalid group', 'error');
       return;
     }
+
     try {
-      const { data: existingInvitations, error: checkError } = await supabase
-        .from('invitations')
-        .select('*')
-        .eq('group_id', group.id)
-        .eq('email', email)
-        .eq('status', 'pending');
-
-      if (checkError) throw checkError;
-
-      if (existingInvitations && existingInvitations.length > 0) {
-        showToast('An invitation for this email is already pending', 'error');
-        return;
-      }
-
-      const { data, error } = await supabase
-        .from('invitations')
-        .insert({
-          group_id: group.id,
-          email: email,
-          status: 'pending'
-        })
-        .select()
-        .single();
-
-      if (error) throw error;
-
-      showToast('Invitation sent successfully', 'success');
-      router.push(`/user/coach/swimGroup/${encodeURIComponent(group.name)}`);
+      await sendInvitation(email);
+      setEmail(''); // Reset form on success
     } catch (error) {
-      console.error('Error inviting swimmer:', error);
-      showToast('Failed to invite swimmer', 'error');
+      // Error is handled by the hook
+      console.error('Error in invitation flow:', error);
     }
   };
 
-  if (!group) {
-    return <CoachPageLayout><div>Loading...</div></CoachPageLayout>;
+  // Loading states
+  if (groupsLoading) {
+    return (
+      <CoachPageLayout>
+        <Loader />
+      </CoachPageLayout>
+    );
+  }
+
+  // Error state
+  if (groupsError || !group) {
+    return (
+      <CoachPageLayout>
+        <div className={styles.errorContainer}>
+          <p className={styles.errorMessage}>
+            {groupsError || 'Group not found'}
+          </p>
+          <button 
+            onClick={() => router.push('/user/coach/swimGroup')}
+            className={styles.backButton}
+          >
+            Back to Groups
+          </button>
+        </div>
+      </CoachPageLayout>
+    );
   }
 
   return (
     <CoachPageLayout>
       <div className={styles.inviteSwimmerContainer}>
-        <h1>Invite Swimmer to {group.name}</h1>
+        <div className={styles.header}>
+          <h1 className={styles.title}>Invite Swimmer to {group.name}</h1>
+          <button
+            onClick={() => router.push(`/user/coach/swimGroup/${encodeURIComponent(group.name)}`)}
+            className={styles.backLink}
+          >
+            ← Back to Group
+          </button>
+        </div>
+
         <form onSubmit={handleSubmit} className={styles.inviteSwimmerForm}>
-          <label>Email</label>
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="Swimmer's Email"
-            required
-          />
-          <button type="submit">Send Invitation</button>
+          <div className={styles.formGroup}>
+            <label htmlFor="email" className={styles.label}>
+              Email Address
+            </label>
+            <input
+              id="email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="Enter swimmer's email"
+              className={styles.input}
+              required
+              disabled={inviteLoading}
+              autoComplete="email"
+            />
+          </div>
+
+          {inviteError && (
+            <div className={styles.errorMessage}>
+              {inviteError}
+            </div>
+          )}
+
+          <button 
+            type="submit" 
+            className={styles.submitButton}
+            disabled={inviteLoading || !email.trim()}
+          >
+            {inviteLoading ? (
+              <span className={styles.loadingText}>
+                <Loader />
+                Sending Invitation...
+              </span>
+            ) : (
+              'Send Invitation'
+            )}
+          </button>
         </form>
       </div>
       <ToastContainer />

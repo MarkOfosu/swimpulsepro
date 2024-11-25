@@ -13,7 +13,7 @@ import {
   Trash2
 } from 'lucide-react';
 import { format } from 'date-fns';
-import { UpcomingActivity } from '@/app/lib/types';
+import { UpcomingActivity } from '@app/lib/types';
 import { CoachActivityResponses } from './CoachActivityResponses';
 import styles from '../../styles/CoachActivityCard.module.css';
 

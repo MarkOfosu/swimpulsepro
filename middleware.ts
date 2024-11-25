@@ -4,6 +4,7 @@ import { NextRequest } from 'next/server'
 export async function middleware(request: NextRequest) {
   return await updateSession(request)
 }
+export const dynamic = 'force-dynamic';
 
 export const config = {
   matcher: [

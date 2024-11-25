@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { createClient } from '@/utils/supabase/client';
 import { Plus, Calendar, Users, Clock, Pencil, Trash2 } from 'lucide-react';
-import { ActivityFormData, ActivityType, SwimGroup, UpcomingActivity } from '@/app/lib/types';
+import { ActivityFormData, ActivityType, SwimGroup, UpcomingActivity } from '@app/lib/types';
 import { useUser } from '../../../context/UserContext';
 import { Button } from '@/components/elements/Button';
 import Loader from '@/components/elements/Loader';

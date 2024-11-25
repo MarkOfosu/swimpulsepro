@@ -14,7 +14,7 @@ import { Button } from '@/components/elements/Button';
 import {
   ActivityResponseStatus,
   UpcomingActivity
-} from '@/app/lib/types';
+} from '@app/lib/types';
 import styles from '@/styles/ResponseModal.module.css';
 
 interface ResponseModalProps {

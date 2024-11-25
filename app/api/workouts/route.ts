@@ -54,7 +54,7 @@
 import { createClient } from '@/utils/supabase/server'
 import { NextResponse } from 'next/server'
 import { getUserRole } from '@/utils/supabase/getUserRole'
-import { SwimWorkout } from '@/app/lib/types'
+import { SwimWorkout } from '@app/lib/types'
 
 export async function GET() {
   try {

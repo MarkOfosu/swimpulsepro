@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { createClient } from '@/utils/supabase/client';
 import { Calendar, Filter } from 'lucide-react';
-import { ActivityType, UpcomingActivity, ActivityResponseStatus } from '@/app/lib/types';
+import { ActivityType, UpcomingActivity, ActivityResponseStatus } from '@app/lib/types';
 import { useUser } from '../../../context/UserContext';
 import Loader from '@/components/elements/Loader';
 import styles from '../../../styles/SwimmerActivity.module.css';

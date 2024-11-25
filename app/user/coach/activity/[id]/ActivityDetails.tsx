@@ -5,7 +5,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import { DashboardUtils } from '@/app/api/dashboard/dashboardUtils';
-import { UpcomingActivity } from '@/app/lib/types';
+import { UpcomingActivity } from '@app/lib/types';
 import { CoachActivityResponses } from '@/components/elements/activities/CoachActivityResponses';
 import Loader from '@/components/elements/Loader';
 import { Button } from '@/components/elements/Button';

@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { Dialog, DialogPanel, DialogTitle } from '@headlessui/react';
 import { Button } from '@/components/elements/Button';
 import { X, CheckCircle, Clock, XCircle } from 'lucide-react';
-import { UpcomingActivity, ActivityResponseStatus } from '@/app/lib/types';
+import { UpcomingActivity, ActivityResponseStatus } from '@app/lib/types';
 import styles from '../../styles/ActivityResponseModal.module.css';
 
 interface ActivityResponseModalProps {

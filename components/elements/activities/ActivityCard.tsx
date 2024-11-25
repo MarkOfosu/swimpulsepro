@@ -1,7 +1,7 @@
 // components/elements/activities/ActivityCard.tsx
 import React from 'react';
 import { Pencil, Trash2, Calendar, MapPin, Users } from 'lucide-react';
-import { UpcomingActivity} from '@/app/lib/types';
+import { UpcomingActivity} from '@app/lib/types';
 import styles from './Activities.module.css';
 
 interface ActivityCardProps {

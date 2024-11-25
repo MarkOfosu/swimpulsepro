@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { Notification } from '@/app/lib/types';
+import { Notification } from '@app/lib/types';
 
 export function useNotification(duration = 3000) {
   const [notification, setNotification] = useState<Notification | null>(null);

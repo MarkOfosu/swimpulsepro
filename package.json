@@ -11,6 +11,7 @@
     "prettier": "prettier --write src/gql"
   },
   "dependencies": {
+    "-": "^0.0.1",
     "@fortawesome/fontawesome-free": "^6.6.0",
     "@fortawesome/free-solid-svg-icons": "^6.6.0",
     "@fortawesome/react-fontawesome": "^0.2.2",
@@ -32,6 +33,7 @@
     "@types/react-beautiful-dnd": "^13.1.8",
     "@types/recharts": "^1.8.29",
     "date-fns": "^4.1.0",
+    "g": "^2.0.1",
     "jspdf": "^2.5.2",
     "langchain": "^0.2.16",
     "langsmith": "^0.1.41",
@@ -49,7 +51,7 @@
     "react-window": "^1.8.10",
     "recharts": "^2.12.7",
     "resend": "^4.0.0",
-    "supabase": "^1.192.5"
+    "supabase": "^1.223.10"
   },
   "devDependencies": {
     "@types/date-fns": "^2.6.3",

@@ -9,7 +9,7 @@ import { Button } from '@/components/elements/Button';
 import { SwimmerResultsHistory } from '@/components/elements/swimResults/SwimmerResultsHistory';
 import { PersonalBestsComparison } from '@/components/elements/swimResults/PersonalBestsComparison';
 import { ProgressChart } from '@/components/elements/swimResults/ProgressChart';
-import { ActivityResponseStatus, SwimResult, UpcomingActivity } from '@/app/lib/types';
+import { ActivityResponseStatus, SwimResult, UpcomingActivity } from '@app/lib/types';
 import { createClient } from '@/utils/supabase/client';
 import SwimmerStandardsProgress from '@/components/elements/swimResults/SwimmerStandardsProgress';
 import { useUser } from '../../../context/UserContext';

@@ -1,4 +1,4 @@
-import { WorkoutData, SwimWorkout } from '@/app/lib/types';
+import { WorkoutData, SwimWorkout } from '@app/lib/types';
 
 export const workoutService = {
   fetchWorkouts: async () => {

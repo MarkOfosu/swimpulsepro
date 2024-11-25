@@ -16,7 +16,7 @@ import {
   ActivityResponseStatus,
   ActivityResponseSummary,
   UpcomingActivity
-} from '@/app/lib/types';
+} from '@app/lib/types';
 import { ResponseModal } from './ResponseModal'
 import Loader from '@/components/elements/Loader';
 import styles from '@/styles/SwimmerActivityResponses.module.css';

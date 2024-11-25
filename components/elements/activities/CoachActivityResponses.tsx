@@ -18,7 +18,7 @@ import {
   ActivityResponseDetails,
   ActivityResponseSummary,
   ActivityResponseStatus
-} from '@/app/lib/types';
+} from '@app/lib/types';
 import Loader from '@/components/elements/Loader';
 import styles from '../../styles/CoachActivityResponses.module.css';
 

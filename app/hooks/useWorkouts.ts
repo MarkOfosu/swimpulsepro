@@ -3,7 +3,7 @@ import { workoutService } from '@/app/services/workoutService';
 import { ITEMS_PER_PAGE } from '@/app/lib/constants';
 import { useState, useCallback } from 'react'
 import { createClient } from '@/utils/supabase/client'
-import { SwimWorkout, WorkoutData } from '@/app/lib/types'
+import { SwimWorkout, WorkoutData } from '@app/lib/types'
 
 export function useWorkouts() {
   const [workouts, setWorkouts] = useState<WorkoutData[]>([])

@@ -6,7 +6,7 @@ import CoachPageLayout from "../CoachPageLayout";
 import { useWorkouts } from '@/app/hooks/useWorkouts';
 import { useSwimGroups } from '@/app/hooks/useSwimGroups';
 import { useNotification } from '@/app/hooks/useNotification';
-import { SwimWorkout } from '@/app/lib/types';
+import { SwimWorkout } from '@app/lib/types';
 import styles from '../../../styles/WorkoutPage.module.css';
 import ViewWorkouts from './ViewWorkouts';
 import ManualWorkout from './ManualWorkout';

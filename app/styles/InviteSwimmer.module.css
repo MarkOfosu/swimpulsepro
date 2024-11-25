@@ -55,6 +55,52 @@
   .inviteSwimmerForm button:hover {
     background-color: #89b4fa;
   }
+
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+  }
+  
+  .backLink {
+    color: #666;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border-radius: 0.25rem;
+    transition: all 0.2s;
+  }
+  
+  .backLink:hover {
+    background: #f5f5f5;
+  }
+  
+  .loadingText {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  
+  .errorContainer {
+    text-align: center;
+    padding: 2rem;
+  }
+  
+  .backButton {
+    margin-top: 1rem;
+    padding: 0.5rem 1rem;
+    border-radius: 0.25rem;
+    background: #f5f5f5;
+    border: 1px solid #ddd;
+    cursor: pointer;
+  }
+  
+  .backButton:hover {
+    background: #eee;
+  }
   
   @media (max-width: 600px) {
     .inviteSwimmerContainer {
