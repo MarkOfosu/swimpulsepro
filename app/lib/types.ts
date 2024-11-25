@@ -17,6 +17,7 @@ export interface MeasurementCriteria {
 }
 
 // Swim Workout types
+
 export interface SwimWorkout {
   focus: string;
   warmup: string[];
@@ -29,19 +30,56 @@ export interface SwimWorkout {
   description?: string;
 }
 
+export interface WorkoutData {
+  id: string;
+  coach_id: string;
+  group_id: string;
+  workout_data: SwimWorkout;
+  created_at: string;
+}
+
+export interface SwimGroup {
+  id: string;
+  name: string;
+  coach_id: string;
+  group_code?: string;  // Made optional as it might not always be required
+}
+
+// Additional types for better type safety
+export interface WorkoutSearchParams {
+  groupId?: string;
+  date?: string;
+  focus?: string;
+  page: number;
+  itemsPerPage: number;
+}
+
+export interface NotificationState {
+  message: string;
+  type: 'success' | 'error';
+}
+
+// Initial state for a new workout
+export const initialWorkoutState: SwimWorkout = {
+  focus: '',
+  warmup: [''],
+  preset: [''],
+  main_set: [''],
+  cooldown: [''],
+  // Optional fields are not included 
+};
+
+
+export interface Notification {
+  message: string;
+  type: 'success' | 'error';
+}
+
 export interface AITrainingData {
   id: string;
   group_id: string;
   training_data: SwimWorkout[];
   created_at: string;
-}
-
-export interface WorkoutData {
-  coach_id: string;
-  group_id: string;
-  workout_data: SwimWorkout;
-  created_at?: string;
-  id?: string;
 }
 
 
@@ -299,16 +337,7 @@ export type ActivitySkillLevel =
 
 export type ActivityResponseStatus = 'attending' | 'interested' | 'not_attending';
 
-// Group Interface
-export interface SwimGroup {
-  id: string;
-  name: string;
-  description?: string;
-  group_code?: string;
-  coach_id?: string;
-  swimmers?: { count: number }[];
-  swimmerCount?: number;
-}
+
 
 // Response Interfaces
 export interface ActivityResponse {

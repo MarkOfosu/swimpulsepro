@@ -1,9 +1,12 @@
+// app/workouts/page.tsx
 "use client"
 
-import React, { useState, useEffect } from 'react';
-import { createClient } from '@utils/supabase/client';
+import React, { useState } from 'react';
 import CoachPageLayout from "../CoachPageLayout";
-import { WorkoutData, SwimWorkout, SwimGroup } from '@app/lib/types';
+import { useWorkouts } from '@/app/hooks/useWorkouts';
+import { useSwimGroups } from '@/app/hooks/useSwimGroups';
+import { useNotification } from '@/app/hooks/useNotification';
+import { SwimWorkout } from '@/app/lib/types';
 import styles from '../../../styles/WorkoutPage.module.css';
 import ViewWorkouts from './ViewWorkouts';
 import ManualWorkout from './ManualWorkout';
@@ -11,113 +14,52 @@ import AIWorkout from './AIWorkout';
 import WorkoutPageSkeleton from './loading';
 
 const WorkoutPage: React.FC = () => {
-  const [workouts, setWorkouts] = useState<WorkoutData[]>([]);
-  const [groups, setGroups] = useState<SwimGroup[]>([]);
   const [selectedGroup, setSelectedGroup] = useState<string>('');
   const [viewMode, setViewMode] = useState<'view' | 'manual' | 'ai'>('view');
-  const [coachId, setCoachId] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  
+  const { 
+    workouts, 
+    isLoading: workoutsLoading, 
+    error: workoutsError,
+    saveWorkout 
+  } = useWorkouts();
 
-  const supabase = createClient();
+  const {
+    groups,
+    isLoading: groupsLoading,
+    error: groupsError
+  } = useSwimGroups();
 
-  useEffect(() => {
-    fetchInitialData();
-  }, []);
+  const { showNotification } = useNotification();
 
-  const fetchInitialData = async () => {
-    setIsLoading(true);
-    try {
-      const { data: sessionData } = await supabase.auth.getSession();
-      const session = sessionData?.session;
-
-      if (!session) {
-        console.error('No session found, redirecting to login...');
-        return;
-      }
-
-      setCoachId(session.user.id);
-
-      await Promise.all([
-        fetchGroups(session.user.id),
-        fetchWorkouts(session.user.id)
-      ]);
-    } catch (error) {
-      console.error('Error fetching initial data:', error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-
-  const fetchGroups = async (coachId: string) => {
-    const { data, error } = await supabase
-      .from('swim_groups')
-      .select('id, name, group_code')
-      .eq('coach_id', coachId);
-
-    if (error) {
-      console.error('Error fetching swim groups:', error);
-    } else {
-      setGroups(data || []);
-    }
-  };
-
-  const fetchWorkouts = async (coachId: string) => {
-    const { data, error } = await supabase
-      .from('workouts')
-      .select('id, workout_data, created_at, coach_id, group_id')
-      .eq('coach_id', coachId);
-    
-    if (error) {
-      console.error('Error fetching workouts:', error);
-    } else {
-      setWorkouts(data || []);
-    }
-  };
+  const isLoading = workoutsLoading || groupsLoading;
+  const error = workoutsError || groupsError;
 
   const handleSaveWorkout = async (workout: SwimWorkout, groupId: string) => {
-    if (!coachId) {
-      console.error('No coach ID found');
-      return;
+    try {
+      await saveWorkout(workout, groupId);
+      showNotification('Workout saved successfully!', 'success');
+      
+      // Reset selection after successful save if needed
+      setSelectedGroup('');
+      
+      // Optionally switch back to view mode
+      setViewMode('view');
+    } catch (error) {
+      showNotification(
+        `Failed to save workout: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        'error'
+      );
+      throw error; // Re-throw to let the component handle it if needed
     }
-
-    // Save to workouts table
-    const { data: workoutData, error: workoutError } = await supabase
-      .from('workouts')
-      .insert({
-        coach_id: coachId,
-        group_id: groupId,
-        workout_data: workout,
-      })
-      .select();
-
-    if (workoutError) {
-      console.error('Error saving workout:', workoutError);
-      return;
-    }
-
-    // Save to ai_training_data table
-    const { error: aiTrainingError } = await supabase
-      .from('ai_training_data')
-      .insert({
-        group_id: groupId,
-        training_data: [workout],
-      });
-
-    if (aiTrainingError) {
-      console.error('Error saving to AI training data:', aiTrainingError);
-    }
-
-    if (workoutData) {
-      setWorkouts([...workouts, workoutData[0]]);
-    }
-
-    alert('Workout saved successfully!');
   };
-
 
   if (isLoading) {
     return <WorkoutPageSkeleton />;
+  }
+
+  if (error) {
+    return <div className={styles.error}>Error: {error}</div>;
   }
 
   return (
@@ -126,18 +68,33 @@ const WorkoutPage: React.FC = () => {
         <h1 className={styles.title}>Manage Workouts</h1>
 
         <div className={styles.buttonGroup}>
-          <button onClick={() => setViewMode('view')} className={styles.optionButton}>View Past Workouts</button>
-          <button onClick={() => setViewMode('manual')} className={styles.optionButton}>Write Manual Workout</button>
-          <button onClick={() => setViewMode('ai')} className={styles.optionButton}>Generate AI Workout</button>
+          <button 
+            onClick={() => setViewMode('view')} 
+            className={`${styles.optionButton} ${viewMode === 'view' ? styles.active : ''}`}
+          >
+            View Past Workouts
+          </button>
+          <button 
+            onClick={() => setViewMode('manual')} 
+            className={`${styles.optionButton} ${viewMode === 'manual' ? styles.active : ''}`}
+          >
+            Write Manual Workout
+          </button>
+          <button 
+            onClick={() => setViewMode('ai')} 
+            className={`${styles.optionButton} ${viewMode === 'ai' ? styles.active : ''}`}
+          >
+            Generate AI Workout
+          </button>
         </div>
 
         <div className={styles.contentBox}>
           {viewMode === 'view' && (
             <ViewWorkouts 
-            groups={groups} 
-            selectedGroup={selectedGroup} 
-            setSelectedGroup={setSelectedGroup} 
-          />
+              groups={groups} 
+              selectedGroup={selectedGroup} 
+              setSelectedGroup={setSelectedGroup} 
+            />
           )}
 
           {viewMode === 'manual' && (

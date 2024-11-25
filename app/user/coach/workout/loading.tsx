@@ -3,26 +3,32 @@ import styles from '../../../styles/WorkoutPageSkeleton.module.css';
 
 const WorkoutPageSkeleton = () => {
   return (
-    <div className={styles.container}>
+    <div className={styles.skeletonContainer}>
       {/* Title skeleton */}
-      <div className={styles.titleSkeleton} />
+      <div className={styles.skeletonTitle} />
       
-      {/* Button group skeleton */}
-      <div className={styles.buttonGroup}>
+      {/* Navigation buttons skeleton */}
+      <div className={styles.skeletonButtonGroup}>
         {[1, 2, 3].map((btn) => (
-          <div key={btn} className={styles.buttonSkeleton} />
+          <div 
+            key={btn} 
+            className={styles.skeletonButton}
+            style={{ width: '120px', height: '40px' }}
+          />
         ))}
       </div>
       
-      {/* Content box skeleton */}
-      <div className={styles.contentBox}>
+      {/* Content skeleton */}
+      <div className={styles.skeletonContent}>
         {/* Group selector skeleton */}
-        <div className={styles.selectSkeleton} />
+        <div className={styles.skeletonSelect} />
         
-        {/* Content rows skeleton */}
+        {/* Workout items skeleton */}
         {[1, 2, 3, 4].map((row) => (
-          <div key={row} className={styles.rowSkeleton}>
-            <div className={styles.rowContent} />
+          <div key={row} className={styles.skeletonWorkoutItem}>
+            <div className={styles.skeletonLine} style={{ width: '80%' }} />
+            <div className={styles.skeletonLine} style={{ width: '60%' }} />
+            <div className={styles.skeletonLine} style={{ width: '70%' }} />
           </div>
         ))}
       </div>

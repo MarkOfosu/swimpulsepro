@@ -39,7 +39,10 @@ const Activities = () => {
         .eq('coach_id', user.id);
 
       if (error) throw error;
-      setGroups(data || []);
+      setGroups((data || []).map(group => ({
+        ...group,
+        coach_id: user.id
+      })));
     } catch (err) {
       console.error('Error fetching groups:', err);
       toast.error('Failed to load groups');
@@ -101,7 +104,6 @@ const Activities = () => {
   
   // Add a debug effect to monitor the activity data
   useEffect(() => {
-    console.log('Current activities:', activities);
   }, [activities]);
 
   // Format activity data for database

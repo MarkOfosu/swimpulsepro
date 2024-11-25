@@ -12,3 +12,5 @@ export const DELETION_REASONS = [
   export type DeletionReason = typeof DELETION_REASONS[number]['value'];
   
   export type DeletionReasonType = 'taking_break' | 'not_useful' | 'switching_team' | 'privacy_concerns' | 'duplicate_account' | 'other';
+
+  export const ITEMS_PER_PAGE = 5;
