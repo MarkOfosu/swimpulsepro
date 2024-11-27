@@ -26,7 +26,7 @@
     "@react-email/components": "^0.0.25",
     "@supabase/auth-helpers-nextjs": "^0.10.0",
     "@supabase/auth-helpers-react": "^0.5.0",
-    "@supabase/ssr": "^0.4.0",
+    "@supabase/ssr": "^0.4.1",
     "@supabase/supabase-js": "^2.46.1",
     "@tanstack/react-query": "^5.59.16",
     "@types/jspdf": "^2.0.0",
@@ -51,7 +51,8 @@
     "react-window": "^1.8.10",
     "recharts": "^2.12.7",
     "resend": "^4.0.0",
-    "supabase": "^1.223.10"
+    "supabase": "^1.223.10",
+    "zustand": "^5.0.1"
   },
   "devDependencies": {
     "@types/date-fns": "^2.6.3",
